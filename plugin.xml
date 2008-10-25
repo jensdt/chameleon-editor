@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="ChameleonEditor"
+   name="ChameleonEditor Plug-in"
+   version="1.0.1"
+   provider-name="K.U.Leuven"
+   class="chameleon.editor.ChameleonEditorPlugin">
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.ide"/>
+   </requires>
+
+   <runtime>
+      <library name="lib/antlr.jar"/>
+      <library name="lib/junit.jar"/>
+      <library name="lib/log4j-1.2.8.jar"/>
+      <library name="lib/org.rejuse.jar"/>
+      <library name="bin/." />
+      <library name="lib/chameleon.jar">
+         <export name="*"/>
+      </library>
+      <library name="."/>
+   </runtime> 
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="chameleon.editor.editors.ChameleonEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="java, cs"
+            icon="icons/chameleon.gif"
+            id="chameleonEditor.editors.ChameleonEditor"
+            name="Chameleon Editor">
+      </editor>
+   </extension> 
+   
+   <extension
+         id="ChameleonNature"
+         name="Chameleon Project"
+         point="org.eclipse.core.resources.natures">
+         <runtime>
+         	<run class="chameleon.editor.project.ChameleonProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="chameleonEditor.project.ProjectWizard"
+         name="ChameleonProject"
+         point="org.eclipse.ui.newWizards"
+        >
+       	<category
+         name="Chameleon"
+         id="chameleon.category1">
+   </category>
+      <wizard
+            class="chameleon.editor.project.ProjectWizard"
+            id="ChameleonEditor.ProjectWizard"
+            name="New Chameleon Project"
+            icon="icons/chameleon.png"
+            category="chameleon.category1"            
+            project="true">
+            <description>Creates a new Chameleon Project</description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ChameleonEditorPreferencePage"
+            class="chameleon.editor.editors.preferences.ColoringPreferencePage"
+            id="ColoringPreferencePage"
+            name="Syntax Coloring"/>
+      <page
+            category="ChameleonEditorPreferencePage"
+            class="chameleon.editor.editors.preferences.OutlinePreferencePage"
+            id="OutlinePreferencePage"
+            name="Outline Elements"/>
+      <page
+            class="chameleon.editor.editors.preferences.ChameleonEditorPreferencePage"
+            id="ChameleonEditorPreferencePage"
+            name="ChameleonEditor"/>
+   </extension>
+
+<extension
+      id="problemmarker" 
+      point="org.eclipse.core.resources.markers" 
+      name="%problemName">
+      <super type="org.eclipse.core.resources.marker"/>
+      <persistent value="true"/>
+      <attribute name="severity"/>
+      <attribute name="message"/>
+      <attribute name="location"/>
+   </extension>
+   <extension
+      id="taskmarker" 
+      point="org.eclipse.core.resources.markers" 
+      name="%taskName">
+      <super type="org.eclipse.core.resources.marker"/>
+      <persistent value="true"/>
+      <attribute name="priority"/>
+      <attribute name="message"/>
+      <attribute name="done"/>
+      <attribute name="userEditable"/>      
+   </extension>
+   <extension
+      id="bookmark" 
+      point="org.eclipse.core.resources.markers" 
+      name="%bookmarkName">
+      <super type="org.eclipse.core.resources.marker"/>
+      <persistent value="true"/>
+      <attribute name="message"/>
+      <attribute name="location"/>
+   </extension>
+
+   
+
+</plugin>
