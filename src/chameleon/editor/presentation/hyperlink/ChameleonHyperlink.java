@@ -24,6 +24,7 @@ import chameleon.core.MetamodelException;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.declaration.Declaration;
 import chameleon.core.declaration.DeclarationContainer;
+import chameleon.core.declaration.Signature;
 import chameleon.core.reference.CrossReference;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.linkage.Decorator;
@@ -82,7 +83,7 @@ public class ChameleonHyperlink implements IHyperlink {
 
 	public void open() {
 		try {
-			Declaration<? extends Declaration, DeclarationContainer> referencedElement = getReferencedElement();
+			Declaration<? extends Declaration, DeclarationContainer,? extends Signature> referencedElement = getReferencedElement();
 			if (referencedElement != null) {
 				System.out.println("De link wordt geopend...");
 				CompilationUnit cu = referencedElement.getNearestAncestor(CompilationUnit.class);
