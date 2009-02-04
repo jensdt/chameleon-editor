@@ -86,7 +86,7 @@ public class ChameleonHyperlink implements IHyperlink {
 			Declaration<? extends Declaration, DeclarationContainer,? extends Signature> referencedElement = getReferencedElement();
 			if (referencedElement != null) {
 				System.out.println("De link wordt geopend...");
-				CompilationUnit cu = referencedElement.getNearestAncestor(CompilationUnit.class);
+				CompilationUnit cu = referencedElement.nearestAncestor(CompilationUnit.class);
 				ChameleonDocument doc = findDocument(cu);
 				
 
@@ -96,7 +96,7 @@ public class ChameleonHyperlink implements IHyperlink {
 				IFile file = doc.getFile();
 				
 				//create Marker to jump immediately to the referenced element.
-				Decorator dec = (Decorator) referencedElement.getDecorator(Decorator.ALL_DECORATOR);
+				Decorator dec = (Decorator) referencedElement.tag(Decorator.ALL_DECORATOR);
 				IMarker marker = null;
 				
 				try {

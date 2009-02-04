@@ -42,12 +42,12 @@ public class Decorator extends Position implements Tag {
   		throw new ChameleonProgrammerException("Changing element of decorator with name "+name+" to null");
   	}
   	if(element != _element) {
-  		if((_element != null) && (_element.getDecorator(name) == this)){
+  		if((_element != null) && (_element.tag(name) == this)){
   			_element.removeTag(name);
   		}
   		_element = element;
-  		if((_element != null) && (_element.getDecorator(name) != this)) {
-  		  _element.setDecorator(this, name);
+  		if((_element != null) && (_element.tag(name) != this)) {
+  		  _element.setTag(this, name);
   		}
   	}
   }
@@ -70,8 +70,8 @@ public class Decorator extends Position implements Tag {
 
 	
 	public Decorator getParentDecorator(){
-		Element parentElem = getElement().getParent();
-		Decorator parentDeco = (Decorator)parentElem.getDecorator(ALL_DECORATOR);
+		Element parentElem = getElement().parent();
+		Decorator parentDeco = (Decorator)parentElem.tag(ALL_DECORATOR);
 		return parentDeco;
 	}
 	

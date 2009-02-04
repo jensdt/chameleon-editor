@@ -407,18 +407,18 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	}
 	
 	public static void showTypeSize(Namespace root) {
-		for(Type type:root.getDescendants(Type.class)) {
-		  int size = type.getDescendants(Element.class).size();
+		for(Type type:root.descendants(Type.class)) {
+		  int size = type.descendants(Element.class).size();
 		  System.out.println(type.getFullyQualifiedName()+" contains "+size+" elements");
 		}
 	}
 	public void reconcile(ChameleonDirtyRegion dirtyRegion, IRegion subRegion){
 		Namespace root = getDocument().getCompilationUnit().getDefaultNamespacePart().getDefaultNamespace();
 		if(DEBUG) {
-			System.out.println("Number of elements in model: "+root.getDescendants(Element.class).size());
-			System.out.println("Number of namespaces in model: "+root.getDescendants(Namespace.class).size());
-			System.out.println("Number of namespacesparts in model: "+root.getDescendants(NamespacePart.class).size());
-			System.out.println("Number of types in model: "+root.getDescendants(Type.class).size());
+			System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
+			System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
+			System.out.println("Number of namespacesparts in model: "+root.descendants(NamespacePart.class).size());
+			System.out.println("Number of types in model: "+root.descendants(Type.class).size());
 			showSize(root);
 			showTypeSize(root);
 		}

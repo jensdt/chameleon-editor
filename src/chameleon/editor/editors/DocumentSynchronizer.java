@@ -35,7 +35,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onTypeNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Type Name Change");
-		Decorator dec = (Decorator)type.getDecorator(Decorator.NAME_DECORATOR);
+		Decorator dec = (Decorator)type.tag(Decorator.NAME_DECORATOR);
 //		for (int i = 0; i < decs.length; i++) {
 //			Decorator dec = (Decorator) decs[i];
 			replaceInDocument(dec.getOffset(),dec.getLength(),type.getName());
@@ -49,7 +49,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onVariableNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Variable Name Change");
-		Decorator deco = (Decorator) type.getDecorator(Decorator.ALL_DECORATOR);
+		Decorator deco = (Decorator) type.tag(Decorator.ALL_DECORATOR);
 //		for (int i = 0; i < deco.length; i++) {
 //			Decorator pos = (Decorator) deco[i];
 			try{

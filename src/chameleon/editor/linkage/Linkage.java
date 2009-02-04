@@ -46,7 +46,7 @@ public class Linkage implements ILinkage {
 		} catch (BadPositionCategoryException e) {
 			System.err.println("Couldn't set decorator ["+dectype+"] for "+el);
 		}
-		el.setDecorator(dec,dectype);
+		el.setTag(dec,dectype);
 	}
 
 	public int getLineOffset(int i) {

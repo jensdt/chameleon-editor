@@ -81,7 +81,7 @@ public class ChameleonOutlineTree {
 		try{
 			Vector<Element> children = new Vector<Element>(0);
 			Element elem = (Element) parentElement;
-			List elementChildren = elem.getChildren();
+			List elementChildren = elem.children();
 			//Vector<String> possibleChildren = hashElements.get(elem.getElement().getClass().getName());
 			for(int i = 0; i < elementChildren.size(); i++){
 				Element elementChild = ((Element)elementChildren.get(i));
@@ -107,7 +107,7 @@ public class ChameleonOutlineTree {
 	 * @return true if the element is a proper tree element and has decorators
 	 */
 	public static boolean isAllowedInTree(String language, Element elementChild) {
-		 return ((elementChild.hasDecorators()) && (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
+		 return ((elementChild.hasTags()) && (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
 	}
 	
 	
@@ -197,7 +197,7 @@ public class ChameleonOutlineTree {
 	public void update(Element element, boolean bool) {
 		System.out.println("ChameleonOutlineTree.update");
 		if (bool){ //addition
-			if(element.getParent().equals(node)){
+			if(element.parent().equals(node)){
 				//tis een van dees kinderen.
 				addChild(element);
 				fireAdd(element);
