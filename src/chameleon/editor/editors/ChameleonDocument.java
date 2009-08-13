@@ -26,7 +26,6 @@ import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.widgets.Display;
 
 import chameleon.core.Config;
-import chameleon.core.IMetaModel;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
@@ -306,8 +305,9 @@ public class ChameleonDocument extends Document {
 		}
 	}
 	
-	public IMetaModel getModel(){
-		return getProjectNature().getModel();
+	public Object getModel(){
+		throw new Error("Apparently this method is used by eclipse.");
+//		return getProjectNature().getModel();
 	}
 	
 	public IMetaModelFactory getMetaModelFactory(){

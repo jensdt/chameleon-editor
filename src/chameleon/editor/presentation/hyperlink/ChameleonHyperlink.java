@@ -83,7 +83,7 @@ public class ChameleonHyperlink implements IHyperlink {
 
 	public void open() {
 		try {
-			Declaration<? extends Declaration, DeclarationContainer,? extends Signature> referencedElement = getReferencedElement();
+			Declaration<?,?,?,? > referencedElement = getReferencedElement();
 			if (referencedElement != null) {
 				System.out.println("De link wordt geopend...");
 				CompilationUnit cu = referencedElement.nearestAncestor(CompilationUnit.class);

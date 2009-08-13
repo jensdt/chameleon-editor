@@ -413,7 +413,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		}
 	}
 	public void reconcile(ChameleonDirtyRegion dirtyRegion, IRegion subRegion){
-		Namespace root = getDocument().getCompilationUnit().getDefaultNamespacePart().getDefaultNamespace();
+		Namespace root = getDocument().getCompilationUnit().language().defaultNamespace();
 		if(DEBUG) {
 			System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
 			System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());

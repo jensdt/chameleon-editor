@@ -10,8 +10,8 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import chameleon.core.element.Element;
+import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
-import chameleon.core.modifier.ModifierContainer;
 import chameleon.editor.ChameleonEditorExtension;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.editors.ChameleonEditor;
@@ -85,9 +85,9 @@ public class ChameleonOutlineLabelProvider implements ILabelProvider {
 		Element element = elem.getElement();
 		//String name = element.getShortDescription();
 		String name = element.getClass().getSimpleName();
-		if(element instanceof ModifierContainer) {
+		if(element instanceof ElementWithModifiers) {
 
-				List modifiers = ((ModifierContainer)element).modifiers();
+				List modifiers = ((ElementWithModifiers)element).modifiers();
 				for (Iterator iter = modifiers.iterator(); iter.hasNext();) {
 					Modifier modifier = (Modifier) iter.next();
 					name = name+ ((modifier.toString()).toLowerCase());
