@@ -19,7 +19,7 @@ import chameleon.core.type.Type;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
 import chameleon.editor.linkage.Decorator;
-import chameleon.editor.linkage.Linkage;
+import chameleon.editor.linkage.DocumentEditorToolExtension;
 
 
 /**
@@ -196,40 +196,18 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						
 						// B. reparsen element
 						
-						element.reParse(new Linkage(getDocument()),getDocument().getMetaModelFactory());
+						element.reParse(new DocumentEditorToolExtension(getDocument()),getDocument().getMetaModelFactory());
 						
 						
 						//System.out.println("  verwerken positie geslaagd\n");
 					}catch(Exception e){
-						try{
-							if(DEBUG) {
-							  System.out.println("Members verwerken mislukt. Proberen hele document verwerken");
-							}
-							parseWholeDocument(_document);
-							//System.out.println("  verwerken hele document geslaagd");
-							for(int n=0; n<dirtyPositions.size(); n++){
-								status[n] = false;
-							}
-						}catch(Exception err){
-							//System.out.println("  verwerken positie niet geslaagd");
-							//System.out.println("   => positie(s) en element verwijderd");
-							ClonedDecorator pos = ((ClonedDecorator) dirtyPositions.get(i));
-							pos.getElement().disconnect();
-							try{
-								getDocument().removePosition(Decorator.CHAMELEON_CATEGORY,pos);				
-								removeEmbeddedPos(pos, positions, status);
-							}catch(Exception error){
-								error.printStackTrace();
-							}	
-							
-						}
+						reparseEntireDocument(status, positions, i);
 					}
 					status[i] = false;
 				}
 			}
 			
 		}
-	
 		
 		// voor test huidige posities even printen
 		//System.out.println("--------------------");
@@ -243,6 +221,31 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		
 		fireModelUpdated();
 		
+	}
+
+	private void reparseEntireDocument(boolean[] status, Position[] positions, int i) {
+		try{
+			if(DEBUG) {
+			  System.out.println("Members verwerken mislukt. Proberen hele document verwerken");
+			}
+			parseWholeDocument(_document);
+			//System.out.println("  verwerken hele document geslaagd");
+			for(int n=0; n<dirtyPositions.size(); n++){
+				status[n] = false;
+			}
+		}catch(Exception err){
+			//System.out.println("  verwerken positie niet geslaagd");
+			//System.out.println("   => positie(s) en element verwijderd");
+			ClonedDecorator pos = ((ClonedDecorator) dirtyPositions.get(i));
+			pos.getElement().disconnect();
+			try{
+				getDocument().removePosition(Decorator.CHAMELEON_CATEGORY,pos);				
+				removeEmbeddedPos(pos, positions, status);
+			}catch(Exception error){
+				error.printStackTrace();
+			}	
+			
+		}
 	}
 	
 	public void addUpdateListener(ActionListener newListener){

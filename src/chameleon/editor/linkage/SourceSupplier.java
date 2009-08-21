@@ -40,7 +40,7 @@ public class SourceSupplier implements ISourceSupplier  {
 	}
 
 	public ILinkage getLinkage() {
-		if (current<docs.length) return new Linkage(docs[current]);
+		if (current<docs.length) return new DocumentEditorToolExtension(docs[current]);
 		return null;
 	}
 

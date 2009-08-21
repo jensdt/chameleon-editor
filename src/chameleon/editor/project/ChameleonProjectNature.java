@@ -23,11 +23,11 @@ import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
-import chameleon.editor.linkage.Linkage;
+import chameleon.editor.linkage.DocumentEditorToolExtension;
 import chameleon.editor.linkage.SourceSupplier;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
+import chameleon.editor.toolextension.IMetaModelFactory;
 import chameleon.input.ParseException;
-import chameleon.linkage.IMetaModelFactory;
 
 /**
  * @author Manuel Van Wesemael 
@@ -304,7 +304,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void addModelElement(ChameleonDocument document, Element parent) {
 		modelElements.add(document);
 		try {
-			getMetaModelFactory().addSource(new Linkage(document),document.get(), parent);
+			getMetaModelFactory().addSource(new DocumentEditorToolExtension(document),document.get(), parent);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

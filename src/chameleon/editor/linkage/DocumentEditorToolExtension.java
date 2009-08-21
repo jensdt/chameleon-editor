@@ -17,11 +17,11 @@ import chameleon.linkage.IParseErrorHandler;
  * 
  * A linkage implementation for setting decorators
  */
-public class Linkage implements ILinkage {
+public class DocumentEditorToolExtension implements ILinkage {
 
 	private IDocument _document;
 
-	public Linkage(IDocument document) {
+	public DocumentEditorToolExtension(IDocument document) {
 		_document = document;
 	}
 

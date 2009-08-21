@@ -32,8 +32,8 @@ import chameleon.editor.LanguageMgt;
 import chameleon.editor.linkage.Decorator;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.editor.toolextension.IMetaModelFactory;
 import chameleon.input.ParseException;
-import chameleon.linkage.IMetaModelFactory;
 
 /**
  * @author Jef Geerinckx

@@ -21,8 +21,8 @@ import org.xml.sax.SAXException;
 
 import chameleon.core.element.Element;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.linkage.ILanguageModelID;
-import chameleon.linkage.IMetaModelFactory;
+import chameleon.editor.toolextension.ILanguageModelID;
+import chameleon.editor.toolextension.IMetaModelFactory;
 import chameleon.output.Syntax;
 import chameleon.tool.ToolExtension;
 

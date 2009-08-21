@@ -10,7 +10,7 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.project.ChameleonProjectNature;
-import chameleon.linkage.IMetaModelFactory;
+import chameleon.editor.toolextension.IMetaModelFactory;
 
 /**
  * @author Jef Geerinckx
