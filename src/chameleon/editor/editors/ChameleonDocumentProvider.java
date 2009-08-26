@@ -25,9 +25,6 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 	//the editor where this documentprovider is used
 	private ChameleonEditor editor;
 	
-	//provides the metaModelFactory
-	private MetaModelFactoryProvider _metaModelFactoryProvider;
-	
 	public ChameleonDocumentProvider(ChameleonEditor editor){
 		this.editor=editor;
 		

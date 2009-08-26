@@ -24,7 +24,7 @@ import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.toolextension.ILanguageModelID;
 import chameleon.editor.toolextension.IMetaModelFactory;
 import chameleon.output.Syntax;
-import chameleon.tool.ToolExtension;
+import chameleon.tool.Connector;
 
 /**
  * @author Manuel Van Wesemael
@@ -46,7 +46,7 @@ public class LanguageMgt {
     // the languages names
     private Map<String, ILanguageModelID> models;
 
-    private Map<String, ToolExtension> tools;
+    private Map<String, Connector> tools;
 
     private URLClassLoader languageloader;
     /**
@@ -57,7 +57,7 @@ public class LanguageMgt {
     private LanguageMgt() {
         presentationModels = new HashMap<String, PresentationModel>();
         models = new HashMap<String, ILanguageModelID>();
-        tools = new HashMap<String,ToolExtension>();
+        tools = new HashMap<String,Connector>();
         try {
             loadJars();
         }

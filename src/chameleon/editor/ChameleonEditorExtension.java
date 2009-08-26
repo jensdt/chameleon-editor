@@ -1,6 +1,6 @@
 package chameleon.editor;
 
-import chameleon.tool.ToolExtensionImpl;
+import chameleon.tool.ConnectorImpl;
 import chameleon.core.element.Element;
 
 /**
@@ -9,7 +9,7 @@ import chameleon.core.element.Element;
  * Date: 16-okt-2006
  * Time: 14:53:44
  */
-public abstract class ChameleonEditorExtension extends ToolExtensionImpl {
+public abstract class ChameleonEditorExtension extends ConnectorImpl {
 
     public abstract String getLabel(Element element);
 

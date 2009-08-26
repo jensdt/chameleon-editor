@@ -124,7 +124,7 @@ public class ChameleonOutlineLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if(element instanceof ChameleonOutlineTree) {
 			Element e = ((ChameleonOutlineTree)element).getElement();
-			ChameleonEditorExtension ext = getEditor().getDocument().getProjectNature().getModel().language().getToolExtension(ChameleonEditorExtension.class);
+			ChameleonEditorExtension ext = getEditor().getDocument().getProjectNature().getModel().language().connector(ChameleonEditorExtension.class);
 			return ext.getLabel(e);
 		} else if (element != null) {
 			return element.toString();

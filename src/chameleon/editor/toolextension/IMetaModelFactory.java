@@ -11,9 +11,8 @@ import chameleon.core.method.Method;
 import chameleon.core.namespace.Namespace;
 import chameleon.input.ParseException;
 import chameleon.linkage.ILinkage;
-import chameleon.linkage.ILinkageFactory;
 import chameleon.linkage.ISourceSupplier;
-import chameleon.tool.ToolExtension;
+import chameleon.tool.Connector;
 
 /**
  * @author Jef Geerinckx, Joeri Hendrickx
@@ -32,7 +31,7 @@ public interface IMetaModelFactory {
      * Create a metamodel from a set of files. The supplied ILinkageFactory
      * will be used to create ILinkage objects for each file.
      */
-    public Namespace getMetaModel(ILinkageFactory fact, Set<File> files) throws Exception;
+    public Namespace getMetaModel(Set<File> files) throws Exception;
 
     public void parseTypeMembers(ILinkage linkage, String code, int line, int column, Element typeMember) throws Exception;
 
@@ -51,8 +50,8 @@ public interface IMetaModelFactory {
 
     public void replaceMethod(ILinkage linkage, String methodCode, Method method)throws IOException, ParseException, MetamodelException;
 
-    void addToolExtension(Class<? extends ToolExtension> extClass, ToolExtension ext);
+    void addToolExtension(Class<? extends Connector> extClass, Connector ext);
 
-    void removeToolExtension(Class<? extends ToolExtension> extClass);
+    void removeToolExtension(Class<? extends Connector> extClass);
 
 }
