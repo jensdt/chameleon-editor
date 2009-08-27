@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 
+import chameleon.core.Config;
 import chameleon.core.MetamodelException;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
@@ -58,7 +59,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void init(Language language){
 //		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));
 		this._language = language;
-		createModel();
+		updateAllModels();
 	}
 	
 	/**
@@ -95,14 +96,14 @@ public class ChameleonProjectNature implements IProjectNature{
 		try {
 			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/.CHAMPROJECT")));
 			String lang = f.readLine();
-			init(LanguageMgt.getInstance().findLanguage(lang));
+			init(LanguageMgt.getInstance().createLanguage(lang));
 			f.close();
 		} catch (IOException e) {
 			System.out.println("No initfile...");
 		}
 		
 		loadDocuments();
-		createModel();
+		updateAllModels();
 	}
 	
 //	private void setMetaModelFactory(IMetaModelFactory mMF) {
@@ -123,40 +124,40 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * Creates a new model for this document. If another model was set, anything of it is removed
 	 * and is replaced by the new model.
 	 */
-	public void createModel(){
+	public void updateAllModels() {
 
-		if (modelFactory()!=null) {
-		
-		for (ChameleonDocument element:modelElements) {
 			try {
-				element.getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-			  //getDocument().removeParseErrors();
-			} catch (CoreException e) {
-			   // something went wrong
-				e.printStackTrace();
+				for (ChameleonDocument doc : modelElements) {
+					updateModel(doc);
+				}
+				if (Config.DEBUG) {
+					// DEBUG: This prints the size of the entire model so memory problems
+					// can be detected. If there is a problem,
+					// the number will keep getting bigger while the size of the source
+					// files remains constant.
+					ChameleonReconcilingStrategy.showSize(language().defaultNamespace());
+					for (Iterator<ChameleonDocument> iter = modelElements.iterator(); iter.hasNext();) {
+						ChameleonDocument element = iter.next();
+						System.out.println(element);
+					}
+				}
+			} catch (Exception exc) {
+				exc.printStackTrace();
+
 			}
-			element.dumpPositions();
-		}
 		
-		try{
-			IDocument[]  docs = (IDocument[]) modelElements.toArray(new IDocument[0]);
-			ModelFactory fact = modelFactory();
-			Namespace model = fact.getMetaModel(new SourceSupplier(docs));
-			ChameleonReconcilingStrategy.showSize(model);
-//			setModel(model);
-			
-			for (Iterator<ChameleonDocument> iter = modelElements.iterator(); iter.hasNext();) {
-				ChameleonDocument element =  iter.next();
-				System.out.println(element);
-			}
-			
-			
+	}
+
+	private void updateModel(ChameleonDocument doc) throws ParseException  {
+		try {
+			doc.getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+			// getDocument().removeParseErrors();
+		} catch (CoreException e) {
+			// something went wrong
+			e.printStackTrace();
 		}
-		catch (Exception exc) {
-			exc.printStackTrace();
-		   
-		}
-		}
+		doc.dumpPositions();
+		modelFactory().addToModel(doc.get());
 	}
 
 	/**
@@ -247,7 +248,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 
 	/**
-	 * adds an extra chameleonDocument to this nature
+	 * Adds an extra chameleonDocument to this nature
 	 * @param document
 	 */
 	public void addToModel(ChameleonDocument document) {
@@ -261,7 +262,13 @@ public class ChameleonProjectNature implements IProjectNature{
 			modelElements.remove(same);
 		}
 		modelElements.add(document);
-		createModel();
+		// SPEED: does this really reparse all documents?
+		try {
+			updateModel(document);
+		} catch (ParseException e) {
+			// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
+			e.printStackTrace();
+		}
 	}
 
 	public List<ChameleonDocument> documents(){
@@ -321,17 +328,10 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void addModelElement(ChameleonDocument document, Element parent) {
 		modelElements.add(document);
 		try {
-			modelFactory().addSource(new DocumentEditorToolExtension(document),document.get(), parent);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			modelFactory().addToModel(document.get());
 		} catch (ParseException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MetamodelException e) {
-			e.printStackTrace();
-		}
-		
+		} 
 	}
 	
 	public void updateOutline() {

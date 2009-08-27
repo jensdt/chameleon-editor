@@ -258,9 +258,9 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 						      
 		      
 		    ChameleonProjectNature chameleonNature = ((ChameleonProjectNature)project.getNature(ChameleonProjectNature.NATURE));
-		    String languageName = ((LanguageSectionPage)pages[0]).getProjectLanguage();
-		    Language language = LanguageMgt.getInstance().findLanguage(languageName);
-			  chameleonNature.init(language);
+//		    String languageName = ((LanguageSectionPage)pages[0]).getProjectLanguage();
+//		    Language language = LanguageMgt.getInstance().createLanguage(languageName);
+//			  chameleonNature.init(language);
 			  chameleonNature.setProject(project);
 			
 	} catch (CoreException e) {

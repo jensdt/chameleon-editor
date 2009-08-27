@@ -76,7 +76,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String taalS = iter.next();
 
-			ChameleonContentOutlinePage.initByDefaults(LanguageMgt.getInstance().findLanguage(taalS));
+			ChameleonContentOutlinePage.initByDefaults(LanguageMgt.getInstance().createLanguage(taalS));
 			LanguageMgt.getInstance().getPresentationModel(taalS);
 
 			TabItem currentPage = new TabItem(languageTabs, SWT.NONE);
@@ -178,7 +178,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 				if (field.getBooleanValue()) allowed.add(name);
 			}
 			
-			ChameleonOutlineTree.setAllowedElements(LanguageMgt.getInstance().findLanguage(language), allowed);
+			ChameleonOutlineTree.setAllowedElements(LanguageMgt.getInstance().createLanguage(language), allowed);
 		}		
 		
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();

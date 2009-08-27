@@ -406,7 +406,7 @@ public class ChameleonDocument extends Document {
 	/**
 	 * Reparse this document.
 	 * 
-	 * the document is basically removed from the project and then added again.
+	 * The document is basically removed from the project and then added again.
 	 */
 	public void reParse() {
 
@@ -424,7 +424,7 @@ public class ChameleonDocument extends Document {
 			e.printStackTrace();
 		}
 
-		// if this is not set, the document is new and has never been acquired
+		// if this is not set, the document is new and has never been parsed before.
 		if (_cu == null) {
 			getProjectNature().addToModel(this);
 		} else {

@@ -403,7 +403,6 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	 * @param dirtyRegion the document region which has been changed
 	 * @param subRegion the sub region in the dirty region which should be reconciled 
 	 */
-	
 	public static void showSize(Namespace ns) {
 		int size = ns.getNamespaceParts().size();
 		System.out.println(ns.getFullyQualifiedName()+" defined by "+size+" parts");

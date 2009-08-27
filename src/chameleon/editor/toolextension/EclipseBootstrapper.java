@@ -1,7 +1,10 @@
 package chameleon.editor.toolextension;
 
+import java.io.IOException;
+
 import chameleon.core.language.Language;
 import chameleon.input.ModelFactory;
+import chameleon.input.ParseException;
 import chameleon.output.Syntax;
 
 /**
@@ -38,7 +41,7 @@ public interface EclipseBootstrapper {
 	 */
 	String getLicense();
 	
-	Language createLanguage();
+	Language createLanguage() throws IOException, ParseException;
 	
 	/**
 	 * @return the CodeWriter for this language

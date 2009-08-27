@@ -19,11 +19,13 @@ import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.toolextension.EclipseBootstrapper;
 import chameleon.input.ModelFactory;
+import chameleon.input.ParseException;
 import chameleon.output.Syntax;
 import chameleon.tool.Connector;
 
@@ -146,8 +148,14 @@ public class LanguageMgt {
         return models.keySet().toArray(new String[0]);
     }
 
-    public Language findLanguage(String name) {
-    	return models.get(name).createLanguage();
+    public Language createLanguage(String name) {
+    	try {
+				return models.get(name).createLanguage();
+			} catch (Exception e) {
+				// FIXME this should not be able to happen. Does splitting Language into Language and Model help? Don't think so.
+				e.printStackTrace();
+				throw new ChameleonProgrammerException(e);
+			}
     }
     
 //    /**
@@ -201,7 +209,7 @@ public class LanguageMgt {
      */
     public PresentationModel getPresentationModel(String languageString) {
         PresentationModel r = presentationModels.get(languageString);
-        Language language = findLanguage(languageString);
+        Language language = createLanguage(languageString);
         if (r == null) {
             try {
                 String filename = "xml/" + languageString.toLowerCase()
