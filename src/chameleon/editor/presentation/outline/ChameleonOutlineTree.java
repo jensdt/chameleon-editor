@@ -1,12 +1,14 @@
 package chameleon.editor.presentation.outline;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 
 /**
  * @author Manuel Van Wesemael 
@@ -23,7 +25,7 @@ public class ChameleonOutlineTree {
 	private IChameleonOutlineTreeListener listener= NullChameleonOutlineTreeListener.getSoleInstance();
 	
 	//contains string representation of all the elements that may be contained in this tree
-	private static HashMap<String, Vector<String>> allowedTreeElements= new HashMap<String, Vector<String>>(0);
+	private static HashMap<Language, List<String>> allowedTreeElements = new HashMap<Language, List<String>>(0);
 	
 	/**
 	 * Creates a new empty tree with empty current node, and no children
@@ -77,9 +79,9 @@ public class ChameleonOutlineTree {
 	 * @return
 	 * 	The Decorator children of the given parentelement
 	 */
-	public Vector<Element> getChildren(String lang, Element parentElement) {
+	public List<Element> getChildren(Language lang, Element parentElement) {
 		try{
-			Vector<Element> children = new Vector<Element>(0);
+			List<Element> children = new ArrayList<Element>(0);
 			Element elem = (Element) parentElement;
 			List elementChildren = elem.children();
 			//Vector<String> possibleChildren = hashElements.get(elem.getElement().getClass().getName());
@@ -106,7 +108,7 @@ public class ChameleonOutlineTree {
 	 * @param elementChild 
 	 * @return true if the element is a proper tree element and has decorators
 	 */
-	public static boolean isAllowedInTree(String language, Element elementChild) {
+	public static boolean isAllowedInTree(Language language, Element elementChild) {
 		 return ((elementChild.hasTags()) && (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
 	}
 	
@@ -114,7 +116,7 @@ public class ChameleonOutlineTree {
 	/*
 	 * check whether the given description matches one of the allowed ones
 	 */
-	private static boolean isAllowedDescription(String language, String shortDescription) {
+	private static boolean isAllowedDescription(Language language, String shortDescription) {
 		return allowedTreeElements.get(language).contains(shortDescription);
 	}
 	
@@ -140,7 +142,7 @@ public class ChameleonOutlineTree {
 	 * @param treeRootElement
 	 * 	The beginElement.
 	 */
-	public void composeTree(String lang, Element treeElement) {
+	public void composeTree(Language lang, Element treeElement) {
 		node = treeElement;
 		if(treeElement !=null){
 			List<Element> treeElementChildren = getChildren(lang, treeElement);
@@ -313,7 +315,7 @@ public class ChameleonOutlineTree {
 	 * Sets the elements which are to be shown in the outline tree.
 	 * This does not update the tree !
 	 */
-	public static void setAllowedElements(String lang, Vector<String> alloweds) {
+	public static void setAllowedElements(Language lang, List<String> alloweds) {
 
 		try {
 		for (Iterator<String> iter = alloweds.iterator(); iter.hasNext();) {

@@ -4,8 +4,10 @@
 package chameleon.editor.presentation.outline;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -19,6 +21,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
@@ -38,13 +41,13 @@ import chameleon.editor.presentation.PresentationModel;
 public class ChameleonContentOutlinePage extends ContentOutlinePage {
 
 	//contains all trees created during the life of the workbench (for 1 session)
-	private static Vector<ChameleonContentOutlinePage> allTrees;
+	private static List<ChameleonContentOutlinePage> allTrees;
 
 	//the used languages
-	private static Vector<String> initedLanguages = new Vector<String>();
+	private static List<Language> initedLanguages = new ArrayList<Language>();
 
 	//the current language used in the editor
-	private String currentLanguage;
+	private Language currentLanguage;
 
 	//The treeviewer that is used to store and view our tree
 	private TreeViewer treeViewer;
@@ -69,7 +72,7 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * @param defaultAllowedElements
 	 * 		the default allowed elements
 	 */
-	public ChameleonContentOutlinePage(String language,ChameleonEditor editor, Vector<String> allowedElements, Vector<String> defaultAllowedElements) {
+	public ChameleonContentOutlinePage(Language language,ChameleonEditor editor, List<String> allowedElements, List<String> defaultAllowedElements) {
 		super();
 
  
@@ -93,11 +96,11 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * @param lang
 	 * 	The language that is initialised
 	 */
-	public static void initByDefaults(String lang){
+	public static void initByDefaults(Language lang){
 		
-		PresentationModel pm = LanguageMgt.getInstance().getPresentationModel(lang);
+		PresentationModel pm = LanguageMgt.getInstance().getPresentationModel(lang.name());
 		
-		Vector<String> v = new Vector<String>();
+		List<String> v = new ArrayList<String>();
 		for (Iterator<String[]> iter = pm.getOutlineElements().iterator(); iter.hasNext();) {
 			String[] element = iter.next();
 			v.add(element[0]);
@@ -113,12 +116,12 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * Initialises this language with the given defaults if no defaults are found in the 
 	 * preference store
 	 */
-	private static void initByDefaults(String language, Vector<String> allowedElements, Vector<String> defaultAllowedElements) {
+	private static void initByDefaults(Language language, List<String> allowedElements, List<String> defaultAllowedElements) {
 		if (!initedLanguages.contains(language)){
 			
 			IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
 			
-			Vector<String> allowed = new Vector<String>();
+			List<String> allowed = new ArrayList<String>();
 			if (store.getBoolean("Chameleon_prefs_inited")) {
 			
 				for (Iterator<String> iter = allowedElements.iterator(); iter.hasNext();) {
@@ -156,11 +159,9 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * @param language
 	 * 	The language to be switched at
 	 * 	 */
-	public void changeLanguage(String language) {
+	public void changeLanguage(Language language) {
 		//System.out.println("ChameleonContentOutlinePage ChangeLanguage");
 			currentLanguage = language;
-
-
 	}
 
 
@@ -168,7 +169,7 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * 
 	 * @return the current language used
 	 */
-	public String getCurrentLanguage() {
+	public Language getCurrentLanguage() {
 		//System.out.println("ChameleonContentOutlinePage getCurrentLanguage");
 		return currentLanguage;
 	}
@@ -278,7 +279,7 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 	 * returns the root element for the tree
 	 */
 	private Element getTreeRootElement() {
-		return getEditor().getDocument().getCompilationUnit();
+		return getEditor().getDocument().compilationUnit();
 
 	}
 

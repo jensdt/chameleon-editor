@@ -286,7 +286,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
-				fOutlinePage= new ChameleonContentOutlinePage(getDocument().getLanguage(),this,this.getPresentationManager().getOutlineElements(),this.getPresentationManager().getDefaultOutlineElements());
+				fOutlinePage= new ChameleonContentOutlinePage(getDocument().language(),this,this.getPresentationManager().getOutlineElements(),this.getPresentationManager().getDefaultOutlineElements());
 				getDocument().getProjectNature().setOutlinePage(fOutlinePage);
 				if (getEditorInput() != null)
 					fOutlinePage.setInput(getEditorInput());
@@ -363,7 +363,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 			box.setMessage("This document is not part of a Chameleon Project.  The editor will work in restricted mode. Thank you for reading this.");
 			box.open();
 		} else if (presentationManager==null && document!=null) {
-			presentationManager = new PresentationManager(document, LanguageMgt.getInstance().getPresentationModel(document.getLanguage()));
+			presentationManager = new PresentationManager(document, LanguageMgt.getInstance().getPresentationModel(document.language().name()));
 		    if (projViewer != null)
 		    	projViewer.addTextListener(new ChameleonTextListener(document/*, presentationManager*/, projViewer));			
 		}

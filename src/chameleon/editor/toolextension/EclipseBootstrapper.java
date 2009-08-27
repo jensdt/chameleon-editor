@@ -1,5 +1,7 @@
 package chameleon.editor.toolextension;
 
+import chameleon.core.language.Language;
+import chameleon.input.ModelFactory;
 import chameleon.output.Syntax;
 
 /**
@@ -9,7 +11,7 @@ import chameleon.output.Syntax;
  * The implementationclass must be called "LanguageModelID" and must be sat on the root
  * of the language-model-package
  */
-public interface ILanguageModelID {
+public interface EclipseBootstrapper {
 
 	/**
 	 * @return Informal name of the supported language
@@ -36,10 +38,7 @@ public interface ILanguageModelID {
 	 */
 	String getLicense();
 	
-	/**
-	 * @return the MetaModelFactory for this language
-	 */
-	IMetaModelFactory getMetaModelFactory();
+	Language createLanguage();
 	
 	/**
 	 * @return the CodeWriter for this language

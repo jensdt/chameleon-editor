@@ -1,12 +1,15 @@
 package chameleon.editor;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.plugin.*;
-import org.osgi.framework.BundleContext;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
+
+import chameleon.core.language.Language;
 
 
 
@@ -110,10 +113,10 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 	 * 		A proper descriptor is returned if the name exists
 	 * 		else a Descriptor for missing images is returned 
 	 */
-	public static ImageDescriptor getImageDescriptor(String name, String language) {
+	public static ImageDescriptor getImageDescriptor(String name, Language language) {
 		 
 			String iconPath = "icons/";
-			iconPath = iconPath.concat(language.toLowerCase()).concat("/");
+			iconPath = iconPath.concat(language.name().toLowerCase()).concat("/");
 			//System.out.println("---- searching label : " +name);
 		   try {
 		       URL installURL = getDefault().getDescriptor().getInstallURL();

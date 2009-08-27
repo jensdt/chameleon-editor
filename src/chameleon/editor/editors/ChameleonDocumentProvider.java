@@ -8,9 +8,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
-import chameleon.editor.LanguageMgt;
 import chameleon.editor.project.ChameleonProjectNature;
-import chameleon.editor.toolextension.IMetaModelFactory;
 
 /**
  * @author Jef Geerinckx

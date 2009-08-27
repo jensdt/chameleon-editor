@@ -18,10 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,6 +30,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
+import chameleon.core.language.Language;
 import chameleon.editor.LanguageMgt;
 
 /**
@@ -260,8 +257,10 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 				}
 						      
 		      
-		      ChameleonProjectNature chameleonNature = ((ChameleonProjectNature)project.getNature(ChameleonProjectNature.NATURE));
-			  chameleonNature.init(((LanguageSectionPage)pages[0]).getProjectLanguage());
+		    ChameleonProjectNature chameleonNature = ((ChameleonProjectNature)project.getNature(ChameleonProjectNature.NATURE));
+		    String languageName = ((LanguageSectionPage)pages[0]).getProjectLanguage();
+		    Language language = LanguageMgt.getInstance().findLanguage(languageName);
+			  chameleonNature.init(language);
 			  chameleonNature.setProject(project);
 			
 	} catch (CoreException e) {

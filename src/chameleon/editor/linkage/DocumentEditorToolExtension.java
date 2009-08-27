@@ -8,8 +8,6 @@ import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.linkage.ILinkage;
-import chameleon.linkage.IParseErrorHandler;
 
 /**
  * @author Manuel Van Wesemael 
@@ -17,7 +15,7 @@ import chameleon.linkage.IParseErrorHandler;
  * 
  * A linkage implementation for setting decorators
  */
-public class DocumentEditorToolExtension implements ILinkage {
+public class DocumentEditorToolExtension {
 
 	private IDocument _document;
 
@@ -25,9 +23,9 @@ public class DocumentEditorToolExtension implements ILinkage {
 		_document = document;
 	}
 
-	public IParseErrorHandler getParseErrorHandler() {
-		return new ParseErrorHandler(_document);
-	}
+//	public IParseErrorHandler getParseErrorHandler() {
+//		return new ParseErrorHandler(_document);
+//	}
 
 	public String getSource() {
 		return _document.get();
@@ -57,14 +55,14 @@ public class DocumentEditorToolExtension implements ILinkage {
 		}
 	}
 
-	public void addCompilationUnit(CompilationUnit cu) {
-		try {
-			ChameleonDocument cd = (ChameleonDocument) _document;
-			cd.setCompilationUnit(cu);
-		} catch (ClassCastException e){
-			System.err.println("Couldnt set Compilation Unit : not a Chameleon Document");
-		}
-		
-	}
+//	public void addCompilationUnit(CompilationUnit cu) {
+//		try {
+//			ChameleonDocument cd = (ChameleonDocument) _document;
+//			cd.setCompilationUnit(cu);
+//		} catch (ClassCastException e){
+//			System.err.println("Couldnt set Compilation Unit : not a Chameleon Document");
+//		}
+//		
+//	}
 
 }

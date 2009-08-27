@@ -5,8 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -18,15 +19,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.MetamodelException;
+import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.linkage.DocumentEditorToolExtension;
-import chameleon.editor.linkage.SourceSupplier;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
-import chameleon.editor.toolextension.IMetaModelFactory;
+import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;
 
 /**
@@ -39,21 +41,22 @@ import chameleon.input.ParseException;
 public class ChameleonProjectNature implements IProjectNature{
 
 	public ChameleonProjectNature() {
-		modelElements=new Vector<ChameleonDocument>();
+		modelElements=new ArrayList<ChameleonDocument>();
 	}
+	
 	//the project this natures resides
 	private IProject project;
 	
 	//the language of this nature
-	private String _language;
+	private Language _language;
 	
 	//The elements in the model of this nature
-	private Vector<ChameleonDocument> modelElements;
+	private ArrayList<ChameleonDocument> modelElements;
 	
 	public static final String NATURE = "ChameleonEditor.ChameleonNature";
 
-	public void init(String language){
-		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));
+	public void init(Language language){
+//		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));
 		this._language = language;
 		createModel();
 	}
@@ -92,7 +95,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		try {
 			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/.CHAMPROJECT")));
 			String lang = f.readLine();
-			init(lang);
+			init(LanguageMgt.getInstance().findLanguage(lang));
 			f.close();
 		} catch (IOException e) {
 			System.out.println("No initfile...");
@@ -102,16 +105,16 @@ public class ChameleonProjectNature implements IProjectNature{
 		createModel();
 	}
 	
-	private void setMetaModelFactory(IMetaModelFactory mMF) {
-		_metaModelFactory = mMF;
-	}
+//	private void setMetaModelFactory(IMetaModelFactory mMF) {
+//		_metaModelFactory = mMF;
+//	}
 
 	/*
 	 *  (non-Javadoc)
 	 * @see chameleonEditor.editors.IChameleonDocument#getMetaModelFactory()
 	 */
-	public IMetaModelFactory getMetaModelFactory() {
-		return _metaModelFactory;
+	public ModelFactory modelFactory() {
+		return language().connector(ModelFactory.class);
 	}
 
 
@@ -122,7 +125,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 */
 	public void createModel(){
 
-		if (getMetaModelFactory()!=null) {
+		if (modelFactory()!=null) {
 		
 		for (ChameleonDocument element:modelElements) {
 			try {
@@ -137,10 +140,10 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 		try{
 			IDocument[]  docs = (IDocument[]) modelElements.toArray(new IDocument[0]);
-			IMetaModelFactory fact = getMetaModelFactory();
+			ModelFactory fact = modelFactory();
 			Namespace model = fact.getMetaModel(new SourceSupplier(docs));
 			ChameleonReconcilingStrategy.showSize(model);
-			setModel(model);
+//			setModel(model);
 			
 			for (Iterator<ChameleonDocument> iter = modelElements.iterator(); iter.hasNext();) {
 				ChameleonDocument element =  iter.next();
@@ -218,29 +221,29 @@ public class ChameleonProjectNature implements IProjectNature{
 	
 
 	//The meta model factory that this document can use
-	private IMetaModelFactory _metaModelFactory;
+//	private IMetaModelFactory _metaModelFactory;
 	
 	//The meta model for this factory
-	private Namespace _metaModel;
+//	private Namespace _metaModel;
+	
 	private ChameleonContentOutlinePage _outlinePage;
 	
 
-	/**
-	 * Sets model as the new model for this ChameleonDocument
-	 * @param model
-	 * 		The new model.
-	 */
-
-	private void setModel(Namespace model){
-		_metaModel = model;
-	}
+//	/**
+//	 * Sets model as the new model for this ChameleonDocument
+//	 * @param model
+//	 * 		The new model.
+//	 */
+//	private void setModel(Namespace model){
+//		_metaModel = model;
+//	}
 	
 
 	/* (non-Javadoc)
 	 * @see chameleonEditor.editors.IChameleonDocument#getModel()
 	 */
 	public Namespace getModel(){
-		return _metaModel;
+		return language().defaultNamespace();
 	}
 
 	/**
@@ -261,8 +264,18 @@ public class ChameleonProjectNature implements IProjectNature{
 		createModel();
 	}
 
-	public Vector<ChameleonDocument> getAllMetaModelElements(){
-		return modelElements;
+	public List<ChameleonDocument> documents(){
+		return new ArrayList<ChameleonDocument>(modelElements);
+	}
+	
+	public ChameleonDocument document(Element<?,?> element) {
+		CompilationUnit cu = element.nearestAncestor(CompilationUnit.class);
+		for(ChameleonDocument doc : modelElements) {
+			if(doc.compilationUnit() == cu) {
+				return doc;
+			}
+		}
+		return null;
 	}
 	
 /*	public IMetaModel getMetamodel(IDocument document){
@@ -293,18 +306,22 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 	}
 
-	/**
-	 * 
-	 * @return the language of the project
-	 */
-	public String getLanguage() {
+//	/**
+//	 * 
+//	 * @return the language of the project
+//	 */
+//	public String getLanguage() {
+//		return _language;
+//	}
+	
+	public Language language() {
 		return _language;
 	}
 
 	public void addModelElement(ChameleonDocument document, Element parent) {
 		modelElements.add(document);
 		try {
-			getMetaModelFactory().addSource(new DocumentEditorToolExtension(document),document.get(), parent);
+			modelFactory().addSource(new DocumentEditorToolExtension(document),document.get(), parent);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

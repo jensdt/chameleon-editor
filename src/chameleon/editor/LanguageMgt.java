@@ -20,9 +20,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.toolextension.ILanguageModelID;
-import chameleon.editor.toolextension.IMetaModelFactory;
+import chameleon.editor.toolextension.EclipseBootstrapper;
+import chameleon.input.ModelFactory;
 import chameleon.output.Syntax;
 import chameleon.tool.Connector;
 
@@ -44,7 +45,7 @@ public class LanguageMgt {
     private Map<String, PresentationModel> presentationModels;
 
     // the languages names
-    private Map<String, ILanguageModelID> models;
+    private Map<String, EclipseBootstrapper> models;
 
     private Map<String, Connector> tools;
 
@@ -56,7 +57,7 @@ public class LanguageMgt {
      */
     private LanguageMgt() {
         presentationModels = new HashMap<String, PresentationModel>();
-        models = new HashMap<String, ILanguageModelID>();
+        models = new HashMap<String, EclipseBootstrapper>();
         tools = new HashMap<String,Connector>();
         try {
             loadJars();
@@ -100,7 +101,7 @@ public class LanguageMgt {
                 String packagename = filename.substring(0, filename.length()-4);
 
                 try {
-                    ILanguageModelID id = (ILanguageModelID) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
+                    EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
                     models.put(id.getLanguageName(), id);
                     ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
                     tools.put(id.getLanguageName(),editorExt);
@@ -145,24 +146,28 @@ public class LanguageMgt {
         return models.keySet().toArray(new String[0]);
     }
 
-    /**
-     *
-     * @param languageString
-     *            The string representation of the language to be used
-     * @return gives the correct metaModel for the given language string. It is
-     *         advised to call getLanguageStrings so the correct string
-     *         representation can be used
-     */
-    public IMetaModelFactory getModelFactory(String languageString) {
-        try {
-            IMetaModelFactory fact = models.get(languageString).getMetaModelFactory();
-            fact.addToolExtension(ChameleonEditorExtension.class,tools.get(languageString));
-            return fact;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Language findLanguage(String name) {
+    	return models.get(name).createLanguage();
     }
+    
+//    /**
+//     *
+//     * @param languageString
+//     *            The string representation of the language to be used
+//     * @return gives the correct metaModel for the given language string. It is
+//     *         advised to call getLanguageStrings so the correct string
+//     *         representation can be used
+//     */
+//    public ModelFactory getModelFactory(String languageString) {
+//        try {
+//            ModelFactory fact = models.get(languageString).modelFactory();
+//            fact.addToolExtension(ChameleonEditorExtension.class,tools.get(languageString));
+//            return fact;
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public Syntax getCodeWriter(String language) {
         try {
@@ -196,6 +201,7 @@ public class LanguageMgt {
      */
     public PresentationModel getPresentationModel(String languageString) {
         PresentationModel r = presentationModels.get(languageString);
+        Language language = findLanguage(languageString);
         if (r == null) {
             try {
                 String filename = "xml/" + languageString.toLowerCase()
@@ -205,7 +211,7 @@ public class LanguageMgt {
                 String pathStr = Platform.asLocalURL(url).getPath();
                 IPath path = new Path(pathStr);
                 path.removeTrailingSeparator();
-                r = new PresentationModel(languageString, path.toOSString());
+                r = new PresentationModel(language, path.toOSString());
                 presentationModels.put(languageString, r);
             }
             catch (IOException ioe) {
@@ -213,7 +219,7 @@ public class LanguageMgt {
                         + languageString + ".\nEmpty model created instead.");
                 System.err.println(ioe.getMessage());
                 // ioe.printStackTrace();
-                r = new PresentationModel(languageString);
+                r = new PresentationModel(language);
             }
         }
         return r;

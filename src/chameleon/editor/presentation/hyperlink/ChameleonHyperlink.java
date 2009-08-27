@@ -71,10 +71,10 @@ public class ChameleonHyperlink implements IHyperlink {
 	}
 	
 	private ChameleonDocument findDocument(CompilationUnit cu) {
-		List<ChameleonDocument> docs = _document.getProjectNature().getAllMetaModelElements();
+		List<ChameleonDocument> docs = _document.getProjectNature().documents();
 		ChameleonDocument result = null;
 		for(ChameleonDocument doc: docs) {
-			if(doc.getCompilationUnit().equals(cu)) {
+			if(doc.compilationUnit().equals(cu)) {
 				result = doc;
 			}
 		}

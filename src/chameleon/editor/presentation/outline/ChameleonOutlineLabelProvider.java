@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
 import chameleon.editor.ChameleonEditorExtension;
@@ -28,7 +29,7 @@ public class ChameleonOutlineLabelProvider implements ILabelProvider {
 
 	//the current language used => so the path can be set correct
 	// TODO why do they use a string here? Seem primitive to me (Marko)
-	private String language;
+	private Language language;
 	
 	/**
 	 * Creates a new labelProvider with for the given language and the paths for the icons
@@ -39,7 +40,7 @@ public class ChameleonOutlineLabelProvider implements ILabelProvider {
 	 * 
 	 * both parameters <bold>must</bold> be effecive
 	 */
-	public ChameleonOutlineLabelProvider(/*HashMap<String, String> hashIcons,*/String language,ChameleonEditor editor){
+	public ChameleonOutlineLabelProvider(/*HashMap<String, String> hashIcons,*/Language language,ChameleonEditor editor){
 		//imageNames = hashIcons;
 		this.language = language;
 		_editor = editor;

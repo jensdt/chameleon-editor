@@ -27,12 +27,13 @@ import org.eclipse.swt.widgets.Display;
 
 import chameleon.core.Config;
 import chameleon.core.compilationunit.CompilationUnit;
+import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.linkage.Decorator;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
-import chameleon.editor.toolextension.IMetaModelFactory;
+import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;
 
 /**
@@ -47,17 +48,6 @@ import chameleon.input.ParseException;
  */
 
 public class ChameleonDocument extends Document {
-	
-	public static boolean DEBUG;
-	
-	static {
-		if(Config.DEBUG) {
-			//Set to true or false to enable or disable debug info in this class.
-			DEBUG = false;
-		} else {
-			DEBUG = false;
-		}
-	}
 	
 	//The compilation unit of the document
 	private CompilationUnit _cu;
@@ -111,7 +101,7 @@ public class ChameleonDocument extends Document {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}else{
+		} else{
 		   IPath projPath = path.removeFirstSegments(1);	 
 		   file = project.getFile(projPath);
 		   name = file.getName();
@@ -119,11 +109,7 @@ public class ChameleonDocument extends Document {
 		   
 		}
 		this.file = file;
-		
-
-
-
-	}
+			}
 	
 	/**
 	 * 
@@ -135,10 +121,11 @@ public class ChameleonDocument extends Document {
 		if(presentationManager != null)
 			return presentationManager;
 		else{
+			// FIXME: why is that stupid try-catch construction here? the language() method (and previously String getLanguage() take this into account)
 			try {	
-				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(getLanguage()));	
+				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(language().name()));	
 			} catch (NullPointerException e) {
-				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(""));	
+				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(null));	
 			}
 			return presentation;
 		}
@@ -164,7 +151,7 @@ public class ChameleonDocument extends Document {
 			nxt = reader.readLine();
 			if (nxt!=null) tot+="\n"+nxt;
 		}
-		
+		// QUESTION: does this trigger the reconcilers?
 		set(tot);
 		
 	}
@@ -310,8 +297,8 @@ public class ChameleonDocument extends Document {
 //		return getProjectNature().getModel();
 	}
 	
-	public IMetaModelFactory getMetaModelFactory(){
-		return getProjectNature().getMetaModelFactory();
+	public ModelFactory modelFactory(){
+		return getProjectNature().modelFactory();
 	}
 
 
@@ -319,7 +306,7 @@ public class ChameleonDocument extends Document {
 	 * 
 	 * @return the compilation unit
 	 */
-	public CompilationUnit getCompilationUnit() {
+	public CompilationUnit compilationUnit() {
 		return _cu;
 	}
 
@@ -347,16 +334,24 @@ public class ChameleonDocument extends Document {
 		super.addPosition(category, position);
 	}
 
-	/**
-	 * 
-	 * @return the language of the project where this document is in.
-	 * if no project is defined, an empty string is returned
-	 */
-	public String getLanguage() {
-		if (getProject()==null) {
-			return "";
+//	/**
+//	 * 
+//	 * @return the language of the project where this document is in.
+//	 * if no project is defined, an empty string is returned
+//	 */
+//	public String getLanguage() {
+//		if (getProject()==null) {
+//			return "";
+//		}
+//		return getProjectNature().getLanguage();
+//	}
+	
+	public Language language() {
+		if(_cu == null) {
+			return null;
+		} else {
+			return _cu.language();
 		}
-		return getProjectNature().getLanguage();
 	}
 
 	/**
@@ -435,19 +430,19 @@ public class ChameleonDocument extends Document {
 		} else {
 
 			// B. remove compilation unit from model tree
-			if(DEBUG) {
+			if(Config.DEBUG) {
 			  System.out.println("removing compilation unit from tree");
 			}
 			_cu.disconnect();
 
 			// C. remove Document from project
-			if(DEBUG) {
+			if(Config.DEBUG) {
 			  System.out.println("Remove document from project");
 			}
 			getProjectNature().removeModelElement(this);
 
 			// D. Re-add Document to the project (wich will cause it to be parsed)
-			if(DEBUG) {
+			if(Config.DEBUG) {
 			  System.out.println("Re-add document to project");
 			}
 			Namespace root = getProjectNature().getModel();
@@ -557,7 +552,7 @@ public class ChameleonDocument extends Document {
 				}
 					
 			}
-			if(DEBUG) {
+			if(Config.DEBUG) {
 				if(result == null) {
 					System.out.println("getReferenceDecoratorAtRegion will return null.");
 				}

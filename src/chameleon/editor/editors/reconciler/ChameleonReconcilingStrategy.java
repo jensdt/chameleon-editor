@@ -20,6 +20,7 @@ import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
 import chameleon.editor.linkage.Decorator;
 import chameleon.editor.linkage.DocumentEditorToolExtension;
+import chameleon.input.ModelFactory;
 
 
 /**
@@ -196,7 +197,9 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						
 						// B. reparsen element
 						
-						element.reParse(new DocumentEditorToolExtension(getDocument()),getDocument().getMetaModelFactory());
+						ModelFactory factory = getDocument().compilationUnit().language().connector(ModelFactory.class);
+						factory.reParse(element);
+//						element.reParse(new DocumentEditorToolExtension(getDocument()),getDocument().modelFactory());
 						
 						
 						//System.out.println("  verwerken positie geslaagd\n");
@@ -416,7 +419,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		}
 	}
 	public void reconcile(ChameleonDirtyRegion dirtyRegion, IRegion subRegion){
-		Namespace root = getDocument().getCompilationUnit().language().defaultNamespace();
+		Namespace root = getDocument().compilationUnit().language().defaultNamespace();
 		if(DEBUG) {
 			System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
 			System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());

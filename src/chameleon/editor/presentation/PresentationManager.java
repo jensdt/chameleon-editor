@@ -1,6 +1,8 @@
 package chameleon.editor.presentation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -195,11 +197,11 @@ public class PresentationManager {
 		return pres;
 	}
 
-	public Vector<String> getOutlineElements(){
+	public List<String> getOutlineElements(){
 		
-		Vector<String[]> pm = getPresentationModel().getOutlineElements();
+		List<String[]> pm = getPresentationModel().getOutlineElements();
 		
-		Vector<String> v = new Vector<String>();
+		List<String> v = new ArrayList<String>();
 		for (Iterator<String[]> iter = pm.iterator(); iter.hasNext();) {
 			String[] element = iter.next();
 			v.add(element[0]);
@@ -212,7 +214,7 @@ public class PresentationManager {
 		return presentationModel;
 	}
 
-	public Vector<String> getDefaultOutlineElements() {
+	public List<String> getDefaultOutlineElements() {
 		return getPresentationModel().getDefaultOutlineElements();
 	}
 

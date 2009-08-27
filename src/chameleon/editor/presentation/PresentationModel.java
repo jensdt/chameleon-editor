@@ -1,11 +1,15 @@
 package chameleon.editor.presentation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.StyleRange;
@@ -17,6 +21,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 
 /***
@@ -32,20 +37,20 @@ import chameleon.editor.ChameleonEditorPlugin;
 public class PresentationModel {
 	
 	/*A vector containing the style rules */
-	private Vector<StyleRule> rules;
-	private Vector<String[]> outlineElements;
-	private Vector<String> defaultOutlineElements;
-	private String language;
+	private List<StyleRule> rules;
+	private List<String[]> outlineElements;
+	private List<String> defaultOutlineElements;
+	private Language language;
 	
 	/**
 	 * Creates a model with no rules
 	 *
 	 */
-	public PresentationModel(String lang){
+	public PresentationModel(Language lang){
 		language=lang;
-		rules=new Vector<StyleRule>();
-		outlineElements = new Vector<String[]>();	
-		defaultOutlineElements = new Vector<String>();	
+		rules=new ArrayList<StyleRule>();
+		outlineElements = new ArrayList<String[]>();	
+		defaultOutlineElements = new ArrayList<String>();	
 	}
 	
 	/**
@@ -53,11 +58,11 @@ public class PresentationModel {
 	 * @param XMLFile
 	 * 		The XML document being used
 	 */
-	public PresentationModel(String lang, String XMLFile){
+	public PresentationModel(Language lang, String XMLFile){
 		language=lang;
-		rules=new Vector<StyleRule>();
-		outlineElements = new Vector<String[]>();
-		defaultOutlineElements = new Vector<String>();	
+		rules=new ArrayList<StyleRule>();
+		outlineElements = new ArrayList<String[]>();
+		defaultOutlineElements = new ArrayList<String>();	
 		
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -256,7 +261,7 @@ public class PresentationModel {
 		return null;
 	}
 
-	public Vector<String[]> getOutlineElements() {
+	public List<String[]> getOutlineElements() {
 		return outlineElements;
 	}
 
@@ -264,7 +269,7 @@ public class PresentationModel {
 		this.outlineElements = outlineElements;
 	}
 
-	public Vector<String> getDefaultOutlineElements() {
+	public List<String> getDefaultOutlineElements() {
 		return defaultOutlineElements;
 	}
 

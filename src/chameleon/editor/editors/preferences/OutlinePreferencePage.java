@@ -2,10 +2,11 @@ package chameleon.editor.editors.preferences;
 
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -15,7 +16,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
@@ -66,7 +66,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		//a vector containing:
 		// per language a vector of elements
 		// the first element of each vector is the language name
-		HashMap<String, Vector<String[]>> possibilities =  readPossibilities();
+		HashMap<String, List<String[]>> possibilities =  readPossibilities();
 		Set<String> languages = possibilities.keySet();
 
 		TabFolder languageTabs = new TabFolder(getFieldEditorParent(),SWT.NONE);
@@ -76,7 +76,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String taalS = iter.next();
 
-			ChameleonContentOutlinePage.initByDefaults(taalS);
+			ChameleonContentOutlinePage.initByDefaults(LanguageMgt.getInstance().findLanguage(taalS));
 			LanguageMgt.getInstance().getPresentationModel(taalS);
 
 			TabItem currentPage = new TabItem(languageTabs, SWT.NONE);
@@ -89,7 +89,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 			container.setLayout(grid);
 			
 			HashMap<String, BooleanFieldEditor> current = new HashMap<String, BooleanFieldEditor>();
-			Vector<String[]> taal = possibilities.get(taalS);
+			List<String[]> taal = possibilities.get(taalS);
 			for(int i = 0; i< taal.size(); i++){
 				String elemNaam = taal.get(i)[0];
 				String elemDesc = taal.get(i)[1];
@@ -123,11 +123,11 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	 * reads all languages from the languageMgt
 	 * then retrieves all possible language outline elements
 	 */
-	private HashMap<String, Vector<String[]>> readPossibilities() {
+	private HashMap<String, List<String[]>> readPossibilities() {
 	    //lees eerst alle talen uit
 		String[] talen = LanguageMgt.getInstance().getLanguageStrings();
 		//haal van alle talen alle elementen op
-	    HashMap<String, Vector<String[]>> result = obtainLanguageOutlineElements(talen);
+	    HashMap<String, List<String[]>> result = obtainLanguageOutlineElements(talen);
 	    return result;
 	}
 
@@ -135,10 +135,10 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	 * obtain the language outline elements for a vector of languages
 	 * for each language, the corresponding xml file is read and elements are added 
 	 */
-	private HashMap<String, Vector<String[]>> obtainLanguageOutlineElements(String[] talen) {
-		HashMap<String, Vector<String[]>> result = new HashMap<String, Vector<String[]>>();
+	private HashMap<String, List<String[]>> obtainLanguageOutlineElements(String[] talen) {
+		HashMap<String, List<String[]>> result = new HashMap<String, List<String[]>>();
 		for(String taal: talen){
-			Vector<String[]> taalResult = LanguageMgt.getInstance().getPresentationModel(taal).getOutlineElements();
+			List<String[]> taalResult = LanguageMgt.getInstance().getPresentationModel(taal).getOutlineElements();
 
 			result.put(taal, taalResult);
 		}
@@ -168,7 +168,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String language = iter.next();
 			
-			Vector<String> allowed = new Vector<String>();
+			List<String> allowed = new ArrayList<String>();
 			
 			Set<String> elements = options.get(language).keySet();
 			
@@ -178,7 +178,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 				if (field.getBooleanValue()) allowed.add(name);
 			}
 			
-			ChameleonOutlineTree.setAllowedElements(language, allowed);
+			ChameleonOutlineTree.setAllowedElements(LanguageMgt.getInstance().findLanguage(language), allowed);
 		}		
 		
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
