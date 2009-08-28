@@ -3,6 +3,7 @@ package chameleon.editor;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -22,13 +23,9 @@ import org.xml.sax.SAXException;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.editor.connector.ChameleonEditorExtension;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.input.ModelFactory;
-import chameleon.input.ParseException;
 import chameleon.output.Syntax;
-import chameleon.tool.Connector;
 
 /**
  * @author Manuel Van Wesemael
@@ -50,8 +47,6 @@ public class LanguageMgt {
     // the languages names
     private Map<String, EclipseBootstrapper> languages;
 
-    private Map<String, Connector> tools;
-
     private URLClassLoader languageloader;
     /**
      * creates a new mapping for the languages & presenation models These are
@@ -61,7 +56,6 @@ public class LanguageMgt {
     private LanguageMgt() {
         presentationModels = new HashMap<String, PresentationModel>();
         languages = new HashMap<String, EclipseBootstrapper>();
-        tools = new HashMap<String,Connector>();
         try {
             loadJars();
         }
@@ -104,12 +98,16 @@ public class LanguageMgt {
                 String packagename = filename.substring(0, filename.length()-4);
 
                 try {
-                    EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
+                	EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
                     languages.put(id.getLanguageName(), id);
-                    ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
-                    tools.put(id.getLanguageName(),editorExt);
+//                    ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
+//                    tools.put(id.getLanguageName(),editorExt);
                     System.out.println(filename+"\t"+packagename+"\t"+id.getLanguageName()+" "+id.getLanguageVersion()+"\t"+id.getDescription());
                 }
+             	 catch(NoClassDefFoundError throwable) {
+             		 throwable.printStackTrace();
+                 System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
+            	 }
                 catch (InstantiationException e) {
                     System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
                 }
@@ -120,13 +118,12 @@ public class LanguageMgt {
                     System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
                 }
                 catch (ClassNotFoundException e) {
+                	e.printStackTrace();
                     System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
                 }
                 } catch (Exception e){
                     System.err.println("Couldnt load language from "+urls[i]+" : "+e.getMessage());
-
                 }
-
             }
 
             System.out.println("Done.\n");
@@ -212,26 +209,27 @@ public class LanguageMgt {
         PresentationModel r = presentationModels.get(languageString);
         Language language = createLanguage(languageString);
         if (r == null) {
-            try {
+//            try {
 //                String filename = "xml/" + languageString.toLowerCase()
 //                        + "pres.xml";
-                String filename = "xml/presentation.xml";
-
-                URL url = ChameleonEditorPlugin.getDefault().getBundle()
-                        .getEntry(filename);
-                String pathStr = Platform.asLocalURL(url).getPath();
-                IPath path = new Path(pathStr);
-                path.removeTrailingSeparator();
-                r = new PresentationModel(language, path.toOSString());
+                String filename = "/xml/presentation.xml";
+                InputStream stream = language.getClass().getClassLoader().getResourceAsStream(filename);
+//                URL url = ChameleonEditorPlugin.getDefault().getBundle().getEntry(filename);
+                //String pathStr = Platform.asLocalURL(url).getPath();
+//                System.out.println("Looking for presentation in: "+url);
+//                String pathStr = FileLocator.toFileURL(url).getPath();
+//                IPath path = new Path(pathStr);
+//                path.removeTrailingSeparator();
+                r = new PresentationModel(language, stream);
                 presentationModels.put(languageString, r);
-            }
-            catch (IOException ioe) {
-                System.err.println("Unable to load presentation model for "
-                        + languageString + ".\nEmpty model created instead.");
-                System.err.println(ioe.getMessage());
-                // ioe.printStackTrace();
-                r = new PresentationModel(language);
-            }
+//            }
+//            catch (IOException ioe) {
+//                System.err.println("Unable to load presentation model for "
+//                        + languageString + ".\nEmpty model created instead.");
+//                System.err.println(ioe.getMessage());
+//                // ioe.printStackTrace();
+//                r = new PresentationModel(language);
+//            }
         }
         return r;
     }

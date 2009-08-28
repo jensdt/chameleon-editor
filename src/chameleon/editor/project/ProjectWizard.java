@@ -3,7 +3,9 @@ package chameleon.editor.project;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.StringBufferInputStream;
 
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IFile;
@@ -30,7 +32,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-import chameleon.core.language.Language;
 import chameleon.editor.LanguageMgt;
 
 /**
@@ -217,23 +218,23 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 		//taal moet gezet worden ergens => metamodelfactory
 		try {
 			Workspace workspace =(Workspace) ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot workspaceRoot =workspace.getRoot();
+			IWorkspaceRoot workspaceRoot = workspace.getRoot();
 			//volgende geeft het probleem met de classcastexception in chameleondoucmentprovider
 			//workspace zet nl een project in zijn table, en niet een chameleonproject
 			IProject project = workspaceRoot.getProject(((ProjectDetailsPage)pages[1]).getProjectName());
 			IFile projfile = project.getFile(".CHAMPROJECT");
-			
 
-			
-			
-			if (!project.exists())
+			if (!project.exists()) {
 					//dit doet intern ook project.create() wat een project creert in de workspace
 					//project = new ChameleonProject(project.getFullPath(),workspace,workspace.newProjectDescription("Eigenprojectnaam"),new NullProgressMonitor());
 					project.create(workspace.newProjectDescription("Eigenprojectnaam"),new NullProgressMonitor());
-
+			}
 		
-			if(!project.isOpen())
+			if(!project.isOpen()) {
 					project.open(new NullProgressMonitor());
+			}
+			InputStream in = new StringBufferInputStream(((LanguageSectionPage)pages[0]).getProjectLanguage());
+			projfile.create(in,true,null);
 			
 			//project nature association
 		      IProjectDescription description = project.getDescription();
@@ -245,17 +246,9 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 		      description.setNatureIds(newNatures);
 		      project.setDescription(description, null);
 
-				try {
-					PrintStream out = new PrintStream(new File("temp"));
-					out.println(((LanguageSectionPage)pages[0]).getProjectLanguage());
-					out.close();
-					
-					projfile.create(new FileInputStream("temp"),true,null);
-					
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-						      
+//					PrintStream out = new PrintStream(new File("temp"));
+//					out.println(((LanguageSectionPage)pages[0]).getProjectLanguage());
+//					out.close();
 		      
 		    ChameleonProjectNature chameleonNature = ((ChameleonProjectNature)project.getNature(ChameleonProjectNature.NATURE));
 //		    String languageName = ((LanguageSectionPage)pages[0]).getProjectLanguage();

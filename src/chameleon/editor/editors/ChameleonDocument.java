@@ -347,10 +347,11 @@ public class ChameleonDocument extends Document {
 //	}
 	
 	public Language language() {
-		if(_cu == null) {
+		try {
+			return ((ChameleonProjectNature)_project.getNature(ChameleonProjectNature.NATURE)).language();
+		} catch (CoreException e) {
+			e.printStackTrace();
 			return null;
-		} else {
-			return _cu.language();
 		}
 	}
 

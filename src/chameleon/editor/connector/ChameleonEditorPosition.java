@@ -55,6 +55,7 @@ public class ChameleonEditorPosition extends Position implements Tag {
   		throw new ChameleonProgrammerException("Changing element of decorator with name "+name+" to null");
   	}
   	if(element != _element) {
+  		// Remove from current element.
   		if((_element != null) && (_element.tag(name) == this)){
   			_element.removeTag(name);
   		}

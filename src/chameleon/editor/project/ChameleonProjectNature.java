@@ -16,9 +16,11 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.rejuse.predicate.TypePredicate;
 
 import chameleon.core.Config;
 import chameleon.core.compilationunit.CompilationUnit;
+import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
@@ -47,7 +49,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 	
 	//the project this natures resides
-	private IProject project;
+	private IProject _project;
 	
 	//the language of this nature
 	private Language _language;
@@ -59,10 +61,12 @@ public class ChameleonProjectNature implements IProjectNature{
 
 	public void init(Language language){
 //		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));
+		if(language == null) {
+			throw new ChameleonProgrammerException("Cannot set the language of a Chameleon project nature to null.");
+		}
 		this._language = language;
 		language.setConnector(SourceManager.class, new EclipseSourceManager(this));
-		language.addProcessor(InputProcessor.class, new EclipseEditorInputProcessor());
-		updateAllModels();
+		language.addProcessor(InputProcessor.class, new EclipseEditorInputProcessor(this));
 	}
 	
 	/**
@@ -86,7 +90,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * returns the project where this nature is linked with
 	 */
 	public IProject getProject() {
-		return project;
+		return _project;
 	}
 
 	/**
@@ -94,19 +98,22 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * All documents (if any) are loaded and the according model is built.
 	 */
 	public void setProject(IProject project) {
-		this.project = project;
+		if(project != _project) {
+		this._project = project;
 		
 		try {
 			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/.CHAMPROJECT")));
 			String lang = f.readLine();
-			init(LanguageMgt.getInstance().createLanguage(lang));
 			f.close();
+			Language language = LanguageMgt.getInstance().createLanguage(lang);
+			init(language);
+			loadDocuments();
+			updateAllModels();
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("No initfile...");
 		}
-		
-		loadDocuments();
-		updateAllModels();
+		}
 	}
 	
 //	private void setMetaModelFactory(IMetaModelFactory mMF) {
@@ -203,7 +210,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		System.out.println("ADDING :: "+resource.getName());
 		
 		if (resource instanceof IFile)  {
-			addToModel(new ChameleonDocument(project,(IFile)resource,resource.getFullPath()));
+			addToModel(new ChameleonDocument(_project,(IFile)resource,resource.getFullPath()));
 		}
 		if (resource instanceof IFolder) {
 			IFolder folder = (IFolder) resource ;

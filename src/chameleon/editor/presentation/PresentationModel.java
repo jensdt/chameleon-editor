@@ -1,6 +1,7 @@
 package chameleon.editor.presentation;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 
@@ -58,7 +60,13 @@ public class PresentationModel {
 	 * @param XMLFile
 	 * 		The XML document being used
 	 */
-	public PresentationModel(Language lang, String XMLFile){
+	public PresentationModel(Language lang, InputStream XMLFile){
+		if(lang == null) {
+			throw new ChameleonProgrammerException("The language for presentation model is null.");
+		}
+		if(XMLFile == null) {
+			throw new ChameleonProgrammerException("The input stream for presentation model is null.");
+		}
 		language=lang;
 		rules=new ArrayList<StyleRule>();
 		outlineElements = new ArrayList<String[]>();

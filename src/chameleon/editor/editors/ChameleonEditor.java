@@ -30,6 +30,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+import chameleon.core.language.Language;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.presentation.PresentationManager;
@@ -363,7 +364,11 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 			box.setMessage("This document is not part of a Chameleon Project.  The editor will work in restricted mode. Thank you for reading this.");
 			box.open();
 		} else if (presentationManager==null && document!=null) {
-			presentationManager = new PresentationManager(document, LanguageMgt.getInstance().getPresentationModel(document.language().name()));
+			Language language = document.language();
+			if(language == null) {
+				System.out.println("Language of document "+document.getName()+" is null.");
+			}
+			presentationManager = new PresentationManager(document, LanguageMgt.getInstance().getPresentationModel(language.name()));
 		    if (projViewer != null)
 		    	projViewer.addTextListener(new ChameleonTextListener(document/*, presentationManager*/, projViewer));			
 		}
