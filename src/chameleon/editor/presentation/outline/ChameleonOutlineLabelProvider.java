@@ -13,8 +13,8 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
-import chameleon.editor.ChameleonEditorExtension;
 import chameleon.editor.ChameleonEditorPlugin;
+import chameleon.editor.connector.ChameleonEditorExtension;
 import chameleon.editor.editors.ChameleonEditor;
 
 /**

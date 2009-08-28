@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
+import chameleon.editor.connector.ChameleonEditorExtension;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.input.ModelFactory;

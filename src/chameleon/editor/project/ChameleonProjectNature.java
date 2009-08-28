@@ -23,11 +23,15 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
+import chameleon.editor.connector.EclipseEditorInputProcessor;
+import chameleon.editor.connector.EclipseSourceManager;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
+import chameleon.input.InputProcessor;
 import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;
+import chameleon.input.SourceManager;
 
 /**
  * @author Manuel Van Wesemael 
@@ -56,6 +60,8 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void init(Language language){
 //		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));
 		this._language = language;
+		language.setConnector(SourceManager.class, new EclipseSourceManager(this));
+		language.addProcessor(InputProcessor.class, new EclipseEditorInputProcessor());
 		updateAllModels();
 	}
 	
