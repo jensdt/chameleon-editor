@@ -34,12 +34,12 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		}
 	}
 
-	public void setLocation(Element element, Position2D start, Position2D end) {
+	public void setLocation(Element element, Position2D start, Position2D end, CompilationUnit compilationUnit) {
 		//System.out.println("dec at "+offset+" to "+length+" type "+dectype+" on "+el);
 		if(element == null) {
 			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
 		}
-		ChameleonDocument doc = document(element);
+		ChameleonDocument doc = document(compilationUnit);
 		String dectype = "_ALL";
 		try {
 			int offset = doc.getLineOffset(start.lineNumber()) + start.offset();
@@ -57,6 +57,24 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 	
 	public ChameleonDocument document(Element element) {
 		return projectNature().document(element);
+	}
+
+	public void setLocation(Element element, int offset, int length, CompilationUnit compilationUnit) {
+		if(element == null) {
+			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
+		}
+		String dectype = ChameleonEditorPosition.ALL_DECORATOR;
+		try {
+			ChameleonDocument doc = document(compilationUnit);
+			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,dectype);
+			doc.addPosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,dec);
+			element.setTag(dec,dectype);
+		} catch (BadLocationException e) {
+			System.err.println("Couldn't set decorator ["+dectype+"] for "+element);
+		} catch (BadPositionCategoryException e) {
+			System.err.println("Couldn't set decorator ["+dectype+"] for "+element);
+		}
+		
 	}
 
 }

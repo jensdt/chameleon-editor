@@ -48,7 +48,7 @@ public class LanguageMgt {
     private Map<String, PresentationModel> presentationModels;
 
     // the languages names
-    private Map<String, EclipseBootstrapper> models;
+    private Map<String, EclipseBootstrapper> languages;
 
     private Map<String, Connector> tools;
 
@@ -60,7 +60,7 @@ public class LanguageMgt {
      */
     private LanguageMgt() {
         presentationModels = new HashMap<String, PresentationModel>();
-        models = new HashMap<String, EclipseBootstrapper>();
+        languages = new HashMap<String, EclipseBootstrapper>();
         tools = new HashMap<String,Connector>();
         try {
             loadJars();
@@ -105,7 +105,7 @@ public class LanguageMgt {
 
                 try {
                     EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
-                    models.put(id.getLanguageName(), id);
+                    languages.put(id.getLanguageName(), id);
                     ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
                     tools.put(id.getLanguageName(),editorExt);
                     System.out.println(filename+"\t"+packagename+"\t"+id.getLanguageName()+" "+id.getLanguageVersion()+"\t"+id.getDescription());
@@ -146,12 +146,12 @@ public class LanguageMgt {
      *         languages of the chameleonEditor
      */
     public String[] getLanguageStrings() {
-        return models.keySet().toArray(new String[0]);
+        return languages.keySet().toArray(new String[0]);
     }
 
     public Language createLanguage(String name) {
     	try {
-				return models.get(name).createLanguage();
+				return languages.get(name).createLanguage();
 			} catch (Exception e) {
 				// FIXME this should not be able to happen. Does splitting Language into Language and Model help? Don't think so.
 				e.printStackTrace();
@@ -180,7 +180,7 @@ public class LanguageMgt {
 
     public Syntax getCodeWriter(String language) {
         try {
-            return models.get(language).getCodeWriter();
+            return languages.get(language).getCodeWriter();
 
         } catch (NullPointerException e){ return null; }
     }
