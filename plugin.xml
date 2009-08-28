@@ -3,7 +3,7 @@
 <plugin
    id="ChameleonEditor"
    name="ChameleonEditor Plug-in"
-   version="1.0.1"
+   version="1.1"
    provider-name="K.U.Leuven"
    class="chameleon.editor.ChameleonEditorPlugin">
 

@@ -213,8 +213,10 @@ public class LanguageMgt {
         Language language = createLanguage(languageString);
         if (r == null) {
             try {
-                String filename = "xml/" + languageString.toLowerCase()
-                        + "pres.xml";
+//                String filename = "xml/" + languageString.toLowerCase()
+//                        + "pres.xml";
+                String filename = "xml/presentation.xml";
+
                 URL url = ChameleonEditorPlugin.getDefault().getBundle()
                         .getEntry(filename);
                 String pathStr = Platform.asLocalURL(url).getPath();
