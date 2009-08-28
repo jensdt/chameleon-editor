@@ -7,15 +7,27 @@ import chameleon.core.element.Element;
 import chameleon.core.tag.Tag;
 
 /**
+ * A tag intended for linking a position to a model element.
+ * 
+ * Eclipse registers positions under certain categories. The Chameleon positions are registered
+ * under the category ChameleonEditorPosition.CHAMELEON_CATEGORY. To request the Chameleon positions, 
+ * use someDocument.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+ *
  * @author Manuel Van Wesemael 
  * @author Joeri Hendrickx 
  * @author Marko van Dooren
- * 
- * A tag intended for linking a position to a model element.
  */
 public class ChameleonEditorPosition extends Position implements Tag {
 
-	
+	/**
+	 * Initialize a new Chameleon editor position with the given offset and length, and
+	 * with the given name.
+	 * 
+	 * @param offset
+	 * @param length
+	 * @param element
+	 * @param name
+	 */
 	public ChameleonEditorPosition(int offset, int length, Element element, String name){
 		super(Math.max(0,offset),Math.max(0,length));
   	if(element == null) {
@@ -57,7 +69,10 @@ public class ChameleonEditorPosition extends Position implements Tag {
  * END COPYING
  */
 	
-	
+	/**
+	 * Eclipse registers positions under certain categories. The Chameleon positions are registered
+	 * under the category ChameleonEditorPosition.CHAMELEON_CATEGORY.
+	 */
 	public final static String CHAMELEON_CATEGORY= "__ChameleonDecorator";
 
 	private String _name;
