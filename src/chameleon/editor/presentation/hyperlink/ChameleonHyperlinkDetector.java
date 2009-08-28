@@ -15,7 +15,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import chameleon.core.Config;
 import chameleon.core.element.Element;
 import chameleon.core.reference.CrossReference;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.editors.ChameleonDocument;
 
   
@@ -59,7 +59,7 @@ public class ChameleonHyperlinkDetector implements IHyperlinkDetector {
 			e.printStackTrace();
 		}
 		// ----------------------------------------
-		Decorator decorator = document.getReferenceDecoratorAtRegion(region);
+		ChameleonEditorPosition decorator = document.getReferenceDecoratorAtRegion(region);
 		// Tag decorator = document.getDecoratorAtRegionOfType(region, refclass);
 		IHyperlink[] result = null;
 		if (decorator != null) {

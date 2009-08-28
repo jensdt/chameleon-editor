@@ -9,13 +9,14 @@ import chameleon.core.tag.Tag;
 /**
  * @author Manuel Van Wesemael 
  * @author Joeri Hendrickx 
+ * @author Marko van Dooren
  * 
- * A decorator intended for linking a position to a meta-element.
+ * A tag intended for linking a position to a model element.
  */
-public class Decorator extends Position implements Tag {
+public class ChameleonEditorPosition extends Position implements Tag {
 
 	
-	public Decorator(int offset, int length, Element element, String name){
+	public ChameleonEditorPosition(int offset, int length, Element element, String name){
 		super(Math.max(0,offset),Math.max(0,length));
   	if(element == null) {
   		throw new ChameleonProgrammerException("Initializing decorator with null element");
@@ -69,16 +70,16 @@ public class Decorator extends Position implements Tag {
 	}
 
 	
-	public Decorator getParentDecorator(){
+	public ChameleonEditorPosition getParentDecorator(){
 		Element parentElem = getElement().parent();
-		Decorator parentDeco = (Decorator)parentElem.tag(ALL_DECORATOR);
+		ChameleonEditorPosition parentDeco = (ChameleonEditorPosition)parentElem.tag(ALL_DECORATOR);
 		return parentDeco;
 	}
 	
 	/** Decorator spanning an entire element **/
 	public final static String ALL_DECORATOR= "__ALL";
 	public static final String NAME_DECORATOR = "__NAME";
-	public static final String REFERENCE_DECORATOR = "__Reference";
+	public static final String CROSSREFERENCE_DECORATOR = "__Reference";
 
 	
 	
@@ -86,8 +87,8 @@ public class Decorator extends Position implements Tag {
 		return "Offset : "+getOffset()+"\tLength : "+getLength()+"\tElement : "+getElement();
 	}
 
-	public Decorator clonePosition() {
-		return new Decorator(getOffset(),getLength(),getElement(),_name);
+	public ChameleonEditorPosition clonePosition() {
+		return new ChameleonEditorPosition(getOffset(),getLength(),getElement(),_name);
 	}
 
 

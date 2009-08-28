@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import chameleon.core.element.Element;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 
 /**
  * 
@@ -83,7 +83,7 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	public Object getParent(Object element) {
 		//System.out.println("ChameleonTreeContents getparent: " );
 		try{
-			Decorator dec = (Decorator) element;
+			ChameleonEditorPosition dec = (ChameleonEditorPosition) element;
 			System.out.println("CAST SUCCEEDED!");
 			return dec.getParentDecorator();
 		}catch(ClassCastException e){

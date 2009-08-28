@@ -30,7 +30,7 @@ import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.input.ModelFactory;
@@ -163,8 +163,8 @@ public class ChameleonDocument extends Document {
 	 * The meta model is also set here.
 	 */
 	private void initialize(){
-		addPositionCategory(Decorator.CHAMELEON_CATEGORY);
-		addPositionUpdater(new DefaultPositionUpdater(Decorator.CHAMELEON_CATEGORY));
+		addPositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+		addPositionUpdater(new DefaultPositionUpdater(ChameleonEditorPosition.CHAMELEON_CATEGORY));
 	}
 
 	/**
@@ -174,14 +174,14 @@ public class ChameleonDocument extends Document {
 	public void printPositionsAndParents(String chameleon_category){
 		Position[] pos;
 		try {
-				pos = getPositions(Decorator.CHAMELEON_CATEGORY);
+				pos = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 				System.out.println("***********************\n" +
 								   "***********************\n" +
 								   "* elements with __ALL decorator\n " +
 								   "***********************");
 				for(int i=0; i<pos.length; i++){
-					String elementname = ((Decorator)pos[i]).getElement().getClass().getName();
-					String decoratorName =((Decorator)pos[i]).getName();
+					String elementname = ((ChameleonEditorPosition)pos[i]).getElement().getClass().getName();
+					String decoratorName =((ChameleonEditorPosition)pos[i]).getName();
 					if (decoratorName.equals("__ALL")){
 						System.out.println(elementname);
 					}
@@ -195,8 +195,8 @@ public class ChameleonDocument extends Document {
 						   "***********************");
 
 			for(int i=0; i<pos.length; i++){
-				String elementname = ((Decorator)pos[i]).getElement().getClass().getName();
-				String decoratorName =((Decorator)pos[i]).getName();
+				String elementname = ((ChameleonEditorPosition)pos[i]).getElement().getClass().getName();
+				String decoratorName =((ChameleonEditorPosition)pos[i]).getName();
 				if (decoratorName.equals("__ALL")
 						&&
 					(elementname.equals("org.jnome.mm.compilationunit.CompilationUnit")||
@@ -211,7 +211,7 @@ public class ChameleonDocument extends Document {
 					String parentDecorator;
 
 					try {
-						parentDecorator= ((Decorator)pos[i]).getParentDecorator().getElement().getClass().getName();
+						parentDecorator= ((ChameleonEditorPosition)pos[i]).getParentDecorator().getElement().getClass().getName();
 						
 					} catch (Exception e) {
 						parentDecorator = "parentDecorator not found" ;
@@ -316,8 +316,8 @@ public class ChameleonDocument extends Document {
 	 */
 	public void dumpPositions() {
 		try {
-			this.removePositionCategory(Decorator.CHAMELEON_CATEGORY);
-			this.addPositionCategory(Decorator.CHAMELEON_CATEGORY);
+			this.removePositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+			this.addPositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 		} catch (BadPositionCategoryException e) {}
 		
 	}
@@ -390,7 +390,7 @@ public class ChameleonDocument extends Document {
 	 * 
 	 * @return the elements which are folded
 	 */
-	public Vector<Decorator> getFoldedElementsFromModel() {
+	public Vector<ChameleonEditorPosition> getFoldedElementsFromModel() {
 		return getPresentation().getFoldedElementsFromModel();
 	}
 
@@ -535,16 +535,16 @@ public class ChameleonDocument extends Document {
 	}
 
 	
-	public Decorator getReferenceDecoratorAtRegion(IRegion region){
+	public ChameleonEditorPosition getReferenceDecoratorAtRegion(IRegion region){
 		try {
-			Position[] positions = getPositions(Decorator.CHAMELEON_CATEGORY);
+			Position[] positions = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 			// Find smallest decorater including the specified region:
 			int minLength = Integer.MAX_VALUE;
-			Decorator result = null;
+			ChameleonEditorPosition result = null;
 			for (Position position : positions) {
-				if(position instanceof Decorator ){
-					Decorator decorator = (Decorator) position;
-					if(decorator.getName().equals(Decorator.REFERENCE_DECORATOR)){
+				if(position instanceof ChameleonEditorPosition ){
+					ChameleonEditorPosition decorator = (ChameleonEditorPosition) position;
+					if(decorator.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_DECORATOR)){
 						if(decorator.includes(region.getOffset()) && decorator.getLength()<minLength){
 							result = decorator;
 						}

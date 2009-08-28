@@ -33,7 +33,7 @@ public class EclipseSourceManager extends ConnectorImpl implements SourceManager
 	}
 
 	public String text(Element element) {
-		Decorator decorator = (Decorator) element.tag(Decorator.ALL_DECORATOR);
+		ChameleonEditorPosition decorator = (ChameleonEditorPosition) element.tag(ChameleonEditorPosition.ALL_DECORATOR);
 		ChameleonDocument document = projectNature().document(element);
 		try {
 			return document.get(decorator.getOffset(), decorator.getLength());

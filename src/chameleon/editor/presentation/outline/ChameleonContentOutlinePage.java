@@ -25,7 +25,7 @@ import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.PresentationModel;
 
@@ -228,13 +228,13 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 		else {
 			ChameleonOutlineTree segment= (ChameleonOutlineTree) ((IStructuredSelection) selection).getFirstElement();
 			Element element = ((Element)segment.getElement());
-			if(element.hasTag(Decorator.NAME_DECORATOR)){
-				 start= ((Decorator)element.tag(Decorator.NAME_DECORATOR)).getOffset();
-				 length =((Decorator)element.tag(Decorator.NAME_DECORATOR)).getLength();
+			if(element.hasTag(ChameleonEditorPosition.NAME_DECORATOR)){
+				 start= ((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_DECORATOR)).getOffset();
+				 length =((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_DECORATOR)).getLength();
 			}
 			else{ //het ding heeft geen naam, dus pak een decorator
 				Collection<Tag> decs = element.tags();
-				Decorator firstDec = (Decorator) decs.iterator().next();
+				ChameleonEditorPosition firstDec = (ChameleonEditorPosition) decs.iterator().next();
 			 start = firstDec.getOffset();
  			 length = firstDec.getLength();
 

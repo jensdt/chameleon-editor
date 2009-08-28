@@ -10,7 +10,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.editors.ChameleonDocument;
 
 
@@ -67,10 +67,10 @@ public class PresentationManager {
 	public TextPresentation createTextPresentation() throws NullPointerException{
 		final TextPresentation pres = new TextPresentation();
 		try {
-			Position[] poss = document.getPositions(Decorator.CHAMELEON_CATEGORY);
+			Position[] poss = document.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 			
 			for (int i = 0; i < poss.length; i++) {
-				Decorator dec = (Decorator) poss[i];
+				ChameleonEditorPosition dec = (ChameleonEditorPosition) poss[i];
 				try {
 					// FIXME
 					StyleRange sr = presentationModel.map(dec.getOffset(), dec.getLength(), dec.getElement().getClass().getName().toLowerCase(), dec
@@ -100,7 +100,7 @@ public class PresentationManager {
 	 * 		The decorator to be checked
 	 * 		
 	 */
-	private boolean isFoldable(Decorator decorator) {
+	private boolean isFoldable(ChameleonEditorPosition decorator) {
 		PresentationStyle presStyle = presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
 		if(presStyle != null && presStyle.isfoldable())
 			return true;
@@ -117,10 +117,10 @@ public class PresentationManager {
 		try {
 			if(document == null)
 				throw new NullPointerException();
-			Position[] poss = document.getPositions(Decorator.CHAMELEON_CATEGORY);
+			Position[] poss = document.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 			Vector<Position> foldablePos= new Vector<Position>(0);
  			for (int i = 0; i < poss.length; i++) {
-				if(isFoldable(((Decorator) poss[i]))){
+				if(isFoldable(((ChameleonEditorPosition) poss[i]))){
 					foldablePos.add( poss[i]);
 				}
 			}
@@ -137,13 +137,13 @@ public class PresentationManager {
 	/**
 	 * returns all the elements that are marked to be folded from the model
 	 */
-	public Vector<Decorator> getFoldedElementsFromModel() {
+	public Vector<ChameleonEditorPosition> getFoldedElementsFromModel() {
 		try {
-			Position[] poss = document.getPositions(Decorator.CHAMELEON_CATEGORY);
-			Vector<Decorator> foldPos= new Vector<Decorator>(0);
+			Position[] poss = document.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+			Vector<ChameleonEditorPosition> foldPos= new Vector<ChameleonEditorPosition>(0);
  			for (int i = 0; i < poss.length; i++) {
-				if(isFolded(((Decorator) poss[i]))){
-					foldPos.add((Decorator) poss[i]);
+				if(isFolded(((ChameleonEditorPosition) poss[i]))){
+					foldPos.add((ChameleonEditorPosition) poss[i]);
 				}
 			}
  			
@@ -153,7 +153,7 @@ public class PresentationManager {
 			e.printStackTrace();
 		}
 		//in case there are no foldablePositions
-		return new Vector<Decorator>(0);
+		return new Vector<ChameleonEditorPosition>(0);
 	}	
 	
 	/**
@@ -162,7 +162,7 @@ public class PresentationManager {
 	 * 	The decorator that is being checked
 	 * @return True when the decorator is folded in the editor. False otherwise
 	 */
-	private boolean isFolded(Decorator decorator) {
+	private boolean isFolded(ChameleonEditorPosition decorator) {
 		//FIXME
 		PresentationStyle presStyle = presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
 		if(presStyle != null && presStyle.isFolded())
@@ -176,11 +176,11 @@ public class PresentationManager {
 	public TextPresentation createTextPresentation(TextPresentation pres, int offset, int length) {
 		try {
 			System.out.println("doing presentation on " + document);
-			Position[] poss = document.getPositions(Decorator.CHAMELEON_CATEGORY);
+			Position[] poss = document.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 
 			for (int i = 0; i < poss.length; i++) {
 				if (poss[i].getOffset()+poss[i].getLength() > offset && poss[i].getOffset() < offset+length){
-					Decorator dec = (Decorator) poss[i];
+					ChameleonEditorPosition dec = (ChameleonEditorPosition) poss[i];
 					StyleRange sr = presentationModel.map(dec.getOffset(),dec.getLength(),dec.getElement().getClass().getName().toLowerCase(), dec.getName());
 					if (sr!=null) pres.mergeStyleRange(sr);
 				}

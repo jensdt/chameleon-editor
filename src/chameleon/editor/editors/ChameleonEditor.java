@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
@@ -238,10 +238,10 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be folded
 	 */
-	public void fold(Vector<Decorator> positions){
+	public void fold(Vector<ChameleonEditorPosition> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
 			for (int i = 0; i < positions.size(); i++) {
-				Decorator dec = positions.get(i);
+				ChameleonEditorPosition dec = positions.get(i);
 					if(chamAnnot.getPosition().getOffset()==dec.getOffset() &&
 					   chamAnnot.getPosition().getLength()==dec.getLength()	){
 						annotationModel.collapse(chamAnnot.getAnnotation());
@@ -257,10 +257,10 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be unfolded
 	 */
-	public void unfold(Vector<Decorator> positions){
+	public void unfold(Vector<ChameleonEditorPosition> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
 			for (int i = 0; i < positions.size(); i++) {
-				Decorator dec = positions.get(i);
+				ChameleonEditorPosition dec = positions.get(i);
 					if(chamAnnot.getPosition().getOffset()==dec.getOffset() &&
 					   chamAnnot.getPosition().getLength()==dec.getLength()	){
 					annotationModel.expand(chamAnnot.getAnnotation());

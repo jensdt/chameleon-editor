@@ -10,7 +10,7 @@ import chameleon.core.method.Method;
 import chameleon.core.method.MethodListener;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeListener;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 
 
 /**
@@ -35,7 +35,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onTypeNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Type Name Change");
-		Decorator dec = (Decorator)type.tag(Decorator.NAME_DECORATOR);
+		ChameleonEditorPosition dec = (ChameleonEditorPosition)type.tag(ChameleonEditorPosition.NAME_DECORATOR);
 //		for (int i = 0; i < decs.length; i++) {
 //			Decorator dec = (Decorator) decs[i];
 			replaceInDocument(dec.getOffset(),dec.getLength(),type.getName());
@@ -49,7 +49,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onVariableNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Variable Name Change");
-		Decorator deco = (Decorator) type.tag(Decorator.ALL_DECORATOR);
+		ChameleonEditorPosition deco = (ChameleonEditorPosition) type.tag(ChameleonEditorPosition.ALL_DECORATOR);
 //		for (int i = 0; i < deco.length; i++) {
 //			Decorator pos = (Decorator) deco[i];
 			try{

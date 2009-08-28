@@ -26,7 +26,7 @@ import chameleon.core.declaration.Declaration;
 import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.declaration.Signature;
 import chameleon.core.reference.CrossReference;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.editors.ChameleonDocument;
 
 /**
@@ -96,7 +96,7 @@ public class ChameleonHyperlink implements IHyperlink {
 				IFile file = doc.getFile();
 				
 				//create Marker to jump immediately to the referenced element.
-				Decorator dec = (Decorator) referencedElement.tag(Decorator.ALL_DECORATOR);
+				ChameleonEditorPosition dec = (ChameleonEditorPosition) referencedElement.tag(ChameleonEditorPosition.ALL_DECORATOR);
 				IMarker marker = null;
 				
 				try {

@@ -16,7 +16,7 @@ import chameleon.core.element.Element;
 import chameleon.core.namespace.Namespace;
 import chameleon.core.namespacepart.NamespacePart;
 import chameleon.core.type.Type;
-import chameleon.editor.connector.Decorator;
+import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
 import chameleon.input.ModelFactory;
@@ -120,19 +120,19 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	private void clonePositions(){
 		Position[] positions = null;
 		try {
-			positions = _document.getPositions(Decorator.CHAMELEON_CATEGORY);
+			positions = _document.getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 		} catch (BadPositionCategoryException e) {
 			e.printStackTrace();
 		}
 				
-		Decorator eP = null;
+		ChameleonEditorPosition eP = null;
 		for(int i=0; i<positions.length; i++){
-			eP = (Decorator)positions[i];
+			eP = (ChameleonEditorPosition)positions[i];
 			clonedPositions.add(cloneDecorator(eP));
 		}
 	}
 	
-	private ClonedDecorator cloneDecorator(Decorator dec) {
+	private ClonedDecorator cloneDecorator(ChameleonEditorPosition dec) {
 		return new ClonedDecorator(dec.getOffset(),dec.getLength(),dec.getElement(),dec.getName());
 	}
 	
@@ -149,7 +149,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		clonedPositions.clear();
 		if(DEBUG) {
 		  try {
-				System.out.println("Number of positions in document: "+getDocument().getPositions(Decorator.CHAMELEON_CATEGORY).length);
+				System.out.println("Number of positions in document: "+getDocument().getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY).length);
 			} catch (BadPositionCategoryException e) {
 				e.printStackTrace();
 			}
@@ -189,7 +189,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						
 						// A. Verwijderen decorators van element
 						
-						getDocument().removePosition(Decorator.CHAMELEON_CATEGORY,position);
+						getDocument().removePosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,position);
 						removeEmbeddedPos(position, positions, status);						
 		
 						Element element = position.getElement();
@@ -242,7 +242,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 			ClonedDecorator pos = ((ClonedDecorator) dirtyPositions.get(i));
 			pos.getElement().disconnect();
 			try{
-				getDocument().removePosition(Decorator.CHAMELEON_CATEGORY,pos);				
+				getDocument().removePosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,pos);				
 				removeEmbeddedPos(pos, positions, status);
 			}catch(Exception error){
 				error.printStackTrace();
@@ -273,7 +273,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 				posB = (ClonedDecorator)positions[i];
 				if(posB.getOffset()>pos.getOffset() && 
 				   (posB.getOffset()+posB.getLength())<(pos.getOffset()+pos.getLength())){
-					getDocument().removePosition(Decorator.CHAMELEON_CATEGORY,posB);				
+					getDocument().removePosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,posB);				
 					for(int n=0; n<status.length; n++){
 						if((dirtyPositions.get(n)) == posB){
 							status[n] = false;

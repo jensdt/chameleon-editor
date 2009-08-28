@@ -45,8 +45,8 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 			int offset = doc.getLineOffset(start.lineNumber()) + start.offset();
 			int endOffSet = doc.getLineOffset(end.lineNumber()) + end.offset();
 			int length = endOffSet - offset;
-			Decorator dec = new Decorator(offset,length,element,dectype);
-			doc.addPosition(Decorator.CHAMELEON_CATEGORY,dec);
+			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,dectype);
+			doc.addPosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,dec);
 			element.setTag(dec,dectype);
 		} catch (BadLocationException e) {
 			System.err.println("Couldn't set decorator ["+dectype+"] for "+element);
