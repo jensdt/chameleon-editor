@@ -84,6 +84,8 @@ public class ChameleonDocument extends Document {
 		
 		super();
 		
+		setCompilationUnit(new CompilationUnit());
+		
 		parseErrors = new ArrayList<ParseException>();
 		
 		_project = project;
@@ -555,7 +557,7 @@ public class ChameleonDocument extends Document {
 			}
 			if(Config.DEBUG) {
 				if(result == null) {
-					System.out.println("getReferenceDecoratorAtRegion will return null.");
+					System.out.println("No cross reference decoration found.");
 				}
 			}
 			return result;

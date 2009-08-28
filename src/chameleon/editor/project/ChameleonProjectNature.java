@@ -167,7 +167,7 @@ public class ChameleonProjectNature implements IProjectNature{
 			e.printStackTrace();
 		}
 		doc.dumpPositions();
-		modelFactory().addToModel(doc.get());
+		modelFactory().addToModel(doc.get(), doc.compilationUnit());
 	}
 
 	/**
@@ -286,7 +286,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 	
 	public ChameleonDocument document(Element<?,?> element) {
-		CompilationUnit cu = element.nearestAncestor(CompilationUnit.class);
+		CompilationUnit cu = element.nearestElement(CompilationUnit.class);
 		for(ChameleonDocument doc : modelElements) {
 			if(doc.compilationUnit() == cu) {
 				return doc;
@@ -338,7 +338,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void addModelElement(ChameleonDocument document, Element parent) {
 		modelElements.add(document);
 		try {
-			modelFactory().addToModel(document.get());
+			modelFactory().addToModel(document.get(), document.compilationUnit());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} 
