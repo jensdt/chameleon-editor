@@ -30,7 +30,7 @@ import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.linkage.Decorator;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.input.ModelFactory;

@@ -26,8 +26,8 @@ import chameleon.core.declaration.Declaration;
 import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.declaration.Signature;
 import chameleon.core.reference.CrossReference;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.editor.linkage.Decorator;
 
 /**
  * The Hyperlink of a cross reference element in the editor. When clicked, it will open

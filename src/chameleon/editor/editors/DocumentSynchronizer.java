@@ -10,7 +10,7 @@ import chameleon.core.method.Method;
 import chameleon.core.method.MethodListener;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeListener;
-import chameleon.editor.linkage.Decorator;
+import chameleon.editor.connector.Decorator;
 
 
 /**

@@ -1,3 +1,4 @@
+package chameleon.editor.connector;
 //package chameleon.editor.linkage;
 //
 //import org.eclipse.jface.text.IDocument;

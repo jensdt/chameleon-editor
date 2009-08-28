@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import chameleon.core.element.Element;
-import chameleon.editor.linkage.Decorator;
+import chameleon.editor.connector.Decorator;
 
 /**
  * 

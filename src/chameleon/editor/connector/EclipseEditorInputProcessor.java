@@ -1,4 +1,4 @@
-package chameleon.editor.linkage;
+package chameleon.editor.connector;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;

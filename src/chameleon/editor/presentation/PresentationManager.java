@@ -10,8 +10,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.editor.linkage.Decorator;
 
 
 /**

@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.linkage.Decorator;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;

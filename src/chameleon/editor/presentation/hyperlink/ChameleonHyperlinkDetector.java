@@ -15,8 +15,8 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import chameleon.core.Config;
 import chameleon.core.element.Element;
 import chameleon.core.reference.CrossReference;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.editor.linkage.Decorator;
 
   
 

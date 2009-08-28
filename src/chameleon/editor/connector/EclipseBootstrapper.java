@@ -1,4 +1,4 @@
-package chameleon.editor.toolextension;
+package chameleon.editor.connector;
 
 import java.io.IOException;
 

@@ -16,10 +16,9 @@ import chameleon.core.element.Element;
 import chameleon.core.namespace.Namespace;
 import chameleon.core.namespacepart.NamespacePart;
 import chameleon.core.type.Type;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
-import chameleon.editor.linkage.Decorator;
-import chameleon.editor.linkage.DocumentEditorToolExtension;
 import chameleon.input.ModelFactory;
 
 
@@ -199,7 +198,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						
 						ModelFactory factory = getDocument().compilationUnit().language().connector(ModelFactory.class);
 						String text = getDocument().get(position.getOffset(), position.getLength());
-						factory.reParse(element, text);
+						factory.reParse(element);
 //						element.reParse(new DocumentEditorToolExtension(getDocument()),getDocument().modelFactory());
 						
 						

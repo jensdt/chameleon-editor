@@ -25,8 +25,8 @@ import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
+import chameleon.editor.connector.Decorator;
 import chameleon.editor.editors.ChameleonEditor;
-import chameleon.editor.linkage.Decorator;
 import chameleon.editor.presentation.PresentationModel;
 
 /**
