@@ -209,27 +209,10 @@ public class LanguageMgt {
         PresentationModel r = presentationModels.get(languageString);
         Language language = createLanguage(languageString);
         if (r == null) {
-//            try {
-//                String filename = "xml/" + languageString.toLowerCase()
-//                        + "pres.xml";
                 String filename = "/xml/presentation.xml";
                 InputStream stream = language.getClass().getClassLoader().getResourceAsStream(filename);
-//                URL url = ChameleonEditorPlugin.getDefault().getBundle().getEntry(filename);
-                //String pathStr = Platform.asLocalURL(url).getPath();
-//                System.out.println("Looking for presentation in: "+url);
-//                String pathStr = FileLocator.toFileURL(url).getPath();
-//                IPath path = new Path(pathStr);
-//                path.removeTrailingSeparator();
                 r = new PresentationModel(language, stream);
                 presentationModels.put(languageString, r);
-//            }
-//            catch (IOException ioe) {
-//                System.err.println("Unable to load presentation model for "
-//                        + languageString + ".\nEmpty model created instead.");
-//                System.err.println(ioe.getMessage());
-//                // ioe.printStackTrace();
-//                r = new PresentationModel(language);
-//            }
         }
         return r;
     }

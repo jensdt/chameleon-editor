@@ -135,12 +135,11 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	 * obtain the language outline elements for a vector of languages
 	 * for each language, the corresponding xml file is read and elements are added 
 	 */
-	private HashMap<String, List<String[]>> obtainLanguageOutlineElements(String[] talen) {
+	private HashMap<String, List<String[]>> obtainLanguageOutlineElements(String[] languages) {
 		HashMap<String, List<String[]>> result = new HashMap<String, List<String[]>>();
-		for(String taal: talen){
-			List<String[]> taalResult = LanguageMgt.getInstance().getPresentationModel(taal).getOutlineElements();
-
-			result.put(taal, taalResult);
+		for(String language: languages){
+			List<String[]> languageResult = LanguageMgt.getInstance().getPresentationModel(language).getOutlineElements();
+			result.put(language, languageResult);
 		}
 		return result;
 	}

@@ -13,6 +13,7 @@ import org.eclipse.jface.text.Position;
 import chameleon.core.Config;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
+import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.core.namespacepart.NamespacePart;
 import chameleon.core.type.Type;
@@ -418,7 +419,8 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		}
 	}
 	public void reconcile(ChameleonDirtyRegion dirtyRegion, IRegion subRegion){
-		Namespace root = getDocument().compilationUnit().language().defaultNamespace();
+		Language language = getDocument().compilationUnit().language();
+		Namespace root = language.defaultNamespace();
 		if(DEBUG) {
 			System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
 			System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
