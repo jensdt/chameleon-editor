@@ -21,10 +21,10 @@ import chameleon.editor.project.ChameleonProjectNature;
 public class ChameleonDocumentProvider extends FileDocumentProvider {
 
 	//the editor where this documentprovider is used
-	private ChameleonEditor editor;
+	private ChameleonEditor _editor;
 	
 	public ChameleonDocumentProvider(ChameleonEditor editor){
-		this.editor=editor;
+		this._editor=editor;
 		
 	}
 	
@@ -36,46 +36,56 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
-		ChameleonDocument document = createChameleonDocument(element);
-		return document;
-	}
-	
-	/*
-	 * Creates a new Chameleon document according to the element that is given.
-	 * The object also receives a meta model factor & content.
-	 * @param element
-	 * 		The element that is used to create the ChameleonDocument
-	 */
-	protected ChameleonDocument createChameleonDocument(Object element) throws CoreException {
-
 		IProject project = null;
 		ChameleonProjectNature nature = null;
 		IPath path=null;
 		if (element instanceof IFileEditorInput){
-		try {
-			IFileEditorInput input = (IFileEditorInput)element;
-			project = (IProject) input.getFile().getProject();
-			path=input.getFile().getFullPath();
-			nature = (ChameleonProjectNature) project.getNature(ChameleonProjectNature.NATURE);
+			try {
+				IFileEditorInput input = (IFileEditorInput)element;
+				project = input.getFile().getProject();
+				path=input.getFile().getFullPath();
+				nature = (ChameleonProjectNature) project.getNature(ChameleonProjectNature.NATURE);
+			}
+			catch(ClassCastException a){
+				project=null;
+			}
+			if (nature==null) {
+				project=null;
+			}
 		}
-		 catch(ClassCastException a){
-			 project=null;
-		 }
-		 
-		 if (nature==null) project=null;
-
+		ChameleonDocument document = null;
+		boolean newDocument = false;
+		if(nature != null) {
+			document = nature.documentFromPath(path);
 		}
-		ChameleonDocument document= createEmptyChameleonDocument(project, path);
+		if(document == null) {
+			document = createEmptyChameleonDocument(project, path);
+			newDocument = true;
+		} else {
+			System.out.println("Document exists");
+		}
 		if (setDocumentContent(document, (IEditorInput) element, getEncoding(element))) {
 			setupDocument(element, document);
-			
-			editor.documentChanged(document);
+			_editor.documentChanged(document);
 		}
-		
-		nature.addToModel(document);
+		if(newDocument) {
+		  nature.addToModel(document);
+		} else {
+			nature.updateModel(document);
+		}
 		
 		return document;
 	}
+	
+//	/*
+//	 * Creates a new Chameleon document according to the element that is given.
+//	 * The object also receives a meta model factor & content.
+//	 * @param element
+//	 * 		The element that is used to create the ChameleonDocument
+//	 */
+//	protected ChameleonDocument createChameleonDocument(Object element) throws CoreException {
+//
+//	}
 	
 	/*
 	 * creates a new Chameleon document that is empty in the sense that there is no text in it yet

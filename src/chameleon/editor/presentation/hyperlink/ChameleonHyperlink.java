@@ -57,6 +57,10 @@ public class ChameleonHyperlink implements IHyperlink {
 		return getReference().toString();
 	}
 	
+	public ChameleonDocument document() {
+		return _document;
+	}
+	
 	public CrossReference getReference(){
 		return this._element;
 	}
@@ -70,25 +74,16 @@ public class ChameleonHyperlink implements IHyperlink {
 		return null;
 	}
 	
-	private ChameleonDocument findDocument(CompilationUnit cu) {
-		List<ChameleonDocument> docs = _document.getProjectNature().documents();
-		ChameleonDocument result = null;
-		for(ChameleonDocument doc: docs) {
-			if(doc.compilationUnit().equals(cu)) {
-				result = doc;
-			}
-		}
-		return result;
-	}
-
 	public void open() {
 		try {
 			Declaration<?,?,?,? > referencedElement = getReferencedElement();
 			if (referencedElement != null) {
 				System.out.println("De link wordt geopend...");
 				CompilationUnit cu = referencedElement.nearestAncestor(CompilationUnit.class);
-				ChameleonDocument doc = findDocument(cu);
-				
+				ChameleonDocument doc = document().getProjectNature().document(cu);
+				if(doc == null) {
+					System.out.println("Document of referenced object is null");
+				}
 
 				IWorkbench wb = PlatformUI.getWorkbench();
 				IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
@@ -100,13 +95,16 @@ public class ChameleonHyperlink implements IHyperlink {
 				IMarker marker = null;
 				
 				try {
-					int offset = dec.getOffset();
-					System.out.println("Offset: "+offset);
-					int lineNumber = doc.getLineOfOffset(offset);
-					 HashMap map = new HashMap();
-					 map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+					int lineNumber = 0;
+					if(dec != null) {
+						int offset = dec.getOffset();
+						System.out.println("Offset: "+offset);
+						lineNumber = doc.getLineOfOffset(offset);
+					}
+//					 HashMap map = new HashMap();
+//					 map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 					 marker = file.createMarker(IMarker.TEXT);
-					 marker.setAttributes(map);
+					 marker.setAttribute(IMarker.LINE_NUMBER,lineNumber);
 				} catch (BadLocationException exc) {
 					System.out.println("Could not calculate line number of declaration of referenced element when opening a Chameleon hyperlink.");
 					exc.printStackTrace();

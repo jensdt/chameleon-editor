@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.Config;
@@ -121,7 +122,7 @@ public class ChameleonProjectNature implements IProjectNature{
 			Language language = LanguageMgt.getInstance().createLanguage(lang);
 			init(language);
 			loadDocuments();
-			updateAllModels();
+//			updateAllModels();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("No initfile...");
@@ -171,7 +172,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 	}
 
-	private void updateModel(ChameleonDocument doc) throws ParseException  {
+	public void updateModel(ChameleonDocument doc) {
 		try {
 			doc.getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 			// getDocument().removeParseErrors();
@@ -180,7 +181,13 @@ public class ChameleonProjectNature implements IProjectNature{
 			e.printStackTrace();
 		}
 		doc.dumpPositions();
-		modelFactory().addToModel(doc.get(), doc.compilationUnit());
+		try {
+			modelFactory().addToModel(doc.get(), doc.compilationUnit());
+		} catch (ParseException e) {
+			// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -286,12 +293,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		}
 		modelElements.add(document);
 		// SPEED: does this really reparse all documents?
-		try {
 			updateModel(document);
-		} catch (ParseException e) {
-			// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
-			e.printStackTrace();
-		}
 	}
 
 	public List<ChameleonDocument> documents(){
@@ -301,7 +303,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public ChameleonDocument document(Element<?,?> element) {
 		CompilationUnit cu = element.nearestElement(CompilationUnit.class);
 		for(ChameleonDocument doc : modelElements) {
-			if(doc.compilationUnit() == cu) {
+			if(doc.compilationUnit().equals(cu)) {
 				return doc;
 			}
 		}
@@ -366,6 +368,17 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void setOutlinePage(ChameleonContentOutlinePage outlinePage) {
 		this._outlinePage = outlinePage;
 		
+	}
+
+	public ChameleonDocument documentFromPath(IPath path) {
+		ChameleonDocument result = null;
+		for(ChameleonDocument doc:modelElements) {
+			if(doc.path().equals(path)) {
+				result = doc;
+				break;
+			}
+		}
+		return result;
 	}
 
 

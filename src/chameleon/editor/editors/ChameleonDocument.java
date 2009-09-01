@@ -54,23 +54,23 @@ public class ChameleonDocument extends Document {
 	//The project where this document is found
 	private IProject _project;
 	//manages the presentation
-	private PresentationManager presentationManager;
+	private PresentationManager _presentationManager;
 	//the path to the file of which this document is made
-	private IPath path;
-	//the last known presenation of the document
-	private TextPresentation lastpresentation;
+	private IPath _path;
+	//the last known presentation of the document
+	private TextPresentation _lastpresentation;
 	
 	//check whether presentation is going on by some reconciler
-	private boolean presenting;
+	private boolean _presenting;
 	//when the document contains language errors, they are stored here.
-	private List<ParseException> parseErrors;	
+	private List<ParseException> _parseErrors;	
 	//A listener for the time when the errors change
-	private ActionListener parseErrorActionListener;
+	private ActionListener _parseErrorActionListener;
 	//The name of the document.
-	private String name;
+	private String _name;
 	//The file of which this document is made
-	private IFile file;
-	private String relativePathName;
+	private IFile _file;
+	private String _relativePathName;
 
 	/**
 	 * creates a new ChameleonDocument & intializes it.
@@ -86,18 +86,18 @@ public class ChameleonDocument extends Document {
 		
 		setCompilationUnit(new CompilationUnit());
 		
-		parseErrors = new ArrayList<ParseException>();
+		_parseErrors = new ArrayList<ParseException>();
 		
 		_project = project;
 		initialize();
 		
-		this.path=path;
+		this._path=path;
 		
 		if (file!=null){ 		
 			try {
 				parseFile(file);
-				relativePathName = path.removeFirstSegments(1).toString();
-				name = file.getName();
+				_relativePathName = path.removeFirstSegments(1).toString();
+				_name = file.getName();
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -106,12 +106,16 @@ public class ChameleonDocument extends Document {
 		} else{
 		   IPath projPath = path.removeFirstSegments(1);	 
 		   file = project.getFile(projPath);
-		   name = file.getName();
-		   relativePathName = projPath.toString();
+		   _name = file.getName();
+		   _relativePathName = projPath.toString();
 		   
 		}
-		this.file = file;
+		this._file = file;
 			}
+	
+	public IPath path() {
+		return _path;
+	}
 	
 	/**
 	 * 
@@ -119,10 +123,10 @@ public class ChameleonDocument extends Document {
 	 * The presentation managager if it is present; else a new presentation manager is made and returned
 	 */
 	public PresentationManager getPresentationManager(){
-		PresentationManager result = presentationManager;
+		PresentationManager result = _presentationManager;
 		if(result == null) {
 			result = new PresentationManager(this, getProjectNature().presentationModel());
-			presentationManager = result;
+			_presentationManager = result;
 		}
 		return result;
 	}
@@ -135,7 +139,7 @@ public class ChameleonDocument extends Document {
 	 * 	true if the paths are identical.
 	 */
 	public boolean isSameDocument(ChameleonDocument cd){
-		return path.toOSString().equals(cd.path.toOSString());
+		return _path.toOSString().equals(cd._path.toOSString());
 	}
 	
 	//parses the givenfile
@@ -362,11 +366,11 @@ public class ChameleonDocument extends Document {
 
 		
 		try{
-			lastpresentation = getPresentationManager().createTextPresentation();
+			_lastpresentation = getPresentationManager().createTextPresentation();
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					viewer.changeTextPresentation(lastpresentation, false);
-					viewer.changeTextPresentation(lastpresentation, true);
+					viewer.changeTextPresentation(_lastpresentation, false);
+					viewer.changeTextPresentation(_lastpresentation, true);
 				}
 			});	
 		}catch (NullPointerException npe){
@@ -416,7 +420,7 @@ public class ChameleonDocument extends Document {
 		dumpPositions();
 		try {
 			getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-			parseErrors.clear();
+			_parseErrors.clear();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -463,10 +467,10 @@ public class ChameleonDocument extends Document {
 		
 		try{
 
-			lastpresentation = getPresentationManager().createTextPresentation();
+			_lastpresentation = getPresentationManager().createTextPresentation();
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					viewer.changeTextPresentation(lastpresentation, true);
+					viewer.changeTextPresentation(_lastpresentation, true);
 				}
 			});	
 		}catch (NullPointerException npe){}
@@ -482,19 +486,19 @@ public class ChameleonDocument extends Document {
 //		if(!parseErrors.contains(exc))
 //				parseErrors.add(exc);
 		boolean alreadyPresent = false;
-		for (ParseException exception : parseErrors) {
+		for (ParseException exception : _parseErrors) {
 			if (exception.toString().equals(exc.toString()))
 				 alreadyPresent = true;
 		}
 		if(!alreadyPresent)
-			parseErrors.add(exc);
-		if (parseErrorActionListener!=null) 
-			parseErrorActionListener.actionPerformed(null);
+			_parseErrors.add(exc);
+		if (_parseErrorActionListener!=null) 
+			_parseErrorActionListener.actionPerformed(null);
 		
 	}
 
 	public void setParseActionListener(ActionListener listener){
-		this.parseErrorActionListener = listener;
+		this._parseErrorActionListener = listener;
 	}
 
 	/**
@@ -502,7 +506,7 @@ public class ChameleonDocument extends Document {
 	 * @return all the parse errors for this document
 	 */
 	public List<ParseException> getParseErrors() {
-		return new ArrayList<ParseException>(parseErrors);
+		return new ArrayList<ParseException>(_parseErrors);
 	}
 
 	/**
@@ -510,25 +514,25 @@ public class ChameleonDocument extends Document {
 	 * @return the relative path of this document, starting from the project.
 	 */
 	public IPath getPath() {
-		return path;
+		return _path;
 	}
 
 	public String getName() {
-		return name;
+		return _name;
 	}
 
 	public IFile getFile() {
-		return file;
+		return _file;
 	}
 
 	public void removeParseErrors() {
-		parseErrors.clear();
+		_parseErrors.clear();
 		
 	}
 
 	public String getRelativePathName() {
 		
-		return relativePathName;
+		return _relativePathName;
 	}
 
 	
