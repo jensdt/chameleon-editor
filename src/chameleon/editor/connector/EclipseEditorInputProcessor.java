@@ -72,6 +72,8 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		if(element == null) {
 			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
 		}
+		// ECLIPSE NEEDS A +1 INCREMENT FOR THE LENGTH
+		length++;
 		String dectype = ChameleonEditorPosition.ALL_DECORATOR;
 		setSingleLocation(element, offset, length, compilationUnit, dectype);
 		if(element instanceof CrossReference) {

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,6 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.rejuse.predicate.TypePredicate;
 
 import chameleon.core.Config;
 import chameleon.core.compilationunit.CompilationUnit;
@@ -29,6 +29,7 @@ import chameleon.editor.connector.EclipseEditorInputProcessor;
 import chameleon.editor.connector.EclipseSourceManager;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
+import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
 import chameleon.input.InputProcessor;
 import chameleon.input.ModelFactory;
@@ -58,6 +59,18 @@ public class ChameleonProjectNature implements IProjectNature{
 	private ArrayList<ChameleonDocument> modelElements;
 	
 	public static final String NATURE = "ChameleonEditor.ChameleonNature";
+	
+	private PresentationModel _presentationModel;
+	
+	public PresentationModel presentationModel() {
+		PresentationModel result = _presentationModel;
+		if(result == null) {
+      String filename = "/xml/presentation.xml";
+      InputStream stream = language().getClass().getClassLoader().getResourceAsStream(filename);
+      result = new PresentationModel(language(), stream);
+		}
+		return result;
+	}
 
 	public void init(Language language){
 //		setMetaModelFactory(LanguageMgt.getInstance().getModelFactory(language));

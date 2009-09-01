@@ -34,6 +34,7 @@ import chameleon.core.language.Language;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.presentation.PresentationManager;
+import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
 import chameleon.input.ParseException;
@@ -55,11 +56,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	private ProjectionAnnotationModel annotationModel;
 	
 	//the projectionViewer for this editor
-	private ProjectionViewer projViewer;
-	
-	//manages the various aspects of the presentation
-	private PresentationManager presentationManager;
-	
+	private ProjectionViewer _projViewer;
 	
 	//The current Annotations used in the chameleon editor.  
 	private Annotation[] oldAnnotations;
@@ -149,8 +146,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	    /*
 	     * alles wat te maken heeft met projection en projection document
 	     */
-	    projViewer =(ProjectionViewer)getSourceViewer();
-	    projectionSupport = new ProjectionSupport(projViewer,getAnnotationAccess(),getSharedColors());
+	    _projViewer =(ProjectionViewer)getSourceViewer();
+	    projectionSupport = new ProjectionSupport(_projViewer,getAnnotationAccess(),getSharedColors());
 	    projectionSupport.addSummarizableAnnotationType( "org.eclipse.ui.workbench.texteditor.error");
 	    projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning");
 	    projectionSupport.setHoverControlCreator(new IInformationControlCreator() {
@@ -160,20 +157,19 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	    });
 	    projectionSupport.install();
 	    //turn projection mode on
-	    projViewer.doOperation(ProjectionViewer.TOGGLE);
-	    projViewer.setAnnotationHover(getSourceViewerConfiguration().getAnnotationHover(getSourceViewer()));
-	    projViewer.enableProjection();
-	    if (document != null)
-	    	projViewer.addTextListener(new ChameleonTextListener(document, projViewer));			
+	    _projViewer.doOperation(ProjectionViewer.TOGGLE);
+	    _projViewer.setAnnotationHover(getSourceViewerConfiguration().getAnnotationHover(getSourceViewer()));
+	    _projViewer.enableProjection();
+	    updateTextListener(document);
 	    
 
 	    
-	    annotationModel = projViewer.getProjectionAnnotationModel();
+	    annotationModel = _projViewer.getProjectionAnnotationModel();
 	   
 	}
 	
 
-	
+	private ChameleonTextListener _listener;
 	
 	/*
 	 *  (non-Javadoc)
@@ -332,7 +328,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * Returns the presentation Manager for the editor.
 	 */
 	protected PresentationManager getPresentationManager() {
-		return presentationManager;
+		return getDocument().getPresentationManager();
 	}
 
 	/**
@@ -363,18 +359,21 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 			box.setText("Decreased Functionality");
 			box.setMessage("This document is not part of a Chameleon Project.  The editor will work in restricted mode. Thank you for reading this.");
 			box.open();
-		} else if (presentationManager==null && document!=null) {
-			Language language = document.language();
-			if(language == null) {
-				System.out.println("Language of document "+document.getName()+" is null.");
-			}
-			presentationManager = new PresentationManager(document, LanguageMgt.getInstance().getPresentationModel(language.name()));
-		    if (projViewer != null)
-		    	projViewer.addTextListener(new ChameleonTextListener(document/*, presentationManager*/, projViewer));			
-		}
+		} 
+		updateTextListener(document);
 		
 		document.setParseActionListener(this);
 		
+	}
+
+	private void updateTextListener(ChameleonDocument document) {
+		if(_projViewer != null && _listener != null) {
+			_projViewer.removeTextListener(_listener);
+		}
+    if (document != null && _projViewer != null) {
+			_listener = new ChameleonTextListener(document, _projViewer);
+			_projViewer.addTextListener(_listener);
+		}			
 	}
 
 	/**

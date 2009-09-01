@@ -77,6 +77,7 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 				BooleanFieldEditor foldable = (BooleanFieldEditor) fieldsBySelector.get(selector).get(5);
 				BooleanFieldEditor folded = (BooleanFieldEditor) fieldsBySelector.get(selector).get(6);
 				PresentationStyle style = new PresentationStyle(fg.getOptionalColor(), bg.getOptionalColor(), bold.getBooleanValue(), italic.getBooleanValue(), underline.getBooleanValue(), foldable.getBooleanValue(), folded.getBooleanValue());
+				// FIXME: this should update the presentation models of all project natures.
 				LanguageMgt.getInstance().getPresentationModel(language).updateRule(selector, style);
 			}
 			

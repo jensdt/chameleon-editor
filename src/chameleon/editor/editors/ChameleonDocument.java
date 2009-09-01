@@ -118,19 +118,13 @@ public class ChameleonDocument extends Document {
 	 * @return
 	 * The presentation managager if it is present; else a new presentation manager is made and returned
 	 */
-	private PresentationManager getPresentation(){
-		PresentationManager presentation =null;
-		if(presentationManager != null)
-			return presentationManager;
-		else{
-			// FIXME: why is that stupid try-catch construction here? the language() method (and previously String getLanguage() take this into account)
-			try {	
-				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(language().name()));	
-			} catch (NullPointerException e) {
-				presentation = new PresentationManager(this, LanguageMgt.getInstance().getPresentationModel(null));	
-			}
-			return presentation;
+	public PresentationManager getPresentationManager(){
+		PresentationManager result = presentationManager;
+		if(result == null) {
+			result = new PresentationManager(this, getProjectNature().presentationModel());
+			presentationManager = result;
 		}
+		return result;
 	}
 	
 	/**
@@ -368,7 +362,7 @@ public class ChameleonDocument extends Document {
 
 		
 		try{
-			lastpresentation = getPresentation().createTextPresentation();
+			lastpresentation = getPresentationManager().createTextPresentation();
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					viewer.changeTextPresentation(lastpresentation, false);
@@ -386,7 +380,7 @@ public class ChameleonDocument extends Document {
 	 *   the foldable positions
 	 */
 	public Vector<Position> getFoldablePositions() {
-		return getPresentation().getFoldablePositions();
+		return getPresentationManager().getFoldablePositions();
 	}
 
 	/**
@@ -394,7 +388,7 @@ public class ChameleonDocument extends Document {
 	 * @return the elements which are folded
 	 */
 	public Vector<ChameleonEditorPosition> getFoldedElementsFromModel() {
-		return getPresentation().getFoldedElementsFromModel();
+		return getPresentationManager().getFoldedElementsFromModel();
 	}
 
 	private int nbNamespaceParts(Namespace ns) {
@@ -469,7 +463,7 @@ public class ChameleonDocument extends Document {
 		
 		try{
 
-			lastpresentation = getPresentation().createTextPresentation();
+			lastpresentation = getPresentationManager().createTextPresentation();
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					viewer.changeTextPresentation(lastpresentation, true);
