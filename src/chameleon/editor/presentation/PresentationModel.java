@@ -116,10 +116,10 @@ public class PresentationModel {
 				outlineElements.add(v);
 				if (currNode.getAttributes().getNamedItem("default").getTextContent().equals("visible")){
 					defaultOutlineElements.add(child.getNodeValue());
-					String fieldNaam = "outlineElement_"+language+"_"+child.getNodeValue();
+					String fieldNaam = "outlineElement_"+language.name()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				} else {
-					String fieldNaam = "outlineElement_"+language+"_"+child.getNodeValue();
+					String fieldNaam = "outlineElement_"+language.name()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				}
 			}
@@ -159,20 +159,20 @@ public class PresentationModel {
 	 */
 	private PresentationStyle getFromStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldname = "stylerule_"+language+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
+		String fieldname = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
 		return PresentationStyle.fromStore(store, fieldname);
 	}
 
 
 	private boolean ruleSetInStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+language+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_ruleSet";
+		String fieldNaam = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_ruleSet";
 		return store.getBoolean(fieldNaam);
 	}
 
 	private void addDefaultToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+language+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
+		String fieldNaam = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
 		store.setDefault(fieldNaam+"foreground_color",style.getForeground().getColorString());
 		store.setDefault(fieldNaam+"background_color",style.getBackground().getColorString());
 		store.setDefault(fieldNaam+"foreground_set",style.getForeground().isDefined());
@@ -186,18 +186,18 @@ public class PresentationModel {
 
 	private void addToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+language+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
-		store.setValue(fieldNaam+"foreground_color",style.getForeground().getColorString());
-		store.setValue(fieldNaam+"background_color",style.getBackground().getColorString());
-		store.setValue(fieldNaam+"foreground_set",style.getForeground().isDefined());
-		store.setValue(fieldNaam+"background_set",style.getBackground().isDefined());
-		store.setValue(fieldNaam+"folded",style.isFolded());
-		store.setValue(fieldNaam+"foldable",style.isfoldable());
-		store.setValue(fieldNaam+"bold",style.isBold());
-		store.setValue(fieldNaam+"italic",style.isItalic());
-		store.setValue(fieldNaam+"underline",style.isUnderlined());
+		String fieldName = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
+		store.setValue(fieldName+"foreground_color",style.getForeground().getColorString());
+		store.setValue(fieldName+"background_color",style.getBackground().getColorString());
+		store.setValue(fieldName+"foreground_set",style.getForeground().isDefined());
+		store.setValue(fieldName+"background_set",style.getBackground().isDefined());
+		store.setValue(fieldName+"folded",style.isFolded());
+		store.setValue(fieldName+"foldable",style.isfoldable());
+		store.setValue(fieldName+"bold",style.isBold());
+		store.setValue(fieldName+"italic",style.isItalic());
+		store.setValue(fieldName+"underline",style.isUnderlined());
 
-		store.setValue(fieldNaam+"ruleSet",true);
+		store.setValue(fieldName+"ruleSet",true);
 		
 	}
 
