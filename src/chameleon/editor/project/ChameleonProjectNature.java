@@ -47,6 +47,8 @@ import chameleon.input.SourceManager;
 public class ChameleonProjectNature implements IProjectNature{
 
 	public ChameleonProjectNature() {
+		//Disable caching, or things will fail.
+		Config.setCaching(false);
 		modelElements=new ArrayList<ChameleonDocument>();
 	}
 	
