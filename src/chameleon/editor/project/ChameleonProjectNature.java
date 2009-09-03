@@ -32,7 +32,7 @@ import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
+import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 import chameleon.input.InputProcessor;
 import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;
@@ -264,7 +264,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	//The meta model for this factory
 //	private Namespace _metaModel;
 	
-	private ChameleonContentOutlinePage _outlinePage;
+	private ChameleonOutlinePage _outlinePage;
 	
 
 //	/**
@@ -379,7 +379,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		}
 	}
 
-	public void setOutlinePage(ChameleonContentOutlinePage outlinePage) {
+	public void setOutlinePage(ChameleonOutlinePage outlinePage) {
 		this._outlinePage = outlinePage;
 		
 	}

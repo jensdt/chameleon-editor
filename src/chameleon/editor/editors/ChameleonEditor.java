@@ -375,8 +375,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
 				Language language = getDocument().language();
-				Vector<String> defaultAllowedOutlineElements = getPresentationManager().getDefaultOutlineElements();
-				Vector<String> allowedElements = getPresentationManager().getPresentationModel().getOutlineElementsSimple();
+				List<String> defaultAllowedOutlineElements = getPresentationManager().getDefaultOutlineElements();
+				List<String> allowedElements = getPresentationManager().getPresentationModel().getOutlineElementsSimple();
 				fOutlinePage= new ChameleonOutlinePage(language, this, allowedElements, defaultAllowedOutlineElements);
 				getDocument().getProjectNature().setOutlinePage(fOutlinePage);
 			}
@@ -418,7 +418,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	/**
 	 * Returns the presentation Manager for the editor.
 	 */
-	protected PresentationManager getPresentationManager() {
+	public PresentationManager getPresentationManager() {
 		return getDocument().getPresentationManager();
 	}
 

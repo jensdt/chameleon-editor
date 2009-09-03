@@ -51,7 +51,7 @@ public class Selector {
 		return false;
 	}
 
-	public String getDecoratorType() {
+	public String getPositionType() {
 		return decoratorType;
 	}
 

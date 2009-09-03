@@ -33,7 +33,7 @@ public class PresentationManager {
 	/*
 	 * the presentation model used 
 	 */
-	private PresentationModel presentationModel;
+	private PresentationModel _presentationModel;
 
 	//private ChameleonEditor editor;
 
@@ -53,7 +53,7 @@ public class PresentationManager {
 			throw new IllegalArgumentException("document must be effective");
 		
 		this.document=doc;
-		this.presentationModel = model;
+		this._presentationModel = model;
 		//this.editor = editor;
 	}
 	
@@ -73,7 +73,7 @@ public class PresentationManager {
 				ChameleonEditorPosition dec = (ChameleonEditorPosition) poss[i];
 				try {
 					// FIXME
-					StyleRange sr = presentationModel.map(dec.getOffset(), dec.getLength(), dec.getElement().getClass().getName().toLowerCase(), dec
+					StyleRange sr = _presentationModel.map(dec.getOffset(), dec.getLength(), dec.getElement().getClass().getName().toLowerCase(), dec
 							.getName());
 
 					if (sr != null) {
@@ -101,7 +101,7 @@ public class PresentationManager {
 	 * 		
 	 */
 	private boolean isFoldable(ChameleonEditorPosition decorator) {
-		PresentationStyle presStyle = presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
+		PresentationStyle presStyle = _presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
 		if(presStyle != null && presStyle.isfoldable())
 			return true;
 		else
@@ -164,7 +164,7 @@ public class PresentationManager {
 	 */
 	private boolean isFolded(ChameleonEditorPosition decorator) {
 		//FIXME
-		PresentationStyle presStyle = presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
+		PresentationStyle presStyle = _presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
 		if(presStyle != null && presStyle.isFolded())
 			return true;
 		else
@@ -181,7 +181,7 @@ public class PresentationManager {
 			for (int i = 0; i < poss.length; i++) {
 				if (poss[i].getOffset()+poss[i].getLength() > offset && poss[i].getOffset() < offset+length){
 					ChameleonEditorPosition dec = (ChameleonEditorPosition) poss[i];
-					StyleRange sr = presentationModel.map(dec.getOffset(),dec.getLength(),dec.getElement().getClass().getName().toLowerCase(), dec.getName());
+					StyleRange sr = _presentationModel.map(dec.getOffset(),dec.getLength(),dec.getElement().getClass().getName().toLowerCase(), dec.getName());
 					if (sr!=null) pres.mergeStyleRange(sr);
 				}
 			}
@@ -197,21 +197,21 @@ public class PresentationManager {
 		return pres;
 	}
 
-	public List<String> getOutlineElements(){
-		
-		List<String[]> pm = getPresentationModel().getOutlineElements();
-		
-		List<String> v = new ArrayList<String>();
-		for (Iterator<String[]> iter = pm.iterator(); iter.hasNext();) {
-			String[] element = iter.next();
-			v.add(element[0]);
-			
-		}		
-		return v;
-	}
+//	public List<String> getOutlineElements(){
+//		
+//		List<String[]> pm = getPresentationModel().getOutlineElements();
+//		
+//		List<String> v = new ArrayList<String>();
+//		for (Iterator<String[]> iter = pm.iterator(); iter.hasNext();) {
+//			String[] element = iter.next();
+//			v.add(element[0]);
+//			
+//		}		
+//		return v;
+//	}
 
-	protected PresentationModel getPresentationModel() {
-		return presentationModel;
+	public PresentationModel getPresentationModel() {
+		return _presentationModel;
 	}
 
 	public List<String> getDefaultOutlineElements() {

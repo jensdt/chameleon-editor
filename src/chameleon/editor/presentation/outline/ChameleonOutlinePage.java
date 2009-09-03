@@ -3,7 +3,7 @@
  */
 package chameleon.editor.presentation.outline;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -73,7 +73,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	 * @param defaultAllowedElements
 	 * 		the default allowed elements
 	 */
-	public ChameleonOutlinePage(Language language, ChameleonEditor editor, Vector<String> allowedElements, Vector<String> defaultAllowedElements) {
+	public ChameleonOutlinePage(Language language, ChameleonEditor editor, List<String> allowedElements, List<String> defaultAllowedElements) {
 		super();
 		try {
 			if(editor == null)
