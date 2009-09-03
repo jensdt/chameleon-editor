@@ -163,7 +163,12 @@ public class Filters {
 		public boolean select(Viewer viewer, Object parentElement, Object object) {
 			Element element = ChameleonLabelProvider.getElement(object);
 			if(element instanceof ElementWithModifiers && !(element instanceof Type) ){
-				return ! ((ElementWithModifiers)element).modifiers().contains(modifier);
+//				return ! ((ElementWithModifiers)element).modifiers().contains(modifier);
+				for(Modifier mod: ((ElementWithModifiers<?,?>)element).modifiers()) {
+					if(mod.getClass().equals(modifier.getClass())) {
+						return false;
+					}
+				}
 			}
 			return true;
 		}

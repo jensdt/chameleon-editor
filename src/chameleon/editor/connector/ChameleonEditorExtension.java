@@ -44,6 +44,7 @@ public abstract class ChameleonEditorExtension extends ConnectorImpl {
   	 * 
   	 * @author Tim Vermeiren
   	 */
+  	//FIXME: filter based on properties!!!!
   	public abstract List<Modifier> getFilterModifiers();
 
 }
