@@ -29,8 +29,6 @@ import chameleon.input.ModelFactory;
  * @author Joeri Hendrickx 
  * 
  * This class does the actual reconciling. it starts & initiates the reconciling 
- * 
- *
  */
 public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrategy{
 	
