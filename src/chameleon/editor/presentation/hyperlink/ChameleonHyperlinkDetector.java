@@ -59,7 +59,7 @@ public class ChameleonHyperlinkDetector implements IHyperlinkDetector {
 			e.printStackTrace();
 		}
 		// ----------------------------------------
-		ChameleonEditorPosition decorator = document.getReferenceDecoratorAtRegion(region);
+		ChameleonEditorPosition decorator = document.getReferencePositionAtRegion(region);
 		// Tag decorator = document.getDecoratorAtRegionOfType(region, refclass);
 		IHyperlink[] result = null;
 		if (decorator != null) {

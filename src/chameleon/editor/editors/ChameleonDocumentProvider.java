@@ -23,8 +23,12 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 	//the editor where this documentprovider is used
 	private ChameleonEditor _editor;
 	
+	public void setChameleonEditor(ChameleonEditor chamEditor) {
+		this._editor = chamEditor;
+	}
+
 	public ChameleonDocumentProvider(ChameleonEditor editor){
-		this._editor=editor;
+		setChameleonEditor(editor);
 		
 	}
 	

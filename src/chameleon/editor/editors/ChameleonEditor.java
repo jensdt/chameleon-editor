@@ -3,18 +3,24 @@ package chameleon.editor.editors;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -22,21 +28,45 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IShowEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.rejuse.java.collections.Visitor;
+import org.rejuse.predicate.SafePredicate;
 
+import chameleon.core.compilationunit.CompilationUnit;
+import chameleon.core.element.ChameleonProgrammerException;
+import chameleon.core.element.Element;
 import chameleon.core.language.Language;
+import chameleon.core.tag.Tag;
+import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
+import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 import chameleon.input.ParseException;
 
 /**
@@ -65,7 +95,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	private Vector<ChameleonAnnotation> chameleonAnnotations;
 	
 	//The outline page with its content for this editor
-	private ChameleonContentOutlinePage fOutlinePage;
+	private ChameleonOutlinePage fOutlinePage;
 	
 	//The document that this editor uses.
 	private ChameleonDocument document;
@@ -98,7 +128,23 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		ChameleonSourceViewerConfiguration configuration = new ChameleonSourceViewerConfiguration(this);
 	    
 		setSourceViewerConfiguration(configuration);
-		
+		initEditor();
+	}
+
+	public ChameleonEditor(ChameleonDocumentProvider documentProvider, ChameleonSourceViewerConfiguration configuration){
+		setDocumentProvider(documentProvider);
+		documentProvider.setChameleonEditor(this);
+		setSourceViewerConfiguration(configuration);
+
+		initEditor();
+	}
+
+	/**
+	 * Common statements for both constructors
+	 *
+	 */
+	private void initEditor(){
+
 		chameleonAnnotations = new Vector<ChameleonAnnotation>(0);
 		
 	}
@@ -127,7 +173,52 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 //		      return (IResource) adapter;
 //		   }
 
-	
+		protected void createActions() {
+			createLocalActions();
+			super.createActions();
+		}
+
+		private void createLocalActions() {
+			ResourceBundle bundle = ChameleonEditorPlugin.getDefault().getResourceBundle();
+			if(bundle != null){
+				// Content assistant (auto-completion)
+				//System.out.println(bundle.getString("resource_bundle_loaded"));
+				IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this);
+				String actionId = IChameleonEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS;
+				action.setActionDefinitionId(actionId);
+				setAction(actionId, action);
+				markAsStateDependentAction(actionId, true);
+				// Content Information
+				action= new TextOperationAction(bundle, "ContentAssistContextInformation.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);	//$NON-NLS-1$
+				actionId = IChameleonEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION;
+				action.setActionDefinitionId(actionId);
+				setAction(actionId, action);
+				markAsStateDependentAction(actionId, true);
+				// Formatting
+				action = new TextOperationAction(bundle, "ContentFormatProposal.", this, ISourceViewer.FORMAT);
+				actionId = IChameleonEditorActionDefinitionIds.FORMAT;
+				//actionId = "ContentFormatProposal";
+				action.setActionDefinitionId(actionId);
+				setAction(actionId, action);
+				markAsStateDependentAction(actionId, true);
+			} else {
+				String errorMsg = "\nThe source-folder of the ChameleonEditor must contain an internationalisation-file";
+				errorMsg += "named \'" + ChameleonEditorPlugin.CHAMELEON_RESOURCEBUNDLE_BASENAME + ".properties\'\n";
+				errorMsg += "otherwise the actions cannot be added to the ChameleonEditor.\n";
+				System.err.println(errorMsg);
+				new Exception().printStackTrace();
+				throw new ChameleonProgrammerException(errorMsg);
+			}
+		}
+
+		@Override
+		protected void editorContextMenuAboutToShow(IMenuManager menu) {
+			super.editorContextMenuAboutToShow(menu);
+			addAction(menu, ITextEditorActionConstants.GROUP_REST,  IChameleonEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS); 
+			addAction(menu, ITextEditorActionConstants.GROUP_REST,  IChameleonEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION); 
+			addAction(menu, ITextEditorActionConstants.GROUP_REST,  IChameleonEditorActionDefinitionIds.FORMAT);
+			
+		}
 	/**
 	 * This creates the controls & models necessary to handle the projection annotations .
 	 * Projection Support is also made here and made active.
@@ -283,11 +374,11 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
-				fOutlinePage= new ChameleonContentOutlinePage(getDocument().language(),this,this.getPresentationManager().getOutlineElements(),this.getPresentationManager().getDefaultOutlineElements());
+				Language language = getDocument().language();
+				Vector<String> defaultAllowedOutlineElements = getPresentationManager().getDefaultOutlineElements();
+				Vector<String> allowedElements = getPresentationManager().getPresentationModel().getOutlineElementsSimple();
+				fOutlinePage= new ChameleonOutlinePage(language, this, allowedElements, defaultAllowedOutlineElements);
 				getDocument().getProjectNature().setOutlinePage(fOutlinePage);
-				if (getEditorInput() != null)
-					fOutlinePage.setInput(getEditorInput());
-				
 			}
 			return fOutlinePage;
 		}
@@ -355,10 +446,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		this.document = document;
 		
 		if (document.getProject()==null){
-			MessageBox box =  new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-			box.setText("Decreased Functionality");
-			box.setMessage("This document is not part of a Chameleon Project.  The editor will work in restricted mode. Thank you for reading this.");
-			box.open();
+			ChameleonEditorPlugin.showMessageBox("Decreased Functionality", "This document is not part of a Chameleon Project. " +
+					"The editor will work in restricted mode. Thank you for reading this.", SWT.ICON_ERROR);		
 		} 
 		updateTextListener(document);
 		
@@ -441,6 +530,254 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 
 
 
+	/**
+	 * The line of the given elementen will be highlighted and visible
+	 * 
+	 * @param 	element a chameleon element
+	 * @pre		The given element must be valid and must be an element opened in this editor
+	 * @see		ChameleonEditor#showInEditor(Element, boolean, ChameleonEditor, String)
+	 * 			if you don't have a reference to the correct editor, or no editor reference at all
+	 * 			use the showInEditor method
+	 * @see		#highLightElement(Element, boolean, String)
+	 * 			for extra options
+	 */
+	public void highLightElement(Element element){
+		highLightElement(element, true, ChameleonEditorPosition.NAME_TAG);
+	}
+
+	/**
+	 * @see		#highLightElement(Element)
+	 * 
+	 * @param 	element
+	 * @pre		The given element must be valid and must be an element opened in this editor
+	 * @param 	selectElement wheter to select the element, or just highlight the line
+	 * @param	The name of the editorTag that has to be selected (if he exists). 
+	 * 			Must be a value of EditorTagTypes
+	 */
+	public void highLightElement(Element element, boolean selectElement, String editorTagName){
+		if(element==null){
+			resetHighlight(selectElement);
+			return;
+		}
+		int start = 0;
+		int length = 0;
+		if(element.tags().size()<1){
+			System.err.println("Element "+element.toString()+" has no Editor tags");
+			resetHighlight(selectElement);
+			return;
+		} else if(element.hasTag(editorTagName)){
+			ChameleonEditorPosition tag = (ChameleonEditorPosition)element.tag(editorTagName);
+			start = tag.getOffset();
+			length = tag.getLength();
+		} else if(element.hasTag(ChameleonEditorPosition.ALL_TAG)){
+			ChameleonEditorPosition tag = (ChameleonEditorPosition)element.tag(ChameleonEditorPosition.ALL_TAG);
+			start = tag.getOffset();
+			length = tag.getLength();
+		} else { // gebruik een willekeurige editorTag
+			Collection<Tag> tags = element.tags();
+			ChameleonEditorPosition firstTag = (ChameleonEditorPosition) tags.iterator().next();
+			start = firstTag.getOffset();
+			length = firstTag.getLength();
+		}
+		if(selectElement){
+			ISelectionProvider selProv = getEditorSite().getSelectionProvider();
+			if(selProv != null){
+				selProv.setSelection(new TextSelection(getDocument(), start, length));
+			}
+		} else {
+			try {
+				setHighlightRange(start, length, true);
+			} catch (IllegalArgumentException x) {
+				resetHighlight(selectElement);
+			} 
+		}
+	}
+
+	/**
+	 * Resets the highlight of this editor
+	 * 
+	 * @param 	resetSelection
+	 * 			if true, the selection will be removed
+	 */
+	public void resetHighlight(boolean resetSelection){
+		if(resetSelection){
+			ISelectionProvider selProv = getEditorSite().getSelectionProvider();
+			if(selProv != null){
+				ISelection sel = selProv.getSelection(); 
+				int offset = 0;
+				if(sel instanceof TextSelection){
+					offset = ((TextSelection)sel).getOffset();
+				}
+				selProv.setSelection(new TextSelection(getDocument(), offset, 0));
+			}
+		}
+		resetHighlightRange();
+	}
+
+	/**
+	 * Show the given element in a Chameleon editor
+	 * 
+	 * @param 	element must be effective
+	 * @param 	openNewEditor
+	 * 			Whether to open a new editor if the element is part of an editor that isn't opened yet
+	 * @param 	editor 
+	 * 			a reference to a (arbitrary) Chameleon Editor, might be null
+	 * 			if no Chameleon editor is opened, this reference is necessary to open a new Chameleon editor
+	 * @result	true if the element is shown, false when failed or (element is part of closed editor and openNewEditor == false)
+	 */
+	public static boolean showInEditor(Element element, boolean openNewEditor, ChameleonEditor chamEditor){
+		return showInEditor(element, openNewEditor, chamEditor, true, ChameleonEditorPosition.NAME_TAG);
+	}
+
+	/**
+	 * Show the given element in a Chameleon editor
+	 * 
+	 * @param 	element must be effective
+	 * 			only NamespacePartElement's can be shown (so no modifiers)
+	 * @param 	openNewEditor
+	 * 			Whether to open a new editor if the element is part of an editor that isn't opened yet
+	 * @param 	editor 
+	 * 			a reference to a (arbitrary) Chameleon Editor, might be null
+	 * 			if no Chameleon editor is opened, this reference is necessary to open a new Chameleon editor
+	 * @param	selectElement
+	 * 			whether to select the element (if true), or just highlight the line of the element (if false) 
+	 * @param 	editorTagToHighlight
+	 * 			the type of editortag that has to be highlighted (must be a constant of EditorTagTypes)
+	 * @result	true if the element is shown, false when failed or (element is part of closed editor and openNewEditor == false)
+	 */
+	public static boolean showInEditor(Element<?,?> element, boolean openNewEditor, ChameleonEditor chamEditor, boolean selectElement, String editorTagToHighlight){
+		if(element==null){
+			chamEditor.resetHighlight(selectElement);
+			return false;
+		}
+		// if no editor given, get an active Chameleon editor:
+		if(chamEditor==null){
+			chamEditor = getAnActiveChameleonEditor();
+		}
+		// if ChameleonEditor found:
+		if(chamEditor != null){
+			try {
+				// check wheter the compilationunit of the element is opened in the active editor
+				final CompilationUnit elementCU = element.nearestAncestor(CompilationUnit.class);
+				if(elementCU==null){
+					chamEditor.resetHighlight(selectElement);
+					return false;
+				}
+				// if already opened in the active editor, highlight element
+				IEditorPart activeEditor = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				if(activeEditor instanceof ChameleonEditor && elementCU.equals(((ChameleonEditor)activeEditor).getDocument().compilationUnit())){
+					((ChameleonEditor)activeEditor).highLightElement(element, selectElement, editorTagToHighlight);
+					return true;
+				} else {
+					ChameleonDocument doc = chamEditor.getDocument().getProjectNature().document(elementCU);
+					if(doc!=null){
+						IFile file = doc.getFile();
+						// chamEditor is not the editor of element
+						// search an opened editor with the same compilationUnit
+						ChameleonEditor openedEditor = getOpenedEditorOfCompilationUnit(elementCU);
+						if(openedEditor!=null){
+							// do the IShowEditorInput notification before showing the editor
+							// to reduce flicker
+							if (openedEditor instanceof IShowEditorInput) {
+								((IShowEditorInput) openedEditor).showEditorInput(new FileEditorInput(file));
+							}
+							IWorkbenchPage page = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
+							page.bringToTop(openedEditor);
+							openedEditor.highLightElement(element, selectElement, editorTagToHighlight);
+							return true;
+						}
+						// if desired open in new ChameleonEditor:
+						else if(openNewEditor){
+							// @invar chamEditor!=null && openedEditor==null
+							IWorkbenchPage page = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
+							openedEditor = (ChameleonEditor)IDE.openEditor(page, file, ChameleonEditorPlugin.CHAMELEON_EDITOR_ID);
+							openedEditor.highLightElement(element, selectElement, editorTagToHighlight);
+							return true;
+						} else {
+							chamEditor.resetHighlight(selectElement);
+							return false; // element not opened yet in an editor, and openNewEditor == false
+						}
+					} else {
+						System.err.println("No chameleon document found for element "+ element.toString());
+						chamEditor.resetHighlight(selectElement);
+						return false;
+					}
+				}
+				
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+			chamEditor.resetHighlight(selectElement);
+		}
+		return false;
+	}
+
+	private static ChameleonEditor getAnActiveChameleonEditor(){
+		IEditorPart editor = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		// check wheter the active editor is an ChameleonEditor:
+		if (editor instanceof ChameleonEditor) {
+			return (ChameleonEditor) editor;
+		}
+		// if active editor is no Chameleon editor, search an active chameleonEditor
+		Collection<ChameleonEditor> activeEditors = getActiveChameleonEditors();
+		if(activeEditors.size()>0)
+			return activeEditors.iterator().next();
+		return null;
+	}
+
+	private static Collection<ChameleonEditor> getActiveChameleonEditors(){
+		final List<ChameleonEditor> editors = new ArrayList<ChameleonEditor>();
+		IEditorReference[] references = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+		new Visitor<IEditorReference>(){
+			@Override
+			public void visit(IEditorReference element) {
+				IEditorPart editor = element.getEditor(true);
+				if(editor instanceof ChameleonEditor)
+					editors.add((ChameleonEditor)editor);
+			}
+		}.applyTo(references);
+		return editors;
+	}
+
+	/**
+	 * If an Chameleon-editor is opened with the given CompilationUnit, this chameleon editor is returned
+	 */
+	private static ChameleonEditor getOpenedEditorOfCompilationUnit(final CompilationUnit cu){
+		// add all editors to a List:
+		Collection<ChameleonEditor> editors = getActiveChameleonEditors();
+		// filter out the one that has the same compilationunit as the given one
+		new SafePredicate<ChameleonEditor>(){
+			@Override
+			public boolean eval(ChameleonEditor editor) {
+				return(
+						editor.getDocument().compilationUnit().equals(cu)  
+				) ;
+			}
+		}.filter(editors);
+		if(!editors.isEmpty()){
+			// type check is done in the predicate eval method
+			return editors.iterator().next();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the chameleonEditor (if any) of the currently active page
+	 * can return null!
+	 */
+	public static ChameleonEditor getCurrentActiveEditor(){
+		IWorkbenchWindow activeWorkbenchWindow = Workbench.getInstance().getActiveWorkbenchWindow();
+		if(activeWorkbenchWindow==null)
+			return null;
+		IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+		if(activePage == null)
+			return null;
+		IEditorPart editor = activePage.getActiveEditor();
+		if(editor instanceof ChameleonEditor){
+			return ((ChameleonEditor)editor);
+		}
+		return null;
+	}
 
 
 

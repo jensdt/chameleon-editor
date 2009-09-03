@@ -302,6 +302,13 @@ public class ChameleonProjectNature implements IProjectNature{
 		return new ArrayList<ChameleonDocument>(modelElements);
 	}
 	
+	/**
+	 * Return the Chameleon/Eclipse document for the compilation unit of the
+	 * given element.
+	 * 
+	 * @param element
+	 * @return
+	 */
 	public ChameleonDocument document(Element<?,?> element) {
 		CompilationUnit cu = element.nearestElement(CompilationUnit.class);
 		for(ChameleonDocument doc : modelElements) {

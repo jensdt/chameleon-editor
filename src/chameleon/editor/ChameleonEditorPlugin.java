@@ -6,6 +6,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -23,6 +27,16 @@ import chameleon.core.language.Language;
 public class ChameleonEditorPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ChameleonEditorPlugin plugin;
+
+	public final static String CHAMELEON_EDITOR_ID = "chameleon.editor.editors.ChameleonEditor";
+
+	public final static String CHAMELEON_RESOURCEBUNDLE_BASENAME = "resourcebundle";
+
+	/**
+	 * The directory with the icons, this must be a subdirectory
+	 * Must end with a slash
+	 */
+	public final static String ICON_DIR = "icons/";
 
 	/**
 	 * 
@@ -84,7 +98,18 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 			return key;
 		}
 	}
-	
+
+	public static IWorkbenchPage getActivePage() {
+		return getDefault().internalGetActivePage();
+	}
+
+	private IWorkbenchPage internalGetActivePage() {
+		IWorkbenchWindow window= getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return null;
+		return window.getActivePage();
+	}
+
 
 	/**
 	 * Returns the plugin's resource bundle,
@@ -95,13 +120,40 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 		try {
 			if (resourceBundle == null)
 				resourceBundle = ResourceBundle
-					.getBundle("chameleonEditor.ChameleonEditorPluginResources");
+				.getBundle(CHAMELEON_RESOURCEBUNDLE_BASENAME);
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
 		return resourceBundle;
 	}
-	
+
+	/**
+	 * Show a message box to the user.
+	 * 
+	 * @param 	title
+	 * 			the title of the message box
+	 * @param 	message
+	 * 			the message in the message box
+	 * @param 	style
+	 * 			the style of the message box
+	 * <dl>
+	 * <dt><b>Styles:</b></dt>
+	 * <dd>The different possibilities are separated by a comma. If used more than one style, this should be separated by a | </dd>
+	 * <dd>SWT.ICON_ERROR, SWT.ICON_INFORMATION, SWT.ICON_QUESTION, SWT.ICON_WARNING, SWT.ICON_WORKING</dd>
+	 * <dd>SWT.OK, SWT.OK | SWT.CANCEL</dd>
+	 * <dd>SWT.YES | SWT.NO, SWT.YES | SWT.NO | SWT.CANCEL</dd>
+	 * <dd>SWT.RETRY | SWT.CANCEL</dd>
+	 * <dd>SWT.ABORT | SWT.RETRY | SWT.IGNORE</dd>
+	 * </dl>
+	 * 	@see	MessageBox
+	 */
+	public static void showMessageBox(String title, String message, int style){
+		MessageBox box =  new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), style);
+		box.setText(title);
+		box.setMessage(message);
+		box.open();
+	}
+
 	/**
 	 * 
 	 * @param name
@@ -121,12 +173,50 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 		   try {
 		       URL installURL = getDefault().getDescriptor().getInstallURL();
 		       URL url = new URL(installURL, iconPath + name);
-		      
 		       return ImageDescriptor.createFromURL(url);
 		   } catch (MalformedURLException e) {
 		       return ImageDescriptor.getMissingImageDescriptor();
-		   }
-		}
+	   }
+	}
+
 	
+	/**
+	 * Gets an ImageDescriptor for icons that are not language specific
+	 *  
+	 * @param name the filename of the icon
+	 * @return an imagedescriptor for the icon
+	 */
+	public static ImageDescriptor getImageDescriptor(String name) {
+		try {
+			URL url = new URL(getIconURL(), name);
+			return ImageDescriptor.createFromURL(url);
+		} catch (MalformedURLException e) {
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
+	}
+	/**
+	 * Returns the image descriptor for the default (list) icon.
+	 * @return this will return a bullet
+	 */
+	public static ImageDescriptor getDefaultImageDescriptor() {
+		// return ImageDescriptor.getMissingImageDescriptor();
+		return getImageDescriptor("default_gray.png");
+	}
+	
+	/**
+	 * 
+	 * @return The URL of the directory with the icons
+	 */
+	public static URL getIconURL(){
+		try {
+			return new URL(getDefault().getBundle().getEntry("/"), ICON_DIR);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 }

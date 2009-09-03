@@ -5,7 +5,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -22,14 +25,20 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.rejuse.predicate.Predicate;
+import org.rejuse.predicate.SafePredicate;
 
 import chameleon.core.Config;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
+import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
+import chameleon.editor.connector.ChameleonEditorExtension;
 import chameleon.editor.connector.ChameleonEditorPosition;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
@@ -85,7 +94,10 @@ public class ChameleonDocument extends Document {
 		super();
 		
 		setCompilationUnit(new CompilationUnit());
-		
+		if(project==null){
+			ChameleonEditorPlugin.showMessageBox("Illegal project", "This document is part of an illegal project. \nCheck if the project is a Chameleon Project.", SWT.ICON_ERROR);
+		}
+
 		_parseErrors = new ArrayList<ParseException>();
 		
 		_project = project;
@@ -171,7 +183,7 @@ public class ChameleonDocument extends Document {
 	 * prints debugging stuff
 	 * @param chameleon_category
 	 */
-	public void printPositionsAndParents(String chameleon_category){
+	public void printPositionsAndParents(){
 		Position[] pos;
 		try {
 				pos = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
@@ -228,27 +240,6 @@ public class ChameleonDocument extends Document {
 		}
 		
 	}
-	/*
-	 *  (non-Javadoc)
-	 * @see chameleonEditor.editors.IChameleonDocument#printPositions(java.lang.String)
-	 */
-	public void printPositions(String cat){
-//		try{
-//			Position[] pos = getPositions(ChameleonPosition.CHAMELEON_CATEGORY);
-//			for(int i=0; i<pos.length; i++){
-//				int currentLine = this.getLineOfOffset(pos[i].getOffset());
-//				int lineoffset = this.getLineOffset(currentLine);
-//				currentLine = currentLine + 1; //eclipse begint pas te tellen vanaf rij 1
-//				int currentColumn = pos[i].getOffset() - lineoffset;
-//				System.out.println("  POSITIE - offset: "+pos[i].getOffset()+" - lengte: "+pos[i].getLength()+ " - line: "+ currentLine + " - column: " + currentColumn +" - element: "+((Decorator)pos[i]).getElement().getClass().getName());
-//			}
-//			//pos = getPositions(RangeDecorator.NAME_CATEGORY);
-//			//for(int i=0; i<pos.length; i++){
-//			//	System.out.println("  POSITIE - offset: "+pos[i].getOffset()+" - lengte: "+pos[i].getLength()+" - element: "+((ChameleonPosition)pos[i]).getDecorator().getElement().getClass().getName());
-//			//}
-//		}catch(Exception e){}
-	}
-
 
 	/**
 	 * Sets the compilation unit for this document
@@ -258,7 +249,6 @@ public class ChameleonDocument extends Document {
 	 */
 	public void setCompilationUnit(CompilationUnit cu) {
 		_cu = cu;
-		//_cu.setDocument(this);
 	}
 	
 	
@@ -334,18 +324,6 @@ public class ChameleonDocument extends Document {
 		super.addPosition(category, position);
 	}
 
-//	/**
-//	 * 
-//	 * @return the language of the project where this document is in.
-//	 * if no project is defined, an empty string is returned
-//	 */
-//	public String getLanguage() {
-//		if (getProject()==null) {
-//			return "";
-//		}
-//		return getProjectNature().getLanguage();
-//	}
-	
 	public Language language() {
 		try {
 			return ((ChameleonProjectNature)_project.getNature(ChameleonProjectNature.NATURE)).language();
@@ -362,14 +340,12 @@ public class ChameleonDocument extends Document {
 	 * @param viewer
 	 */
 	public void doPresentation(final ITextViewer viewer) {
-		
-
-		
 		try{
 			_lastpresentation = getPresentationManager().createTextPresentation();
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					viewer.changeTextPresentation(_lastpresentation, false);
+					// CHANGE in Tim's last version, the following line is absent.
+//					viewer.changeTextPresentation(_lastpresentation, false);
 					viewer.changeTextPresentation(_lastpresentation, true);
 				}
 			});	
@@ -453,29 +429,26 @@ public class ChameleonDocument extends Document {
 		System.out.println("Einde reparse");
 	}
 
-	/**
-	 * The textrepresentation for the viewer is changed to the presentation we get
-	 * from our presenation manager. the presentation is done for the speciefied
-	 * offset & length that representation is now the last known one.
-	 * 
-	 * @param viewer
-	 * @param offset
-	 * @param length
-	 */
-	public void doPresentation(final ITextViewer viewer, final int offset, final int length) {
-//		System.out.println("ChameleonDocument.dopresentation is opgeroepen");
-		
-		try{
-
-			_lastpresentation = getPresentationManager().createTextPresentation();
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					viewer.changeTextPresentation(_lastpresentation, true);
-				}
-			});	
-		}catch (NullPointerException npe){}
-		
-	}
+//	/**
+//	 * The textrepresentation for the viewer is changed to the presentation we get
+//	 * from our presenation manager. the presentation is done for the speciefied
+//	 * offset & length that representation is now the last known one.
+//	 * 
+//	 * @param viewer
+//	 * @param offset
+//	 * @param length
+//	 */
+//	public void doPresentation(final ITextViewer viewer, final int offset, final int length) {
+//		try{
+//			_lastpresentation = getPresentationManager().createTextPresentation();
+//			Display.getDefault().asyncExec(new Runnable() {
+//				public void run() {
+//					viewer.changeTextPresentation(_lastpresentation, true);
+//				}
+//			});	
+//		}catch (NullPointerException npe){}
+//		
+//	}
 
 	/**
 	 * A parse error has occured while making the model for the document;
@@ -535,8 +508,19 @@ public class ChameleonDocument extends Document {
 		return _relativePathName;
 	}
 
-	
-	public ChameleonEditorPosition getReferenceDecoratorAtRegion(IRegion region){
+	/**
+	 * Returns the smallest ReferenceEditorTag including the beginoffset of region.
+	 * Returns null if no appropriate editorTag found.
+	 * 
+	 * @param 	region
+	 * 			a region in this document to search a surrounding editorTag from.
+	 * @return	If not null returned, the returned editorTag is a reference editorTag
+	 * 			| result == null || result.getName().equals(EditorTag.REFERENCE)
+	 * @return  The returned editorTag (if any) surrounds the beginoffset of the specified region.
+	 * 			| result == null || result.includes(region.getOffset())
+	 * @autor 	Tim Vermeiren
+	 */
+	public ChameleonEditorPosition getReferencePositionAtRegion(IRegion region){
 		try {
 			Position[] positions = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
 			// Find smallest decorater including the specified region:
@@ -567,6 +551,213 @@ public class ChameleonDocument extends Document {
 		
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	/////////
+	/// COPIED FROM TIM'S LAST VERSION
+	/////////////
+	
+	
+	/**
+	 * Returns the smallest ReferenceEditorTag including the beginoffset of region.
+	 * Returns null if no appropriate editorTag found.
+	 * 
+	 * @param 	region
+	 * 			a region in this document to search a surrounding editorTag from.
+	 * @return	If not null returned, the returned editorTag is a reference editorTag
+	 * 			| result == null || result.getName().equals(EditorTag.REFERENCE)
+	 * @return  The returned editorTag (if any) surrounds the beginoffset of the specified region.
+	 * 			| result == null || result.includes(region.getOffset())
+	 * @autor 	Tim Vermeiren
+	 */
+	public ChameleonEditorPosition getReferenceEditorTagAtRegion(IRegion region){
+		final int offset = region.getOffset();
+		// build a predicate that checks if the EditorTag includes the offset:
+		SafePredicate<ChameleonEditorPosition> predicate = new SafePredicate<ChameleonEditorPosition>(){
+			@Override
+			public boolean eval(ChameleonEditorPosition editorTag) {
+				return (editorTag.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_TAG)) && editorTag.includes(offset);
+			}
+		};
+		Collection<ChameleonEditorPosition> tags = new TreeSet<ChameleonEditorPosition>(ChameleonEditorPosition.lengthComparator);
+		getEditorTagsWithPredicate(predicate, tags);
+		if(tags.size()==0){
+			return null;
+		}
+		return tags.iterator().next();
+	}
+
+	/**
+	 * Returns the smallest EditorTag including the beginoffset of region.
+	 * Returns null if no appropriate editorTag found.
+	 * 
+	 * @param 	offset
+	 * 			the offset in this document to search a surrounding editorTag from.
+	 * @return  The returned editorTag (if any) surrounds the beginoffset of the specified region.
+	 * 			| result == null || result.includes(region.getOffset())
+	 * @autor 	Tim Vermeiren
+	 */
+	public ChameleonEditorPosition getSmallestEditorTagAtOffset(final int offset){
+		Collection<ChameleonEditorPosition> tags = getEditorTagsAtOffset(offset, ChameleonEditorPosition.lengthComparator);
+		if(tags.size()==0){
+			return null;
+		}
+		return tags.iterator().next();
+	}
+	
+	/**
+	 * Returns all EditorTags surrounding the given offset and sorted
+	 * by the given comparator
+	 * 
+	 * @param offset
+	 * @param comparator
+	 * @autor Tim Vermeiren
+	 */
+	public Collection<ChameleonEditorPosition> getEditorTagsAtOffset(int offset, Comparator<ChameleonEditorPosition> comparator){
+		// build a predicate that checks if the EditorTag includes the offset:
+		SafePredicate<ChameleonEditorPosition> predicate = new EditorTagSurroundsOffsetPredicate(offset);
+		Collection<ChameleonEditorPosition> tags = new TreeSet<ChameleonEditorPosition>(comparator);
+		getEditorTagsWithPredicate(predicate, tags);
+		return tags;
+	}
+
+	/**
+	 * Gives the editorTags satisfying the given predicate.
+	 * 
+	 * @param 	predicate
+	 * 			the predicate containing the condition the editorTag has to satisfy
+	 * param	result
+	 * 			The editorTags satisfying the condition will be added to this collection
+	 * 			| predicate.eval(result) == true
+	 * @post	If the predicate throws an exception the searching is just stopped and the already found
+	 * 			elements will be added to the result
+	 * @autor 	Tim Vermeiren
+	 */
+	public void getEditorTagsWithPredicate(Predicate<ChameleonEditorPosition> predicate, Collection<ChameleonEditorPosition> result){
+		try {
+			Position[] positions = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY); // throws BadPositionCategoryException
+			for (Position position : positions) {
+				if(position instanceof ChameleonEditorPosition ){
+					ChameleonEditorPosition editorTag = (ChameleonEditorPosition) position;
+					if(predicate.eval(editorTag)){
+						result.add(editorTag);
+					}
+				}
+			}
+		} catch (BadPositionCategoryException e) {
+			// There exist no editorTags of the type EditorTag.CHAMELEON_CATEGORY
+			e.printStackTrace();
+		} catch (Exception e) {
+			// the predicate has thrown an exception
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Predicate that checks wheter an EditorTag has a given tagname
+	 */
+	public static class EditorTagHasNamePredicate extends SafePredicate<ChameleonEditorPosition>{
+		private String tagName;
+		/**
+		 * @param 	tagName
+		 * 			Must be a constant of EditorTagTypes
+		 */
+		public EditorTagHasNamePredicate(String tagName) {
+			this.tagName = tagName;
+		}
+		@Override
+		public boolean eval(ChameleonEditorPosition tag) {
+			return tag.getName().equals(tagName);
+		}
+	}
+	
+	/**
+	 * Predicate that checks wheter an EditorTag has a given tagname
+	 */
+	public static class EditorTagSurroundsOffsetPredicate extends SafePredicate<ChameleonEditorPosition>{
+		private int offset;
+		public EditorTagSurroundsOffsetPredicate(int offset) {
+			this.offset = offset;
+		}
+		@Override
+		public boolean eval(ChameleonEditorPosition editorTag) {
+			return editorTag.includes(offset);
+		}
+	}
+	
+	/**
+	 * Returns the word found in document including the given offset.
+	 * For testing purposes only. All word-characters (JavaIdentifierParts to be precise)
+	 * before and after the offset are included.
+	 * 
+	 * @param document
+	 * @param offset
+	 */
+	public  String findWord(int offset) {
+		IRegion wordRegion = findWordRegion(offset);
+		String word = null;
+		try {
+			word = this.get(wordRegion.getOffset(), wordRegion.getLength());
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		return word;
+	}
+
+	/**
+	 * Returns the region of the word in this document including the given offset.
+	 * For testing purposes only. All word-characters (JavaIdentifierParts to be precise)
+	 * before and after the offset are included.
+	 * 
+	 * @see org.eclipse.jdt.internal.ui.text.JavaWordFinder
+	 */
+	public IRegion findWordRegion(int offset) {
+		int start = -2;
+		int end = -1;
+		try {
+			int pos = offset;
+			char c;
+
+			while (pos >= 0) {
+				c = this.getChar(pos);
+				if (!language().isValidIdentifierCharacter(c))
+					break;
+				--pos;
+			}
+			start = pos;
+
+			pos = offset;
+			int length = this.getLength();
+
+			while (pos < length) {
+				c = this.getChar(pos);
+				if (!language().isValidIdentifierCharacter(c))
+					break;
+				++pos;
+			}
+			end = pos;
+
+		} catch (BadLocationException x) {
+		}
+
+		if (start >= -1 && end > -1) {
+			if (start == offset && end == offset)
+				return new Region(offset, 0);
+			else if (start == offset)
+				return new Region(start, end - start);
+			else
+				return new Region(start + 1, end - start - 1);
+		}
+
+		return null;
+	}
+
+	
 
 }
 

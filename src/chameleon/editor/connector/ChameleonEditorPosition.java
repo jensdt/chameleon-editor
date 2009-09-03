@@ -1,5 +1,7 @@
 package chameleon.editor.connector;
 
+import java.util.Comparator;
+
 import org.eclipse.jface.text.Position;
 
 import chameleon.core.element.ChameleonProgrammerException;
@@ -107,5 +109,77 @@ public class ChameleonEditorPosition extends Position implements Tag {
 		return new ChameleonEditorPosition(getOffset(),getLength(),getElement(),_name);
 	}
 
+
+	// FIXME Tim wrote a hashCode() method, but no equals. Do we need the hashCode method?
+	
+	/**
+	 * Position overrides the hashCode method and does not take
+	 * the name and the element into account.
+	 * @post	The hashcode will be different for editortags with a different position
+	 * or a different name or a different element.
+	 */
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode() ^ _name.hashCode() ^ _element.hashCode();
+//	}
+
+	
+	/**
+	 * This comparator will compare editorTags and they will be sorted (ascending) by:
+	 * - length
+	 * - offset
+	 * - hashCode
+	 * 
+	 * So the shortest EditorTags will come first. if the length is the same, 
+	 * the EditorTag with the smallest offset comes first and if they are still the same
+	 * the EditorTag with the smallest hashCode comes first.
+	 * 
+	 * @author Tim Vermeiren
+	 */
+	public static Comparator<ChameleonEditorPosition> lengthComparator = new Comparator<ChameleonEditorPosition>() {
+		public int compare(ChameleonEditorPosition t1, ChameleonEditorPosition t2) {
+			// compare by length:
+			int compare = new Integer(t1.getLength()).compareTo(t2.getLength());
+			// if no difference found
+			if(compare!=0)
+				return compare;
+			// compare by offset:
+			compare = new Integer(t1.getOffset()).compareTo(t2.getOffset());
+			// if still the same
+			if(compare!=0)
+				return compare;
+			// compare by hashCode:
+			return new Integer(t1.hashCode()).compareTo(t2.hashCode());
+		}
+	};
+	
+	/**
+	 * This comparator will compare editorTags and they will be sorted (ascending) by:
+	 * - offset
+	 * - length
+	 * - hashCode
+	 * 
+	 * So the EditorTags with the lowest begin-offset will come first. if this is the same, 
+	 * the smallest EditorTag comes first and if they are still the same
+	 * the EditorTag with the smallest hashCode comes first.
+	 * 
+	 * @author Tim Vermeiren
+	 */
+	public static Comparator<ChameleonEditorPosition> beginoffsetComparator = new Comparator<ChameleonEditorPosition>() {
+		public int compare(ChameleonEditorPosition t1, ChameleonEditorPosition t2) {
+			// compare by offset:
+			int compare = new Integer(t1.getOffset()).compareTo(t2.getOffset());
+			// if no difference found
+			if(compare!=0)
+				return compare;
+			// compare by length:
+			compare = new Integer(t1.getLength()).compareTo(t2.getLength());
+			// if still the same
+			if(compare!=0)
+				return compare;
+			// compare by hashCode:
+			return new Integer(t1.hashCode()).compareTo(t2.hashCode());
+		}
+	};
 
 }
