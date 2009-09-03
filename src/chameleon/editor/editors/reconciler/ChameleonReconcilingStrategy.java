@@ -82,9 +82,9 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	//the document to which this ReconcilingStrategy applies
 	private ChameleonDocument _document;
 	//Vector containing clones of positions
-	private ArrayList<ClonedDecorator> clonedPositions = new ArrayList<ClonedDecorator>();
+	private ArrayList<ClonedChameleonPosition> clonedPositions = new ArrayList<ClonedChameleonPosition>();
 	// Vector containing all the dirtyPositions in this document
-	private ArrayList<ClonedDecorator> dirtyPositions = new ArrayList<ClonedDecorator>();
+	private ArrayList<ClonedChameleonPosition> dirtyPositions = new ArrayList<ClonedChameleonPosition>();
 	//states whether the whole document is dirty
 	private boolean _wholeDocumentDirty = false;
 
@@ -131,8 +131,8 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		}
 	}
 	
-	private ClonedDecorator cloneDecorator(ChameleonEditorPosition dec) {
-		return new ClonedDecorator(dec.getOffset(),dec.getLength(),dec.getElement(),dec.getName());
+	private ClonedChameleonPosition cloneDecorator(ChameleonEditorPosition dec) {
+		return new ClonedChameleonPosition(dec.getOffset(),dec.getLength(),dec.getElement(),dec.getName());
 	}
 	
 	// start reconciling
@@ -182,7 +182,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 			Position[] positions = null;
 			for(int i=0; i<dirtyPositions.size(); i++){
 				if(status[i] == true){
-					ClonedDecorator position = dirtyPositions.get(i);
+					ClonedChameleonPosition position = dirtyPositions.get(i);
 					//System.out.println("  verwerken positie --> offset: "+position2.getOffset()+" - lengte: "+position2.getLength()+" - element: "+position.getElement().getClass().getName());
 					try{
 						
@@ -238,7 +238,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		}catch(Exception err){
 			//System.out.println("  verwerken positie niet geslaagd");
 			//System.out.println("   => positie(s) en element verwijderd");
-			ClonedDecorator pos = ((ClonedDecorator) dirtyPositions.get(i));
+			ClonedChameleonPosition pos = ((ClonedChameleonPosition) dirtyPositions.get(i));
 			pos.getElement().disconnect();
 			try{
 				getDocument().removePosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,pos);				
@@ -265,11 +265,11 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	/*
 	 * 
 	 */
-	private void removeEmbeddedPos(ClonedDecorator pos, Position[] positions, boolean[] status){
+	private void removeEmbeddedPos(ClonedChameleonPosition pos, Position[] positions, boolean[] status){
 		try{
-			ClonedDecorator posB = null;
+			ClonedChameleonPosition posB = null;
 			for(int i=0; i<positions.length; i++){
-				posB = (ClonedDecorator)positions[i];
+				posB = (ClonedChameleonPosition)positions[i];
 				if(posB.getOffset()>pos.getOffset() && 
 				   (posB.getOffset()+posB.getLength())<(pos.getOffset()+pos.getLength())){
 					getDocument().removePosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,posB);				
@@ -289,7 +289,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	 * 
 	 */
 	private void removeCoveredPositions(){
-		ClonedDecorator posA, posB;
+		ClonedChameleonPosition posA, posB;
 		for(int i=0; i<dirtyPositions.size(); i++){
 			posA = dirtyPositions.get(i); 
 			for(int t=0; t<dirtyPositions.size(); t++){
@@ -318,9 +318,9 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	 * @param dR
 	 * @return
 	 */
-	private ClonedDecorator getSmallestCoveringPos(ChameleonDirtyRegion dR){
-		ClonedDecorator covPos = null;
-		for(ClonedDecorator pos : clonedPositions) {
+	private ClonedChameleonPosition getSmallestCoveringPos(ChameleonDirtyRegion dR){
+		ClonedChameleonPosition covPos = null;
+		for(ClonedChameleonPosition pos : clonedPositions) {
 			// if dirty region is completely in position ...
 			if(dR.getOffset()>pos.offset && dR.getOffset()<=(pos.getOffset()+pos.getLength()-1) && 
 					(dR.getOffset()+dR.getLength()-1)<(pos.getOffset()+pos.getLength()-1)){
@@ -336,7 +336,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	// reconstruct positions (via dirty region)
 	private void adaptClonedPositions(ChameleonDirtyRegion dR){
 		// dirty region of type _INSERT
-		ClonedDecorator eP;
+		ClonedChameleonPosition eP;
 		if(dR.getType()==ChameleonDirtyRegion.INSERT){
 			for(int j=0; j<clonedPositions.size(); j++){
 				eP = clonedPositions.get(j);
@@ -449,7 +449,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 
 			}
 
-			ClonedDecorator coveringPos = getSmallestCoveringPos(dirtyRegion);
+			ClonedChameleonPosition coveringPos = getSmallestCoveringPos(dirtyRegion);
 
 			if(coveringPos != null){
 				//System.out.println("     => KLEINST GEWIJZIGDE POSITIE - offset: "+coveringPos.getOffset()+" - lengte: "+coveringPos.getLength()+" - element: "+coveringPos.getElement().getClass().getName());
@@ -528,7 +528,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 //		return pos;
 //	}
 //	
-	private void addListDirtyPositions(ClonedDecorator position){
+	private void addListDirtyPositions(ClonedChameleonPosition position){
 		if(!dirtyPositions.contains(position)) {
 			dirtyPositions.add(position);
 		}
@@ -560,9 +560,9 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		return _configuration;
 	}
 	
-	public static class ClonedDecorator extends Position {
+	public static class ClonedChameleonPosition extends Position {
 
-		public ClonedDecorator(int offset, int length, Element element, String name){
+		public ClonedChameleonPosition(int offset, int length, Element element, String name){
 			super(Math.max(0,offset),Math.max(0,length));
 	  	if(element == null) {
 	  		throw new ChameleonProgrammerException("Initializing decorator with null element");

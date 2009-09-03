@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -65,69 +66,66 @@ public class LanguageMgt {
     }
 
     private void loadJars() throws IOException {
-            URL url = Platform.asLocalURL(Platform.find(
-                    Platform.getBundle("ChameleonEditor"),
-                    new Path("languages/"))
-            );
-            FilenameFilter filter = new FilenameFilter(){
-                public boolean accept(File dir, String name) {
-                    return name.contains(".jar");
-                }};
-            File[] files = (new File(url.getFile())).listFiles(filter);
-            URL[] urls = new URL[files.length];
+    	URL url = FileLocator.toFileURL(FileLocator.find(
+    			Platform.getBundle("ChameleonEditor"),
+    			new Path("languages/"), null));
+    	FilenameFilter filter = new FilenameFilter(){
+    		public boolean accept(File dir, String name) {
+    			return name.contains(".jar");
+    		}};
+    		File[] files = (new File(url.getFile())).listFiles(filter);
+    		URL[] urls = new URL[files.length];
 
-            for (int i = 0; i < urls.length; i++) {
-                try {
-                    String s = "jar:"+files[i].toURL().toExternalForm()+"!/";
-                    urls[i] = new URL(s);
-                }
-                catch (MalformedURLException e) {
-                    System.err.println("Incorrect language ["+i+"] "+files[i].toString());
-                }
-            }
+    		for (int i = 0; i < urls.length; i++) {
+    			try {
+    				String s = "jar:"+files[i].toURL().toExternalForm()+"!/";
+    				urls[i] = new URL(s);
+    			}
+    			catch (MalformedURLException e) {
+    				System.err.println("Incorrect language ["+i+"] "+files[i].toString());
+    			}
+    		}
 
-            languageloader = new URLClassLoader(urls, Element.class.getClassLoader());
+    		languageloader = new URLClassLoader(urls, Element.class.getClassLoader());
 
-            System.out.println("\nLoading Languages ===========");
-            System.out.println("Filename   \tpackage      \tLanguage          \tModel");
+    		System.out.println("\nLoading Languages ===========");
+    		System.out.println("Filename   \tpackage      \tLanguage          \tModel");
 
-            for (int i = 0; i < urls.length; i++) {
-                try {
-                String[] filenameParts = urls[i].getFile().split("/");
-                String filename = filenameParts[filenameParts.length-1].replace("!","");
-                String packagename = filename.substring(0, filename.length()-4);
+    		for (int i = 0; i < urls.length; i++) {
+    			try {
+    				String[] filenameParts = urls[i].getFile().split("/");
+    				String filename = filenameParts[filenameParts.length-1].replace("!","");
+    				String packagename = filename.substring(0, filename.length()-4);
 
-                try {
-                	EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
-                    languages.put(id.getLanguageName(), id);
-//                    ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
-//                    tools.put(id.getLanguageName(),editorExt);
-                    System.out.println(filename+"\t"+packagename+"\t"+id.getLanguageName()+" "+id.getLanguageVersion()+"\t"+id.getDescription());
-                }
-             	 catch(NoClassDefFoundError throwable) {
-             		 throwable.printStackTrace();
-                 System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
-            	 }
-                catch (InstantiationException e) {
-                    System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
-                }
-                catch (ClassCastException e) {
-                    System.err.println("Error while loading language : "+packagename+"\nLanguageModelID is not of the correct type.");
-                }
-                catch (IllegalAccessException e) {
-                    System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
-                }
-                catch (ClassNotFoundException e) {
-                	e.printStackTrace();
-                    System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
-                }
-                } catch (Exception e){
-                    System.err.println("Couldnt load language from "+urls[i]+" : "+e.getMessage());
-                }
-            }
-
-            System.out.println("Done.\n");
-
+    				try {
+    					EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
+    					languages.put(id.getLanguageName(), id);
+    					//                    ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
+    					//                    tools.put(id.getLanguageName(),editorExt);
+    					System.out.println(filename+"\t"+packagename+"\t"+id.getLanguageName()+" "+id.getLanguageVersion()+"\t"+id.getDescription());
+    				}
+    				catch(NoClassDefFoundError throwable) {
+    					throwable.printStackTrace();
+    					System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
+    				}
+    				catch (InstantiationException e) {
+    					System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
+    				}
+    				catch (ClassCastException e) {
+    					System.err.println("Error while loading language : "+packagename+"\nLanguageModelID is not of the correct type.");
+    				}
+    				catch (IllegalAccessException e) {
+    					System.err.println("Error while loading language : "+packagename+"\n"+e.getMessage());
+    				}
+    				catch (ClassNotFoundException e) {
+    					e.printStackTrace();
+    					System.err.println("Error while loading language : "+packagename+"\nNo LanguageModelID is supplied.");
+    				}
+    			} catch (Exception e){
+    				System.err.println("Couldnt load language from "+urls[i]+" : "+e.getMessage());
+    			}
+    		}
+    		System.out.println("Done.\n");
     }
 
     /**
@@ -191,7 +189,7 @@ public class LanguageMgt {
     public static Document getXMLDocument(String filename) throws IOException, ParserConfigurationException, SAXException {
         URL url = ChameleonEditorPlugin.getDefault().getBundle().getEntry(
                 "xml/" + filename);
-        String pathStr = Platform.asLocalURL(url).getPath();
+    		String pathStr = FileLocator.toFileURL(url).getPath();
         IPath path = new Path(pathStr);
         path.removeTrailingSeparator();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

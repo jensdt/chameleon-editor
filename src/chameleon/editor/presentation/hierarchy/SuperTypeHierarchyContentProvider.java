@@ -1,0 +1,76 @@
+/**
+ * Created on 24-apr-07
+ * @author Tim Vermeiren
+ */
+package chameleon.editor.presentation.hierarchy;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.rejuse.java.collections.Visitor;
+
+import chameleon.core.MetamodelException;
+import chameleon.core.type.Type;
+import chameleon.core.type.TypeReference;
+import chameleon.core.type.inheritance.InheritanceRelation;
+import chameleon.editor.project.ChameleonProjectNature;
+
+/**
+ * This class will calculate the children of an element in the super type hierarchy
+ * 
+ * @author Tim Vermeiren
+ */
+public class SuperTypeHierarchyContentProvider extends HierarchyContentProvider {
+
+	public SuperTypeHierarchyContentProvider() {
+	}
+
+	/**
+	 * Returns all supertypes of the element if it's a type
+	 */
+	public Object[] getChildren(Object element) {
+		if(element instanceof HierarchyTypeNode){
+			try {
+				HierarchyTypeNode parentTypeNode = (HierarchyTypeNode)element;
+				ChameleonProjectNature projectNature = parentTypeNode.getProjectNature();
+				Type type = parentTypeNode.getType();
+				final Collection<Type> result = new ArrayList<Type>();
+				List<InheritanceRelation> inheritanceRelations = type.inheritanceRelations();
+				// van elke typereference het type opvragen en aan het resultaat toevoegen:
+				new Visitor<InheritanceRelation>(){
+					public void visit(InheritanceRelation element) {
+						try {
+							result.add(element.superClass());
+						} catch (MetamodelException e) {
+							e.printStackTrace();
+						}
+					}
+				}.applyTo(inheritanceRelations);
+				
+				Type[] typeArray = result.toArray(new Type[]{});
+				return HierarchyTypeNode.encapsulateInHierarchyTreeNodes(typeArray, projectNature, parentTypeNode);
+
+			} catch (MetamodelException e) {
+				e.printStackTrace();
+			}
+		} else if(element instanceof RootType){
+			return ((RootType)element).getChildren();
+		}
+		return new Object[]{};
+	}
+	
+	/**
+	 * Returns the parent of the given element
+	 */
+	public Object getParent(Object element) {
+		if(element instanceof HierarchyTypeNode){
+			HierarchyTypeNode node = (HierarchyTypeNode)element;
+			return node.getParent();
+		}
+		return null;
+	}
+
+
+
+}

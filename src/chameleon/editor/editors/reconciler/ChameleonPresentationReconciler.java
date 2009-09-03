@@ -36,7 +36,7 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	 * @param delay
 	 * 	Denotes the delay for this PresentationReconciler
 	 */
-	public ChameleonPresentationReconciler(ChameleonEditor chamEditor,ChameleonReconcilingStrategy chameleonReconcilingStrategy, boolean incremental, int delay) {
+	public ChameleonPresentationReconciler(ChameleonEditor chamEditor,ChameleonReconcilingStrategy chameleonReconcilingStrategy) {
 	       _strategy = chameleonReconcilingStrategy;
 	       _editor = chamEditor;
 	} 

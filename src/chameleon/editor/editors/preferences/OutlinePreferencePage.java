@@ -36,6 +36,10 @@ import chameleon.editor.presentation.outline.ChameleonOutlineTree;
  */
 public class OutlinePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	/**
+	 * For every language (first String) there are a number of boolean options
+	 * to (de)select if an element with a certain name (second String) has to be shown in the outline.
+	 */
 	private HashMap<String, HashMap<String, BooleanFieldEditor>> options;
 	
 	
@@ -63,7 +67,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		
 		options = new HashMap<String, HashMap<String, BooleanFieldEditor>>();
 		
-		//a vector containing:
+		//a hashmap containing:
 		// per language a vector of elements
 		// the first element of each vector is the language name
 		HashMap<String, List<String[]>> possibilities =  readPossibilities();
@@ -76,7 +80,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String taalS = iter.next();
 
-			ChameleonContentOutlinePage.initByDefaults(LanguageMgt.getInstance().createLanguage(taalS));
+			PresentationModel.initAllowedOutlineElementsByDefaults(taalS);
 			LanguageMgt.getInstance().getPresentationModel(taalS);
 
 			TabItem currentPage = new TabItem(languageTabs, SWT.NONE);
@@ -163,14 +167,14 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	private void performChoices(){
 		
 		Set<String> languages = options.keySet();
-		
+		// iterate over languages:
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String language = iter.next();
 			
 			List<String> allowed = new ArrayList<String>();
 			
 			Set<String> elements = options.get(language).keySet();
-			
+			// iterate over options:
 			for (Iterator<String> iterator = elements.iterator(); iterator.hasNext();) {
 				String name = iterator.next();
 				BooleanFieldEditor field = options.get(language).get(name);

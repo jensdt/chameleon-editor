@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -94,7 +96,7 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 	
 	//recolors all open editors.
 	private void recolorAll() {
-		Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
+		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			public void run() {
 				// Collect dirtyParts
@@ -104,12 +106,12 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 				for (int i = 0; i < windows.length; i++) {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
-						IWorkbenchPage page = (IWorkbenchPage) pages[j];
+						IWorkbenchPage page = pages[j];
 						
-                        IEditorPart[] parts = page.getEditors();
+						IEditorReference[] parts = page.getEditorReferences();
                         
                         for (int k = 0; k < parts.length; k++) {
-                        	IEditorPart editor = parts[k];
+                        	IEditorPart editor = parts[k].getEditor(true);
                         	try{
                         		ChameleonEditor chamEditor = (ChameleonEditor) editor;
                         		chamEditor.updateFoldingStructure();
@@ -179,8 +181,10 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 				Vector<FieldEditor> current2 = new Vector<FieldEditor>();
 				Selector selector = iterator.next();
 
-				PresentationStyle presrule = taal.get(selector);
-				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
+				// PresentationStyle presrule = taal.get(selector);
+				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getEditorTagType()+"_";
+//				PresentationStyle presrule = taal.get(selector);
+//				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
 				
 				//Label elementLb = new Label(c, SWT.NONE);
 				selectorGroup.setText(selector.getDescription());

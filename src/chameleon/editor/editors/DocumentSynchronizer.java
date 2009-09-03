@@ -67,18 +67,17 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 * All necessary changes are made.
 	 */
 	public void onMethodNameChangedEvent(Method method){
-//		System.out.println("Synchroniser : Detected Method Name Change");
-//		
-//		Decorator deco = (Decorator) method.getDecorator(Decorator.NAME_DECORATOR);
-//		//for (int i = 0; i < deco.length; i++) {
-//			try{
-//				IDocument document = _document;
-//				document.replace(deco.getOffset(),deco.getLength(),method.getName());
-//			}
-//			catch (Exception exc) {
-//				   throw new Error("replacement in document not possible!");
-//			}
-//		//}
+		System.out.println("Synchroniser : Detected Method Name Change");
+		
+		ChameleonEditorPosition deco = (ChameleonEditorPosition) method.tag(ChameleonEditorPosition.NAME_TAG);
+		//for (int i = 0; i < deco.length; i++) {
+			try{
+				IDocument document = _document;
+				document.replace(deco.getOffset(),deco.getLength(),method.name());
+			}
+			catch (Exception exc) {
+				   throw new Error("replacement in document not possible!");
+			}
 	}
 	
 	/**

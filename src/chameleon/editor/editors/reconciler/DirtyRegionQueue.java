@@ -92,7 +92,7 @@ class DirtyRegionQueue {
 	public ChameleonDirtyRegion removeNextDirtyRegion() {
 		if (fDirtyRegions.size() == 0)
 			return null;
-		ChameleonDirtyRegion dr= (ChameleonDirtyRegion) fDirtyRegions.get(0);
+		ChameleonDirtyRegion dr= fDirtyRegions.get(0);
 		fDirtyRegions.remove(0);
 		return dr;
 	}

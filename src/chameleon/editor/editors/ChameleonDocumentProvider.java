@@ -60,7 +60,7 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 		ChameleonDocument document = null;
 		boolean newDocument = false;
 		if(nature != null) {
-			document = nature.documentFromPath(path);
+			document = nature.documentOfPath(path);
 		}
 		if(document == null) {
 			document = createEmptyChameleonDocument(project, path);

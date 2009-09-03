@@ -222,7 +222,7 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 			//volgende geeft het probleem met de classcastexception in chameleondoucmentprovider
 			//workspace zet nl een project in zijn table, en niet een chameleonproject
 			IProject project = workspaceRoot.getProject(((ProjectDetailsPage)pages[1]).getProjectName());
-			IFile projfile = project.getFile(".CHAMPROJECT");
+			IFile projfile = project.getFile("."+ChameleonProjectNature.CHAMELEON_PROJECT_FILE_EXTENSION);
 
 			if (!project.exists()) {
 					//dit doet intern ook project.create() wat een project creert in de workspace

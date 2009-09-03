@@ -29,6 +29,7 @@ import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.EclipseEditorInputProcessor;
 import chameleon.editor.connector.EclipseSourceManager;
 import chameleon.editor.editors.ChameleonDocument;
+import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.outline.ChameleonContentOutlinePage;
@@ -39,7 +40,9 @@ import chameleon.input.SourceManager;
 
 /**
  * @author Manuel Van Wesemael 
- * @author Joeri Hendrickx 
+ * @author Joeri Hendrickx
+ * @author Tim Vermeiren
+ * @author Marko van Dooren
  * 
  * Defines the nature for ChameleonProjects, it contains the elements in the model 
  * of the nature, the language of the project, and knows the project it is created for.
@@ -58,6 +61,8 @@ public class ChameleonProjectNature implements IProjectNature{
 	//the language of this nature
 	private Language _language;
 	
+	public static final String CHAMELEON_PROJECT_FILE_EXTENSION = "CHAMPROJECT";
+
 	//The elements in the model of this nature
 	private ArrayList<ChameleonDocument> modelElements;
 	
@@ -118,7 +123,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		this._project = project;
 		
 		try {
-			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/.CHAMPROJECT")));
+			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/."+CHAMELEON_PROJECT_FILE_EXTENSION)));
 			String lang = f.readLine();
 			f.close();
 			Language language = LanguageMgt.getInstance().createLanguage(lang);
@@ -207,7 +212,7 @@ public class ChameleonProjectNature implements IProjectNature{
 				if((resource instanceof IFile)){
 					if(!((resource.getFullPath().getFileExtension().equals("project"))
 						||
-						((resource.getFullPath().getFileExtension().equals("CHAMPROJECT"))
+						((resource.getFullPath().getFileExtension().equals(CHAMELEON_PROJECT_FILE_EXTENSION))
 						)))
 						addResourceToModel(resource);
 				}
@@ -379,7 +384,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 	}
 
-	public ChameleonDocument documentFromPath(IPath path) {
+	public ChameleonDocument documentOfPath(IPath path) {
 		ChameleonDocument result = null;
 		for(ChameleonDocument doc:modelElements) {
 			if(doc.path().equals(path)) {
@@ -388,6 +393,38 @@ public class ChameleonProjectNature implements IProjectNature{
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the document with the given file
+	 * @param file must be effective
+	 * @return returns null if no appropriate document found.
+	 */
+	public ChameleonDocument documentOfFile(IFile file){
+		if(file == null)
+			return null;
+		for(ChameleonDocument doc : modelElements){
+			if(file.equals(doc.getFile())){
+				return doc;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Static method to retrieve the language of the current editor. This
+	 * is required because the views are global, and not connected to a particular
+	 * project.
+	 * @return
+	 */
+	public static Language getCurrentLanguage(){
+		ChameleonEditor editor = ChameleonEditor.getCurrentActiveEditor();
+		if(editor!=null){
+			ChameleonDocument doc = editor.getDocument();
+			if(doc!= null)
+				return doc.language();
+		}
+		return null;
 	}
 
 
