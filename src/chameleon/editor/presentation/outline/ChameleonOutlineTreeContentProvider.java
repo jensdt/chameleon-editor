@@ -2,14 +2,13 @@ package chameleon.editor.presentation.outline;
 
 
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import chameleon.core.element.Element;
-import chameleon.editor.connector.ChameleonEditorPosition;
 
 /**
  * 
@@ -76,24 +75,21 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 */
 	public Object[] getChildren(Object parentElement) {
 		//System.out.println("ChameleonTreeContents getChildren: ");
-		Vector<ChameleonOutlineTree> kinderen = ((ChameleonOutlineTree) parentElement).getChildren();
+		List<ChameleonOutlineTree> kinderen = ((ChameleonOutlineTree) parentElement).getChildren();
 		return kinderen.toArray();
 	}
 
-	public Object getParent(Object element) {
-		//System.out.println("ChameleonTreeContents getparent: " );
-		try{
-			ChameleonEditorPosition dec = (ChameleonEditorPosition) element;
-			System.out.println("CAST SUCCEEDED!");
-			return dec.getParentDecorator();
-		}catch(ClassCastException e){
-			e.printStackTrace();
-			//System.out.println("classcastException");
-			return null;
-		}catch(Exception e){ 
-			e.printStackTrace();
-			return null;
+	public Object getParent(Object object) {
+		if(object instanceof ChameleonOutlineTree){
+			ChameleonOutlineTree node = (ChameleonOutlineTree)object;
+			Element element = node.getElement();
+			// check if node is still valid (can be removed)
+			if(element!=null){
+				Element parentElement = element.parent();
+				return new ChameleonOutlineTree(parentElement);
+			}
 		}
+		return null;
 	}
 
 	/**

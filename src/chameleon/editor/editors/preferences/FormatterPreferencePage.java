@@ -1,12 +1,10 @@
 package chameleon.editor.editors.preferences;
 
-
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -24,32 +22,28 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.presentation.outline.ChameleonOutlinePage;
-import chameleon.editor.presentation.outline.ChameleonOutlineTree;
-
+import chameleon.editor.presentation.formatting.ChameleonFormatterStrategy;
 
 /**
- * @author Manuel Van Wesemael 
- * @author Joeri Hendrickx 
+ * @author Tim Vermeiren
  * 
- *	A preference page defining the possible outline elements that will be available
- *  for the outline of the available languages. Users can adjust these settings.
+ * A preference page defining the elements used for the auto-indentation. 
+ * Users can adjust these settings.
  */
-public class OutlinePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-
+public class FormatterPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
 	/**
 	 * For every language (first String) there are a number of boolean options
-	 * to (de)select if an element with a certain name (second String) has to be shown in the outline.
+	 * to (de)select if an element with a certain name (second String) has to be indented
 	 */
 	private HashMap<String, HashMap<String, BooleanFieldEditor>> options;
 	
-	
 	/**
-	 * creates a new outline preference page.
+	 * creates a new indent preference page.
 	 * It contains field editors aligned in a grid.
 	 * The preference store that is being used, is de default preference store.
 	 */
-	public OutlinePreferencePage() {
+	public FormatterPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 		
 		// Set the preference store for the preference page.
@@ -68,37 +62,41 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		
 		options = new HashMap<String, HashMap<String, BooleanFieldEditor>>();
 		
-		//a hashmap containing:
+		//a vector containing:
 		// per language a vector of elements
 		// the first element of each vector is the language name
 		HashMap<String, List<String[]>> possibilities =  readPossibilities();
 		Set<String> languages = possibilities.keySet();
 
 		TabFolder languageTabs = new TabFolder(getFieldEditorParent(),SWT.NONE);
-		languageTabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL,true, true));
-		
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL,true, true);
+		languageTabs.setLayoutData( gridData);
 		
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String taalS = iter.next();
 
-			PresentationModel.initAllowedOutlineElementsByDefaults(taalS);
+			PresentationModel.initIndentElementsByDefaults(taalS);
 			LanguageMgt.getInstance().getPresentationModel(taalS);
-
+			// create Tab page
 			TabItem currentPage = new TabItem(languageTabs, SWT.NONE);
 			currentPage.setText(taalS);
+			// create Scroller
 			ScrolledComposite scroller = new ScrolledComposite(languageTabs, SWT.V_SCROLL);
 			currentPage.setControl(scroller);
+			GridLayout scrollGrid = new GridLayout(1, true);
+			scroller.setLayout(scrollGrid);
+			// create container (for the checkBoxes)
 			Composite container = new Composite(scroller, SWT.NONE);
 			scroller.setContent(container);
-			GridLayout grid = new GridLayout(1, true);
-			container.setLayout(grid);
+			GridLayout containerGrid = new GridLayout(1, true);
+			container.setLayout(containerGrid);
 			
 			HashMap<String, BooleanFieldEditor> current = new HashMap<String, BooleanFieldEditor>();
 			List<String[]> taal = possibilities.get(taalS);
 			for(int i = 0; i< taal.size(); i++){
 				String elemNaam = taal.get(i)[0];
 				String elemDesc = taal.get(i)[1];
-				String fieldNaam = "outlineElement_"+taalS+"_"+elemNaam;
+				String fieldNaam = "indentElement_"+taalS+"_"+elemNaam;
 				BooleanFieldEditor formatOnSave = new BooleanFieldEditor(
 						fieldNaam, 
 						elemDesc, 
@@ -109,12 +107,11 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 			container.pack();
 			scroller.pack();
 			languageTabs.setSize(getFieldEditorParent().getClientArea().width,getFieldEditorParent().getClientArea().height);
+			container.setSize(scroller.getClientArea().width, scroller.getClientArea().height);
+			
 			options.put(taalS, current);
-			 
 		}
 	}
-
-
 
 	public void init(IWorkbench workbench) {}
 
@@ -126,32 +123,32 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	
 	/*
 	 * reads all languages from the languageMgt
-	 * then retrieves all possible language outline elements
+	 * then retrieves all possible language indentation elements
 	 */
 	private HashMap<String, List<String[]>> readPossibilities() {
 	    //lees eerst alle talen uit
 		String[] talen = LanguageMgt.getInstance().getLanguageStrings();
 		//haal van alle talen alle elementen op
-	    HashMap<String, List<String[]>> result = obtainLanguageOutlineElements(talen);
+	    HashMap<String, List<String[]>> result = obtainLanguageIndentElements(talen);
 	    return result;
 	}
 
 	/*
-	 * obtain the language outline elements for a vector of languages
+	 * obtain the language indent elements for a vector of languages
 	 * for each language, the corresponding xml file is read and elements are added 
 	 */
-	private HashMap<String, List<String[]>> obtainLanguageOutlineElements(String[] languages) {
+	private HashMap<String, List<String[]>> obtainLanguageIndentElements(String[] talen) {
 		HashMap<String, List<String[]>> result = new HashMap<String, List<String[]>>();
-		for(String language: languages){
-			List<String[]> languageResult = LanguageMgt.getInstance().getPresentationModel(language).getOutlineElements();
-			result.put(language, languageResult);
+		for(String taal: talen){
+			List<String[]> taalResult = LanguageMgt.getInstance().getPresentationModel(taal).getIndentElements();
+			result.put(taal, taalResult);
 		}
 		return result;
 	}
 
 
 	/**
-	 * all choices are applied and saved & the necessary outlines are updated
+	 * all choices are applied and saved
 	 */
 	public boolean performOk(){
 		boolean prev = super.performOk();
@@ -160,9 +157,8 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 	}
 	
 	/*
-	 * set per language the allowed outlineTreeElements.
+	 * set per language the indent Elements.
 	 * then writes all preferences to the store
-	 * then updates all outlines 
 	 * 
 	 */
 	private void performChoices(){
@@ -172,31 +168,26 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
 			String language = iter.next();
 			
-			List<String> allowed = new ArrayList<String>();
+			Vector<String> indentElements = new Vector<String>();
 			
 			Set<String> elements = options.get(language).keySet();
-			// iterate over options:
+			// iterate over options
 			for (Iterator<String> iterator = elements.iterator(); iterator.hasNext();) {
 				String name = iterator.next();
 				BooleanFieldEditor field = options.get(language).get(name);
-				if (field.getBooleanValue()) allowed.add(name);
+				if (field.getBooleanValue()) indentElements.add(name);
 			}
 			
-			ChameleonOutlineTree.setAllowedElements(language, allowed);
+			ChameleonFormatterStrategy.setIndentElements(language, indentElements);
 		}		
 		
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
 		store.setValue("Chameleon_prefs_inited", true);
-		
-		//FIXME update all outlines
-//		ChameleonOutlinePage.updateAll();
 	}
 	
 	public void performApply(){
 		super.performApply();
 		performChoices();
-		
-		//ChameleonOutlineTree.setAllowedElements(lang, allowed);
 	}	
 
 

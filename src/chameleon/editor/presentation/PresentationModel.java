@@ -468,7 +468,7 @@ public class PresentationModel {
 	}
 
 	public void initIndentElementsByDefaults() {
-		initIndentElementsByDefaults(language, getIndentElementsSimple(), getDefaultIndentElements());
+		initIndentElementsByDefaults(language.name(), getIndentElementsSimple(), getDefaultIndentElements());
 	}
 
 	

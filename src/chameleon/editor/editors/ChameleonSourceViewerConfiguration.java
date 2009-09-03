@@ -34,6 +34,7 @@ import chameleon.editor.presentation.autocompletion.ChameleonContentAssistProces
 import chameleon.editor.presentation.formatting.ChameleonAutoEditStrategy;
 import chameleon.editor.presentation.formatting.ChameleonFormatterStrategy;
 import chameleon.editor.presentation.hyperlink.ChameleonHyperlinkDetector;
+import chameleon.editor.presentation.hyperlink.ChameleonHyperlinkPresenter;
 
 
 /**

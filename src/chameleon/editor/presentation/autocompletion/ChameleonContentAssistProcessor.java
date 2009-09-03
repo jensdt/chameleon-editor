@@ -1,0 +1,129 @@
+package chameleon.editor.presentation.autocompletion;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.ContextInformation;
+import org.eclipse.jface.text.contentassist.ContextInformationValidator;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+
+import chameleon.core.MetamodelException;
+import chameleon.core.element.Element;
+import chameleon.core.expression.ExpressionWithTarget;
+import chameleon.core.expression.InvocationTarget;
+import chameleon.core.language.Language;
+import chameleon.core.lookup.LookupStrategy;
+import chameleon.editor.connector.ChameleonEditorExtension;
+import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.editors.ChameleonDocument;
+import chameleon.support.member.simplename.method.RegularMethodInvocation;
+
+/**
+ * Generates the auto completion proposals.
+ * 
+ * @author Tim Vermeiren
+ */
+public class ChameleonContentAssistProcessor implements IContentAssistProcessor {
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
+	 */
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		offset--;
+		ChameleonDocument chamDoc = (ChameleonDocument)viewer.getDocument();
+		try {
+			IRegion wordRegion = chamDoc.findWordRegion(offset);
+			String nameStart = chamDoc.get(wordRegion.getOffset(), wordRegion.getLength());
+			ChameleonEditorPosition dec = chamDoc.getSmallestEditorTagAtOffset(wordRegion.getOffset());
+			if(dec != null){
+				Element el = dec.getElement();
+//					ContextElement element = (ContextElement)el;
+					LookupStrategy context;
+					// see if element has a target (e.g. car.getOwner())
+					if(el instanceof ExpressionWithTarget){
+						InvocationTarget target = ((ExpressionWithTarget)el).getTarget();
+						if(target != null) {
+							context = target.targetContext();
+						} else {
+							context = el.lexicalLookupStrategy();
+						}
+					} else {
+						context = el.lexicalLookupStrategy();
+					}
+					// search for elements:
+					Language language = chamDoc.getProjectNature().getModel().language();
+//					SafePredicate<Type> typePredicate = el.getTypePredicate();
+					// FIXME
+					Set<Element> foundElements = new HashSet<Element>();
+//					Set<Element> foundElements = new TreeSet<Element>(new AutoCompletionProposalsComparator(nameStart, typePredicate, language));
+//					context.findElementsStartingWith(nameStart, foundElements);
+					
+					
+					// Build proposals array:
+					ICompletionProposal[] result = new ICompletionProposal[foundElements.size()];
+					int i = 0;
+					for (Element currElement : foundElements) {
+						ICompletionProposal proposal;
+						proposal = CompletionProposalBuilder.buildProposal(currElement, chamDoc, offset);
+						result[i++] = proposal;						
+					}
+					return result;
+			}
+		} catch (MetamodelException e) {
+			e.printStackTrace();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+		try {
+			offset--;
+			ChameleonDocument chamDoc = (ChameleonDocument)viewer.getDocument();
+			ChameleonEditorPosition dec = chamDoc.getSmallestEditorTagAtOffset(offset);
+			if(dec!=null){
+				Element element = dec.getElement();
+				Language language = ((ChameleonDocument)viewer.getDocument()).getProjectNature().getModel().language();
+				ChameleonEditorExtension ext = language.connector(ChameleonEditorExtension.class);
+				String elementLabel = ext.getLabel(element);
+				if(element instanceof RegularMethodInvocation){
+					RegularMethodInvocation method = (RegularMethodInvocation) element;
+					elementLabel = ext.getLabel(method.getMethod());
+					return new IContextInformation[]{new ContextInformation(elementLabel, elementLabel)};
+				} else {
+					return null;
+				}
+			}
+		} catch (MetamodelException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return new char[] { '.' };
+	}
+
+	public char[] getContextInformationAutoActivationCharacters() {
+		return new char[] { '(', ',', ' ' };
+	}
+
+	public IContextInformationValidator getContextInformationValidator() {
+		return new ContextInformationValidator(this);
+	}
+
+	public String getErrorMessage() {
+		return null;
+	}
+
+
+}

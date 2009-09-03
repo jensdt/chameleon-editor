@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
@@ -20,12 +19,12 @@ public class ChameleonOutlineTree {
 	//the current element
 	private Element node;
 	//the current element's children
-	private Vector<ChameleonOutlineTree> children;
+	private List<ChameleonOutlineTree> children;
 	//A listener for this tree
 	private IChameleonOutlineTreeListener listener= NullChameleonOutlineTreeListener.getSoleInstance();
 	
 	//contains string representation of all the elements that may be contained in this tree
-	private static HashMap<Language, List<String>> allowedTreeElements = new HashMap<Language, List<String>>(0);
+	private static HashMap<String, List<String>> allowedTreeElements = new HashMap<String, List<String>>(0);
 	
 	/**
 	 * Creates a new empty tree with empty current node, and no children
@@ -35,18 +34,18 @@ public class ChameleonOutlineTree {
 		//  this.decorators = decorators_All;
 		this.node = null;
 		//this.editor = editor;
-		this.children = new Vector<ChameleonOutlineTree>(0);  
+		this.children = new ArrayList<ChameleonOutlineTree>(0);  
 	}
 	
 	/*
 	 * Creates a new  tree with a given node and no children
 	 */
-	private ChameleonOutlineTree(Element node) {
+	public ChameleonOutlineTree(Element node) {
 		//  this.hashElements = hashElements;
 		//  this.decorators = decorators_All;
 		this.node = node;
 		//this.editor = editor;
-		this.children = new Vector<ChameleonOutlineTree>(0);
+		this.children = new ArrayList<ChameleonOutlineTree>(0);
 	}
 	
 	/**
@@ -67,7 +66,7 @@ public class ChameleonOutlineTree {
 	 */
 	private ChameleonOutlineTree addTreeNodeChild(ChameleonOutlineTree childTNode) {
 		if (children == null)
-			children = new  Vector<ChameleonOutlineTree>(0);
+			children = new  ArrayList<ChameleonOutlineTree>(0);
 		children.add(childTNode);
 		return childTNode;
 	}
@@ -123,7 +122,7 @@ public class ChameleonOutlineTree {
 	/**
 	 * @return the children of this tree
 	 */
-	public Vector<ChameleonOutlineTree> getChildren() {
+	public List<ChameleonOutlineTree> getChildren() {
 		return children;
 	}
 	
@@ -173,19 +172,7 @@ public class ChameleonOutlineTree {
 	 * String representation of this tree
 	 */
 	public String toString(){
-		
-		String woorden = null;
-		//try {
-		//int length = editor.getDocument().getLineInformationOfOffset(node.offset).getLength();
-		//woorden = editor.getDocument().get(node.offset,length );
-		woorden = node.toString();
-		System.out.println("chameleontree woorden: " + woorden );
-		//} catch (BadLocationException e) {
-		//  Auto-generated catch block
-		//.printStackTrace();
-		//}
-		//woorden = removeUnneededText(woorden);
-		return woorden;
+		return "chameleontree with node " + node.toString();
 	}
 	
 	/**
@@ -213,7 +200,7 @@ public class ChameleonOutlineTree {
 		else{ //removal
 			if (element == node){
 				node = null;
-				children = new Vector<ChameleonOutlineTree>(0);
+				children = new ArrayList<ChameleonOutlineTree>(0);
 				fireRemove(element);
 			}
 			else{
@@ -315,19 +302,8 @@ public class ChameleonOutlineTree {
 	 * Sets the elements which are to be shown in the outline tree.
 	 * This does not update the tree !
 	 */
-	public static void setAllowedElements(Language lang, List<String> alloweds) {
-
-		try {
-		for (Iterator<String> iter = alloweds.iterator(); iter.hasNext();) {
-			String element = iter.next();
-		}} catch (NullPointerException e){}
-		
-		allowedTreeElements.put(lang,alloweds);		
-
-		for (Iterator<String> iter = alloweds.iterator(); iter.hasNext();) {
-			String element = iter.next();
-		}
-					
+	public static void setAllowedElements(String lang, List<String> alloweds) {
+		allowedTreeElements.put(lang, alloweds);	
 	}
 
 	

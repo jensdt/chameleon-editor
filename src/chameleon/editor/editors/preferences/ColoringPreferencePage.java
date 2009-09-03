@@ -182,7 +182,7 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 				Selector selector = iterator.next();
 
 				// PresentationStyle presrule = taal.get(selector);
-				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getEditorTagType()+"_";
+				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 //				PresentationStyle presrule = taal.get(selector);
 //				String fieldNaam = "stylerule_"+taalS+"_"+selector.getElementType()+"_"+selector.getDecoratorType()+"_";
 				
