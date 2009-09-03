@@ -35,7 +35,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onTypeNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Type Name Change");
-		ChameleonEditorPosition dec = (ChameleonEditorPosition)type.tag(ChameleonEditorPosition.NAME_DECORATOR);
+		ChameleonEditorPosition dec = (ChameleonEditorPosition)type.tag(ChameleonEditorPosition.NAME_TAG);
 //		for (int i = 0; i < decs.length; i++) {
 //			Decorator dec = (Decorator) decs[i];
 			replaceInDocument(dec.getOffset(),dec.getLength(),type.getName());
@@ -49,7 +49,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onVariableNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Variable Name Change");
-		ChameleonEditorPosition deco = (ChameleonEditorPosition) type.tag(ChameleonEditorPosition.ALL_DECORATOR);
+		ChameleonEditorPosition deco = (ChameleonEditorPosition) type.tag(ChameleonEditorPosition.ALL_TAG);
 //		for (int i = 0; i < deco.length; i++) {
 //			Decorator pos = (Decorator) deco[i];
 			try{

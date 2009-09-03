@@ -545,7 +545,7 @@ public class ChameleonDocument extends Document {
 			for (Position position : positions) {
 				if(position instanceof ChameleonEditorPosition ){
 					ChameleonEditorPosition decorator = (ChameleonEditorPosition) position;
-					if(decorator.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_DECORATOR)){
+					if(decorator.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_TAG)){
 						if(decorator.includes(region.getOffset()) && decorator.getLength()<minLength){
 							result = decorator;
 						}

@@ -420,34 +420,39 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	}
 	public void reconcile(ChameleonDirtyRegion dirtyRegion, IRegion subRegion){
 		Language language = getDocument().compilationUnit().language();
-		Namespace root = language.defaultNamespace();
-		if(DEBUG) {
-			System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
-			System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
-			System.out.println("Number of namespacesparts in model: "+root.descendants(NamespacePart.class).size());
-			System.out.println("Number of types in model: "+root.descendants(Type.class).size());
-			showSize(root);
-			showTypeSize(root);
-		}
-		System.out.println("reconciling dirtyregion & subregion,in chameleonReconcilingStrategy");
-		//if(_firstDR == false){
-		if(_firstDR == true){
-			System.out.println("Start synchronisatie");
-			System.out.println(" 1. Verwerken vervuilde tekstgebieden");
-		}
+		if(language != null) {
+			Namespace root = language.defaultNamespace();
+			if(DEBUG) {
+				try {
+					System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
+					System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
+					System.out.println("Number of namespacesparts in model: "+root.descendants(NamespacePart.class).size());
+					System.out.println("Number of types in model: "+root.descendants(Type.class).size());
+					showSize(root);
+					showTypeSize(root);
+				} catch(Exception exc) {
+
+				}
+			}
+			System.out.println("reconciling dirtyregion & subregion,in chameleonReconcilingStrategy");
+			//if(_firstDR == false){
+			if(_firstDR == true){
+				System.out.println("Start synchronisatie");
+				System.out.println(" 1. Verwerken vervuilde tekstgebieden");
+			}
 
 			setWholeDocumentDirty(false);
 			_firstDR = false;
 			//System.out.println("   VERVUILD TEKSTGEBIED - offset: "+dirtyRegion.getOffset()+" - lengte: "+dirtyRegion.getLength()+ " - type: "+dirtyRegion.getType()/*+" tekst: "+dirtyRegion.getText()*/);
-			
+
 			if(dirtyRegion.getType() == ChameleonDirtyRegion.INSERT){
-				
+
 				adaptClonedPositions(dirtyRegion);
 
 			}
-			
+
 			ClonedDecorator coveringPos = getSmallestCoveringPos(dirtyRegion);
-			
+
 			if(coveringPos != null){
 				//System.out.println("     => KLEINST GEWIJZIGDE POSITIE - offset: "+coveringPos.getOffset()+" - lengte: "+coveringPos.getLength()+" - element: "+coveringPos.getElement().getClass().getName());
 				addListDirtyPositions(coveringPos);
@@ -460,20 +465,20 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 			if(dirtyRegion.getType() == ChameleonDirtyRegion.REMOVE){
 				adaptClonedPositions(dirtyRegion);
 			}
-			
+
 			//System.out.println("Klaar met reconcilen");
 
-			
 
-			
-			
-			
-		/*}
+
+
+
+
+			/*}
 		else{
 			_firstDR = false;
 		}*/
-	}
-	
+		}
+	}	
 //	// 	Geeft de minimale (kleinste) positie met lengte groter dan 'length' terug die de volledige dirtyRegion omvat en null indien geen 
 //	// 	positie kan gevonden worden.
 //	private Decorator getCoveringPosition(ChameleonDirtyRegion dirtyRegion, int length){

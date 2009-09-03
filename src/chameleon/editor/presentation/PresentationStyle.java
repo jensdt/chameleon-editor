@@ -122,10 +122,18 @@ public class PresentationStyle {
 	 */
 	public StyleRange getStyleRange(int offset, int length) {
 		StyleRange r = new StyleRange(offset,length,foreground.getColor(), background.getColor());
-		if (bold && !italic)r.fontStyle = 1;
-		if (!bold && italic)r.fontStyle = 2;
-		if (bold && italic)r.fontStyle = 3;
-		if (underline) r.underline=true;
+		int style=0;
+		if (bold && !italic) {
+			r.fontStyle = 1;
+		} else if (!bold && italic) {
+			r.fontStyle = 2;
+		}
+		if (bold && italic){
+			r.fontStyle = 3;
+		}
+		if (underline) {
+			r.underline=true;
+		}
 		return r;
 	}
 	

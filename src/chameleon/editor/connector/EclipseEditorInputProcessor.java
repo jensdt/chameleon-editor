@@ -6,12 +6,12 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
+import chameleon.core.modifier.Modifier;
 import chameleon.core.reference.CrossReference;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.input.InputProcessor;
 import chameleon.input.ParseException;
-import chameleon.input.Position2D;
 import chameleon.tool.Processor;
 import chameleon.tool.ProcessorImpl;
 
@@ -74,25 +74,41 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		}
 		// ECLIPSE NEEDS A +1 INCREMENT FOR THE LENGTH
 		length++;
-		String dectype = ChameleonEditorPosition.ALL_DECORATOR;
-		setSingleLocation(element, offset, length, compilationUnit, dectype);
+		setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.ALL_TAG);
 		if(element instanceof CrossReference) {
-			dectype = ChameleonEditorPosition.CROSSREFERENCE_DECORATOR;
-			setSingleLocation(element, offset, length, compilationUnit, dectype);
+			setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.CROSSREFERENCE_TAG);
 		}
+		if(element instanceof Modifier) {
+			setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.MODIFIER_TAG);
+		}
+ 
+	}
+	
+	public void setLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String tagType) {
+		if(element == null) {
+			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
+		}
+		// ECLIPSE NEEDS A +1 INCREMENT FOR THE LENGTH
+		length++;
+		setSingleLocation(element, offset, length, compilationUnit, tagType);
 	}
 
-	private void setSingleLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String dectype) {
+
+	private void setSingleLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String tagType) {
 		ChameleonDocument doc = document(compilationUnit);
 		try {
 			if(doc.getLength() == 0) {
 				System.out.println("Empty document.");
 			}
-			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,dectype);
+			if(element.hasTag(tagType)) {
+				element.removeTag(tagType);
+				System.out.println("Removed duplicate "+tagType+" tag for element of type "+element.getClass().getName());
+			}
+			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,tagType);
 			doc.addPosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,dec);
 //			element.setTag(dec,dectype);
 		} catch (BadLocationException e) {
-			System.err.println("Couldn't set decorator ["+dectype+"] at offset "+offset+" with length " + length+ " for "+element);
+			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
 			System.err.println("Document length: "+doc.getLength());
 			System.err.println("Trying to show text starting from offset:");
 			try {
@@ -104,7 +120,7 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 			}
 			e.printStackTrace();
 		} catch (BadPositionCategoryException e) {
-			System.err.println("Couldn't set decorator ["+dectype+"] at offset "+offset+" with length " + length+ " for "+element);
+			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
 			e.printStackTrace();
 		}
 	}

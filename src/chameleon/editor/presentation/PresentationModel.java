@@ -33,7 +33,7 @@ import chameleon.editor.ChameleonEditorPlugin;
  * A Presentation Model is part of the language model of a ChameleonEditor instance.
  * 
  * It contains definitions about what and how to colour, to fold, and other presentational
- * parameters.  This object is created from a presentational XML node conform to the
+ * parameters.  This object is created from a presentation XML node conform to the
  * DTD as described in the ChameleonEditor documentation.
  */
 public class PresentationModel {

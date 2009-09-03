@@ -228,9 +228,9 @@ public class ChameleonContentOutlinePage extends ContentOutlinePage {
 		else {
 			ChameleonOutlineTree segment= (ChameleonOutlineTree) ((IStructuredSelection) selection).getFirstElement();
 			Element element = ((Element)segment.getElement());
-			if(element.hasTag(ChameleonEditorPosition.NAME_DECORATOR)){
-				 start= ((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_DECORATOR)).getOffset();
-				 length =((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_DECORATOR)).getLength();
+			if(element.hasTag(ChameleonEditorPosition.NAME_TAG)){
+				 start= ((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_TAG)).getOffset();
+				 length =((ChameleonEditorPosition)element.tag(ChameleonEditorPosition.NAME_TAG)).getLength();
 			}
 			else{ //het ding heeft geen naam, dus pak een decorator
 				Collection<Tag> decs = element.tags();

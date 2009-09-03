@@ -91,7 +91,7 @@ public class ChameleonHyperlink implements IHyperlink {
 				IFile file = doc.getFile();
 				
 				//create Marker to jump immediately to the referenced element.
-				ChameleonEditorPosition dec = (ChameleonEditorPosition) referencedElement.tag(ChameleonEditorPosition.ALL_DECORATOR);
+				ChameleonEditorPosition dec = (ChameleonEditorPosition) referencedElement.tag(ChameleonEditorPosition.ALL_TAG);
 				IMarker marker = null;
 				
 				try {
@@ -128,7 +128,7 @@ public class ChameleonHyperlink implements IHyperlink {
 				// marker.delete();
 			}
 		} catch (MetamodelException exc) {
-			exc.printStackTrace();
+//			exc.printStackTrace();
 			System.out.println("Referenced element not found.");
 		}
 	}
