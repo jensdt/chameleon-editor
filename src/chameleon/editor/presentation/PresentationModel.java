@@ -164,7 +164,7 @@ public class PresentationModel {
 	 */
 	private void addRule(Node currentrule) {
 		String element = currentrule.getAttributes().getNamedItem("element").getTextContent();
-		String dec = currentrule.getAttributes().getNamedItem("editorTag").getTextContent();
+		String dec = currentrule.getAttributes().getNamedItem("decorator").getTextContent();
 		String desc = currentrule.getAttributes().getNamedItem("description").getTextContent();
 		PresentationStyle style = new PresentationStyle(currentrule.getChildNodes());
 		addRule(style, new Selector(element, dec, desc));
