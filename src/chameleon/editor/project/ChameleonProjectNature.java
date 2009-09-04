@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -48,6 +49,9 @@ import chameleon.input.SourceManager;
  * of the nature, the language of the project, and knows the project it is created for.
  */
 public class ChameleonProjectNature implements IProjectNature{
+	static {
+  	BasicConfigurator.configure();
+	}
 
 	public ChameleonProjectNature() {
 		//Disable caching, or things will fail.

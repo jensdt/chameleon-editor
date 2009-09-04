@@ -116,7 +116,9 @@ public class ChameleonOutlineTree {
 	 * check whether the given description matches one of the allowed ones
 	 */
 	private static boolean isAllowedDescription(Language language, String shortDescription) {
-		return allowedTreeElements.get(language).contains(shortDescription);
+		//FIXME: I just set it to true.
+		return true;
+//		return allowedTreeElements.get(language).contains(shortDescription);
 	}
 	
 	/**
