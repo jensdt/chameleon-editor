@@ -6,7 +6,8 @@
    version="1.1"
    provider-name="K.U.Leuven"
    class="chameleon.editor.ChameleonEditorPlugin">
-      <requires>
+   
+   <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.jface.text"/>
@@ -216,5 +217,15 @@
 	/>
 	
 </extension>
+   
+   
+  <extension point="org.eclipse.ui.views">
+    <view 
+		id="chameleon.editor.ChameleonEditorPlugin.modelview" 
+		name="Chameleon Model"
+		icon="icons/model.gif"
+		category="chameleon.editor.ChameleonEditorPlugin"
+		class="chameleon.editor.developertools.modelview.ModelView"/>
+  </extension>
    
 </plugin>
