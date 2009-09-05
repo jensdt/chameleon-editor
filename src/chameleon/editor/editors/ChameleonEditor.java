@@ -90,7 +90,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	private Vector<ChameleonAnnotation> chameleonAnnotations;
 	
 	//The outline page with its content for this editor
-	private ChameleonOutlinePage fOutlinePage;
+	private ChameleonOutlinePage _fOutlinePage;
 	
 	//The document that this editor uses.
 	private ChameleonDocument document;
@@ -356,26 +356,19 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	}
 	
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	/**
-	 * @return the adapter object for the given Class.
-	 * if the class is an IContentOutlinePage, and then the outline Page is not effective,
-	 * a new chameleon outline is created & set.
-	 * 
+	 * This method is invoked by Eclipse to obtain e.g. the outline page for an editor.
 	 */
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
-			if (fOutlinePage == null) {
+			if (_fOutlinePage == null) {
 				Language language = getDocument().language();
 				List<String> defaultAllowedOutlineElements = getPresentationManager().getDefaultOutlineElements();
 				List<String> allowedElements = getPresentationManager().getPresentationModel().getOutlineElementsSimple();
-				fOutlinePage= new ChameleonOutlinePage(language, this, allowedElements, defaultAllowedOutlineElements);
-				getDocument().getProjectNature().setOutlinePage(fOutlinePage);
+				_fOutlinePage= new ChameleonOutlinePage(language, this, allowedElements, defaultAllowedOutlineElements);
+				getDocument().getProjectNature().setOutlinePage(_fOutlinePage);
 			}
-			return fOutlinePage;
+			return _fOutlinePage;
 		}
 		return super.getAdapter(required);
 	}
@@ -541,6 +534,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	}
 
 	/**
+	 * Highlight the given Chameleon element
+	 * 
 	 * @see		#highLightElement(Element)
 	 * 
 	 * @param 	element

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 
@@ -34,7 +35,7 @@ public class ChameleonOutlineTree {
 		//  this.decorators = decorators_All;
 		this.node = null;
 		//this.editor = editor;
-		this.children = new ArrayList<ChameleonOutlineTree>(0);  
+		this.children = new ArrayList<ChameleonOutlineTree>();  
 	}
 	
 	/*
@@ -45,7 +46,7 @@ public class ChameleonOutlineTree {
 		//  this.decorators = decorators_All;
 		this.node = node;
 		//this.editor = editor;
-		this.children = new ArrayList<ChameleonOutlineTree>(0);
+		this.children = new ArrayList<ChameleonOutlineTree>();
 	}
 	
 	/**
@@ -72,43 +73,31 @@ public class ChameleonOutlineTree {
 	}
 	
 	/**
+	 * Return a list of children that must be shown in the outline page.
 	 * 
-	 * @param parentElement
-	 * 	the element from which the children are returned
-	 * @return
-	 * 	The Decorator children of the given parentelement
+	 * @param element
+	 * 	The parent element for which the displayed children are returned
 	 */
-	public List<Element> getChildren(Language lang, Element parentElement) {
-		try{
-			List<Element> children = new ArrayList<Element>(0);
-			Element elem = (Element) parentElement;
-			List elementChildren = elem.children();
-			//Vector<String> possibleChildren = hashElements.get(elem.getElement().getClass().getName());
-			for(int i = 0; i < elementChildren.size(); i++){
-				Element elementChild = ((Element)elementChildren.get(i));
-				if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
-					children.add((Element) elementChild);
-				}
-			}
-			if (children.size()>0)
-				return children;
-			else
-				return null;
-			
-			
-		}catch(ClassCastException e){
-			return null;
+	public List<Element> getChildren(Language lang, Element<?,?> element) {
+		List<Element> children = new ArrayList<Element>();
+		for(Element elementChild : element.children()){
+			if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
+	  		children.add(elementChild);
+ 			}
 		}
+		return children;
 	}
 	
 	/**
-	 * Checks whether this element can be be stated in the chameleonTree 
+	 * Checks whether this element can be be stated in the chameleonTree.
 	 * 
 	 * @param elementChild 
 	 * @return true if the element is a proper tree element and has decorators
 	 */
 	public static boolean isAllowedInTree(Language language, Element elementChild) {
-		 return ((elementChild.hasTags()) && (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
+		 return (elementChild instanceof Declaration) &&
+		        ((elementChild.hasTags()) && 
+				    (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
 	}
 	
 	
@@ -147,7 +136,7 @@ public class ChameleonOutlineTree {
 		node = treeElement;
 		if(treeElement !=null){
 			List<Element> treeElementChildren = getChildren(lang, treeElement);
-			if(!(treeElementChildren==null||treeElementChildren.size()==0)){ //Als er dus kinderen zijn
+			if(! treeElementChildren.isEmpty()){ //Als er dus kinderen zijn
 				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
 					Element element = (Element) iter.next();
 					if (!isAllowedInTree(lang, element))

@@ -63,8 +63,7 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 * to each child box of the given box. */
 	protected void addListenerTo(ChameleonOutlineTree box) {
 		box.addListener(this);
-		for (Iterator iterator = box.getChildren().iterator(); iterator.hasNext();) {
-			ChameleonOutlineTree childTree = (ChameleonOutlineTree) iterator.next();
+		for (ChameleonOutlineTree childTree: box.getChildren()) {
 			addListenerTo(childTree);
 		}
 	}
@@ -74,9 +73,8 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 * @return the children for the parentelement
 	 */
 	public Object[] getChildren(Object parentElement) {
-		//System.out.println("ChameleonTreeContents getChildren: ");
-		List<ChameleonOutlineTree> kinderen = ((ChameleonOutlineTree) parentElement).getChildren();
-		return kinderen.toArray();
+		List<ChameleonOutlineTree> children = ((ChameleonOutlineTree) parentElement).getChildren();
+		return children.toArray();
 	}
 
 	public Object getParent(Object object) {
@@ -107,19 +105,16 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 * @see getChildren(object inputelement)
 	 */
 	public Object[] getElements(Object inputElement) {
-		//System.out.println("ChameleonTreeContents getElements");
 		return getChildren(inputElement);
 	}
 
 	public void add(ChameleonOutlineTreeEvent event) {
-		//System.out.println("ChameleonOutlineTreeContentProvider.Add");
 		Element elem = event.getInvolved();
 		viewer.refresh(elem,true);
 	}
 		
 
 	public void remove(ChameleonOutlineTreeEvent event) {
-		//System.out.println("ChameleonOutlineTreeContentProvider.Remove");
 		add(event);
 		
 	}
