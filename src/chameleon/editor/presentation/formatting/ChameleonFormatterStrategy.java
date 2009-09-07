@@ -18,7 +18,7 @@ import org.rejuse.predicate.SafePredicate;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.util.Util;
@@ -115,7 +115,7 @@ public class ChameleonFormatterStrategy implements IFormattingStrategy {
 	 * @return
 	 */
 	private int getNbIndentationStepsForLine(ChameleonDocument document, int lineNb){
-		SortedSet<ChameleonEditorPosition> editorTags = new TreeSet<ChameleonEditorPosition>(ChameleonEditorPosition.lengthComparator);
+		SortedSet<EclipseEditorTag> editorTags = new TreeSet<EclipseEditorTag>(EclipseEditorTag.lengthComparator);
 		document.getEditorTagsWithPredicate( new AllEditorTagSurroundingLinePredicate(document, lineNb) , editorTags);
 		//document.getEditorTagsWithPredicate( new EditorTagAtLinePredicate(document, lineNb) , editorTags);
 		if(editorTags.size()==0)
@@ -128,7 +128,7 @@ public class ChameleonFormatterStrategy implements IFormattingStrategy {
 	/**
 	 * Predicate that checks wheter an ALL-EditorTag is surrounding a certain line
 	 */
-	public static class AllEditorTagSurroundingLinePredicate extends SafePredicate<ChameleonEditorPosition>{
+	public static class AllEditorTagSurroundingLinePredicate extends SafePredicate<EclipseEditorTag>{
 		private final int lineNb;
 		private final ChameleonDocument document;
 		public AllEditorTagSurroundingLinePredicate(ChameleonDocument document, int lineNb) {
@@ -136,10 +136,10 @@ public class ChameleonFormatterStrategy implements IFormattingStrategy {
 			this.document = document;
 		}
 		@Override
-		public boolean eval(ChameleonEditorPosition tag) {
+		public boolean eval(EclipseEditorTag tag) {
 			try {
 				// consider only ALL-editorTags
-				if(!tag.getName().equals(ChameleonEditorPosition.ALL_TAG))
+				if(!tag.getName().equals(EclipseEditorTag.ALL_TAG))
 					return false;
 				// get editorTags surrounding this line
 				int editorTagStartingLineNumber = document.getLineOfOffset(tag.getOffset());
@@ -154,7 +154,7 @@ public class ChameleonFormatterStrategy implements IFormattingStrategy {
 	/**
 	 * Predicate that checks wheter an ALL-EditorTag is surrounding a certain line
 	 */
-	public static class EditorTagAtLinePredicate extends SafePredicate<ChameleonEditorPosition>{
+	public static class EditorTagAtLinePredicate extends SafePredicate<EclipseEditorTag>{
 		private final int lineNb;
 		private final ChameleonDocument document;
 		public EditorTagAtLinePredicate(ChameleonDocument document, int lineNb) {
@@ -162,7 +162,7 @@ public class ChameleonFormatterStrategy implements IFormattingStrategy {
 			this.document = document;
 		}
 		@Override
-		public boolean eval(ChameleonEditorPosition tag) {
+		public boolean eval(EclipseEditorTag tag) {
 			try {
 				// get editorTags at this line
 				int editorTagStartingLineNumber = document.getLineOfOffset(tag.getOffset());

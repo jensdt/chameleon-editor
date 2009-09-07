@@ -74,12 +74,12 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		}
 		// ECLIPSE NEEDS A +1 INCREMENT FOR THE LENGTH
 		length++;
-		setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.ALL_TAG);
+		setSingleLocation(element, offset, length, compilationUnit, EclipseEditorTag.ALL_TAG);
 		if(element instanceof CrossReference) {
-			setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.CROSSREFERENCE_TAG);
+			setSingleLocation(element, offset, length, compilationUnit, EclipseEditorTag.CROSSREFERENCE_TAG);
 		}
 		if(element instanceof Modifier) {
-			setSingleLocation(element, offset, length, compilationUnit, ChameleonEditorPosition.MODIFIER_TAG);
+			setSingleLocation(element, offset, length, compilationUnit, EclipseEditorTag.MODIFIER_TAG);
 		}
  
 	}
@@ -104,8 +104,8 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 				element.removeTag(tagType);
 				System.out.println("Removed duplicate "+tagType+" tag for element of type "+element.getClass().getName());
 			}
-			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,tagType);
-			doc.addPosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,dec);
+			EclipseEditorTag dec = new EclipseEditorTag(offset,length,element,tagType);
+			doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
 //			element.setTag(dec,dectype);
 		} catch (BadLocationException e) {
 			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);

@@ -10,7 +10,7 @@ import chameleon.core.method.Method;
 import chameleon.core.method.MethodListener;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeListener;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 
 
 /**
@@ -35,7 +35,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onTypeNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Type Name Change");
-		ChameleonEditorPosition dec = (ChameleonEditorPosition)type.tag(ChameleonEditorPosition.NAME_TAG);
+		EclipseEditorTag dec = (EclipseEditorTag)type.tag(EclipseEditorTag.NAME_TAG);
 //		for (int i = 0; i < decs.length; i++) {
 //			Decorator dec = (Decorator) decs[i];
 			replaceInDocument(dec.getOffset(),dec.getLength(),type.getName());
@@ -49,7 +49,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	 */
 	public void onVariableNameChangedEvent(Type type){
 		System.out.println("Synchroniser : Detected Variable Name Change");
-		ChameleonEditorPosition deco = (ChameleonEditorPosition) type.tag(ChameleonEditorPosition.ALL_TAG);
+		EclipseEditorTag deco = (EclipseEditorTag) type.tag(EclipseEditorTag.ALL_TAG);
 //		for (int i = 0; i < deco.length; i++) {
 //			Decorator pos = (Decorator) deco[i];
 			try{
@@ -69,7 +69,7 @@ public class DocumentSynchronizer implements TypeListener, MethodListener{
 	public void onMethodNameChangedEvent(Method method){
 		System.out.println("Synchroniser : Detected Method Name Change");
 		
-		ChameleonEditorPosition deco = (ChameleonEditorPosition) method.tag(ChameleonEditorPosition.NAME_TAG);
+		EclipseEditorTag deco = (EclipseEditorTag) method.tag(EclipseEditorTag.NAME_TAG);
 		//for (int i = 0; i < deco.length; i++) {
 			try{
 				IDocument document = _document;

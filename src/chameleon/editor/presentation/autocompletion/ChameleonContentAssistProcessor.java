@@ -19,8 +19,8 @@ import chameleon.core.expression.ExpressionWithTarget;
 import chameleon.core.expression.InvocationTarget;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupStrategy;
-import chameleon.editor.connector.ChameleonEditorExtension;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.support.member.simplename.method.RegularMethodInvocation;
 
@@ -41,7 +41,7 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 		try {
 			IRegion wordRegion = chamDoc.findWordRegion(offset);
 			String nameStart = chamDoc.get(wordRegion.getOffset(), wordRegion.getLength());
-			ChameleonEditorPosition dec = chamDoc.getSmallestEditorTagAtOffset(wordRegion.getOffset());
+			EclipseEditorTag dec = chamDoc.getSmallestEditorTagAtOffset(wordRegion.getOffset());
 			if(dec != null){
 				Element el = dec.getElement();
 //					ContextElement element = (ContextElement)el;
@@ -88,11 +88,11 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 		try {
 			offset--;
 			ChameleonDocument chamDoc = (ChameleonDocument)viewer.getDocument();
-			ChameleonEditorPosition dec = chamDoc.getSmallestEditorTagAtOffset(offset);
+			EclipseEditorTag dec = chamDoc.getSmallestEditorTagAtOffset(offset);
 			if(dec!=null){
 				Element element = dec.getElement();
 				Language language = ((ChameleonDocument)viewer.getDocument()).getProjectNature().getModel().language();
-				ChameleonEditorExtension ext = language.connector(ChameleonEditorExtension.class);
+				EclipseEditorExtension ext = language.connector(EclipseEditorExtension.class);
 				String elementLabel = ext.getLabel(element);
 				if(element instanceof RegularMethodInvocation){
 					RegularMethodInvocation method = (RegularMethodInvocation) element;

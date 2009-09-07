@@ -3,6 +3,7 @@ package chameleon.editor.connector;
 import java.util.Comparator;
 
 import org.eclipse.jface.text.Position;
+import org.rejuse.predicate.SafePredicate;
 
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
@@ -19,7 +20,7 @@ import chameleon.core.tag.Tag;
  * @author Joeri Hendrickx 
  * @author Marko van Dooren
  */
-public class ChameleonEditorPosition extends Position implements Tag {
+public class EclipseEditorTag extends Position implements Tag {
 
 	/**
 	 * Initialize a new Chameleon editor position with the given offset and length, and
@@ -30,7 +31,7 @@ public class ChameleonEditorPosition extends Position implements Tag {
 	 * @param element
 	 * @param name
 	 */
-	public ChameleonEditorPosition(int offset, int length, Element element, String name){
+	public EclipseEditorTag(int offset, int length, Element element, String name){
 		super(Math.max(0,offset),Math.max(0,length));
   	if(element == null) {
   		throw new ChameleonProgrammerException("Initializing decorator with null element");
@@ -88,9 +89,9 @@ public class ChameleonEditorPosition extends Position implements Tag {
 	}
 
 	
-	public ChameleonEditorPosition getParentDecorator(){
+	public EclipseEditorTag getParentDecorator(){
 		Element parentElem = getElement().parent();
-		ChameleonEditorPosition parentDeco = (ChameleonEditorPosition)parentElem.tag(ALL_TAG);
+		EclipseEditorTag parentDeco = (EclipseEditorTag)parentElem.tag(ALL_TAG);
 		return parentDeco;
 	}
 	
@@ -105,8 +106,8 @@ public class ChameleonEditorPosition extends Position implements Tag {
 		return "Offset : "+getOffset()+"\tLength : "+getLength()+"\tElement : "+getElement();
 	}
 
-	public ChameleonEditorPosition clonePosition() {
-		return new ChameleonEditorPosition(getOffset(),getLength(),getElement(),_name);
+	public EclipseEditorTag clonePosition() {
+		return new EclipseEditorTag(getOffset(),getLength(),getElement(),_name);
 	}
 
 
@@ -136,8 +137,8 @@ public class ChameleonEditorPosition extends Position implements Tag {
 	 * 
 	 * @author Tim Vermeiren
 	 */
-	public static Comparator<ChameleonEditorPosition> lengthComparator = new Comparator<ChameleonEditorPosition>() {
-		public int compare(ChameleonEditorPosition t1, ChameleonEditorPosition t2) {
+	public static Comparator<EclipseEditorTag> lengthComparator = new Comparator<EclipseEditorTag>() {
+		public int compare(EclipseEditorTag t1, EclipseEditorTag t2) {
 			// compare by length:
 			int compare = new Integer(t1.getLength()).compareTo(t2.getLength());
 			// if no difference found
@@ -165,8 +166,8 @@ public class ChameleonEditorPosition extends Position implements Tag {
 	 * 
 	 * @author Tim Vermeiren
 	 */
-	public static Comparator<ChameleonEditorPosition> beginoffsetComparator = new Comparator<ChameleonEditorPosition>() {
-		public int compare(ChameleonEditorPosition t1, ChameleonEditorPosition t2) {
+	public static Comparator<EclipseEditorTag> beginoffsetComparator = new Comparator<EclipseEditorTag>() {
+		public int compare(EclipseEditorTag t1, EclipseEditorTag t2) {
 			// compare by offset:
 			int compare = new Integer(t1.getOffset()).compareTo(t2.getOffset());
 			// if no difference found
@@ -181,5 +182,26 @@ public class ChameleonEditorPosition extends Position implements Tag {
 			return new Integer(t1.hashCode()).compareTo(t2.hashCode());
 		}
 	};
+
+	
+	
+	/**
+	 * Predicate that checks wheter an EditorTag has a given tagname
+	 */
+	public static class NamePredicate extends SafePredicate<EclipseEditorTag>{
+		private String _tagName;
+		/**
+		 * @param 	tagName
+		 * 			Must be a constant of EditorTagTypes
+		 */
+		public NamePredicate(String tagName) {
+			this._tagName = tagName;
+		}
+		@Override
+		public boolean eval(EclipseEditorTag tag) {
+			return tag.getName().equals(_tagName);
+		}
+	}
+	
 
 }

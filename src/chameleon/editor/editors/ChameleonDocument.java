@@ -38,8 +38,8 @@ import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.ChameleonEditorExtension;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.input.ModelFactory;
@@ -175,8 +175,8 @@ public class ChameleonDocument extends Document {
 	 * The meta model is also set here.
 	 */
 	private void initialize(){
-		addPositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
-		addPositionUpdater(new DefaultPositionUpdater(ChameleonEditorPosition.CHAMELEON_CATEGORY));
+		addPositionCategory(EclipseEditorTag.CHAMELEON_CATEGORY);
+		addPositionUpdater(new DefaultPositionUpdater(EclipseEditorTag.CHAMELEON_CATEGORY));
 	}
 
 	/**
@@ -186,14 +186,14 @@ public class ChameleonDocument extends Document {
 	public void printPositionsAndParents(){
 		Position[] pos;
 		try {
-				pos = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+				pos = getPositions(EclipseEditorTag.CHAMELEON_CATEGORY);
 				System.out.println("***********************\n" +
 								   "***********************\n" +
 								   "* elements with __ALL decorator\n " +
 								   "***********************");
 				for(int i=0; i<pos.length; i++){
-					String elementname = ((ChameleonEditorPosition)pos[i]).getElement().getClass().getName();
-					String decoratorName =((ChameleonEditorPosition)pos[i]).getName();
+					String elementname = ((EclipseEditorTag)pos[i]).getElement().getClass().getName();
+					String decoratorName =((EclipseEditorTag)pos[i]).getName();
 					if (decoratorName.equals("__ALL")){
 						System.out.println(elementname);
 					}
@@ -207,8 +207,8 @@ public class ChameleonDocument extends Document {
 						   "***********************");
 
 			for(int i=0; i<pos.length; i++){
-				String elementname = ((ChameleonEditorPosition)pos[i]).getElement().getClass().getName();
-				String decoratorName =((ChameleonEditorPosition)pos[i]).getName();
+				String elementname = ((EclipseEditorTag)pos[i]).getElement().getClass().getName();
+				String decoratorName =((EclipseEditorTag)pos[i]).getName();
 				if (decoratorName.equals("__ALL")
 						&&
 					(elementname.equals("org.jnome.mm.compilationunit.CompilationUnit")||
@@ -223,7 +223,7 @@ public class ChameleonDocument extends Document {
 					String parentDecorator;
 
 					try {
-						parentDecorator= ((ChameleonEditorPosition)pos[i]).getParentDecorator().getElement().getClass().getName();
+						parentDecorator= ((EclipseEditorTag)pos[i]).getParentDecorator().getElement().getClass().getName();
 						
 					} catch (Exception e) {
 						parentDecorator = "parentDecorator not found" ;
@@ -306,8 +306,8 @@ public class ChameleonDocument extends Document {
 	 */
 	public void dumpPositions() {
 		try {
-			this.removePositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
-			this.addPositionCategory(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+			this.removePositionCategory(EclipseEditorTag.CHAMELEON_CATEGORY);
+			this.addPositionCategory(EclipseEditorTag.CHAMELEON_CATEGORY);
 		} catch (BadPositionCategoryException e) {}
 		
 	}
@@ -367,7 +367,7 @@ public class ChameleonDocument extends Document {
 	 * 
 	 * @return the elements which are folded
 	 */
-	public Vector<ChameleonEditorPosition> getFoldedElementsFromModel() {
+	public Vector<EclipseEditorTag> getFoldedElementsFromModel() {
 		return getPresentationManager().getFoldedElementsFromModel();
 	}
 
@@ -520,16 +520,16 @@ public class ChameleonDocument extends Document {
 	 * 			| result == null || result.includes(region.getOffset())
 	 * @autor 	Tim Vermeiren
 	 */
-	public ChameleonEditorPosition getReferencePositionAtRegion(IRegion region){
+	public EclipseEditorTag getReferencePositionAtRegion(IRegion region){
 		try {
-			Position[] positions = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY);
+			Position[] positions = getPositions(EclipseEditorTag.CHAMELEON_CATEGORY);
 			// Find smallest decorater including the specified region:
 			int minLength = Integer.MAX_VALUE;
-			ChameleonEditorPosition result = null;
+			EclipseEditorTag result = null;
 			for (Position position : positions) {
-				if(position instanceof ChameleonEditorPosition ){
-					ChameleonEditorPosition decorator = (ChameleonEditorPosition) position;
-					if(decorator.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_TAG)){
+				if(position instanceof EclipseEditorTag ){
+					EclipseEditorTag decorator = (EclipseEditorTag) position;
+					if(decorator.getName().equals(EclipseEditorTag.CROSSREFERENCE_TAG)){
 						if(decorator.includes(region.getOffset()) && decorator.getLength()<minLength){
 							result = decorator;
 						}
@@ -575,16 +575,16 @@ public class ChameleonDocument extends Document {
 	 * 			| result == null || result.includes(region.getOffset())
 	 * @autor 	Tim Vermeiren
 	 */
-	public ChameleonEditorPosition getReferenceEditorTagAtRegion(IRegion region){
+	public EclipseEditorTag getReferenceEditorTagAtRegion(IRegion region){
 		final int offset = region.getOffset();
 		// build a predicate that checks if the EditorTag includes the offset:
-		SafePredicate<ChameleonEditorPosition> predicate = new SafePredicate<ChameleonEditorPosition>(){
+		SafePredicate<EclipseEditorTag> predicate = new SafePredicate<EclipseEditorTag>(){
 			@Override
-			public boolean eval(ChameleonEditorPosition editorTag) {
-				return (editorTag.getName().equals(ChameleonEditorPosition.CROSSREFERENCE_TAG)) && editorTag.includes(offset);
+			public boolean eval(EclipseEditorTag editorTag) {
+				return (editorTag.getName().equals(EclipseEditorTag.CROSSREFERENCE_TAG)) && editorTag.includes(offset);
 			}
 		};
-		Collection<ChameleonEditorPosition> tags = new TreeSet<ChameleonEditorPosition>(ChameleonEditorPosition.lengthComparator);
+		Collection<EclipseEditorTag> tags = new TreeSet<EclipseEditorTag>(EclipseEditorTag.lengthComparator);
 		getEditorTagsWithPredicate(predicate, tags);
 		if(tags.size()==0){
 			return null;
@@ -602,8 +602,8 @@ public class ChameleonDocument extends Document {
 	 * 			| result == null || result.includes(region.getOffset())
 	 * @autor 	Tim Vermeiren
 	 */
-	public ChameleonEditorPosition getSmallestEditorTagAtOffset(final int offset){
-		Collection<ChameleonEditorPosition> tags = getEditorTagsAtOffset(offset, ChameleonEditorPosition.lengthComparator);
+	public EclipseEditorTag getSmallestEditorTagAtOffset(final int offset){
+		Collection<EclipseEditorTag> tags = getEditorTagsAtOffset(offset, EclipseEditorTag.lengthComparator);
 		if(tags.size()==0){
 			return null;
 		}
@@ -618,10 +618,10 @@ public class ChameleonDocument extends Document {
 	 * @param comparator
 	 * @autor Tim Vermeiren
 	 */
-	public Collection<ChameleonEditorPosition> getEditorTagsAtOffset(int offset, Comparator<ChameleonEditorPosition> comparator){
+	public Collection<EclipseEditorTag> getEditorTagsAtOffset(int offset, Comparator<EclipseEditorTag> comparator){
 		// build a predicate that checks if the EditorTag includes the offset:
-		SafePredicate<ChameleonEditorPosition> predicate = new EditorTagSurroundsOffsetPredicate(offset);
-		Collection<ChameleonEditorPosition> tags = new TreeSet<ChameleonEditorPosition>(comparator);
+		SafePredicate<EclipseEditorTag> predicate = new EditorTagSurroundsOffsetPredicate(offset);
+		Collection<EclipseEditorTag> tags = new TreeSet<EclipseEditorTag>(comparator);
 		getEditorTagsWithPredicate(predicate, tags);
 		return tags;
 	}
@@ -638,12 +638,12 @@ public class ChameleonDocument extends Document {
 	 * 			elements will be added to the result
 	 * @autor 	Tim Vermeiren
 	 */
-	public void getEditorTagsWithPredicate(Predicate<ChameleonEditorPosition> predicate, Collection<ChameleonEditorPosition> result){
+	public void getEditorTagsWithPredicate(Predicate<EclipseEditorTag> predicate, Collection<EclipseEditorTag> result){
 		try {
-			Position[] positions = getPositions(ChameleonEditorPosition.CHAMELEON_CATEGORY); // throws BadPositionCategoryException
+			Position[] positions = getPositions(EclipseEditorTag.CHAMELEON_CATEGORY); // throws BadPositionCategoryException
 			for (Position position : positions) {
-				if(position instanceof ChameleonEditorPosition ){
-					ChameleonEditorPosition editorTag = (ChameleonEditorPosition) position;
+				if(position instanceof EclipseEditorTag ){
+					EclipseEditorTag editorTag = (EclipseEditorTag) position;
 					if(predicate.eval(editorTag)){
 						result.add(editorTag);
 					}
@@ -661,7 +661,7 @@ public class ChameleonDocument extends Document {
 	/**
 	 * Predicate that checks wheter an EditorTag has a given tagname
 	 */
-	public static class EditorTagHasNamePredicate extends SafePredicate<ChameleonEditorPosition>{
+	public static class EditorTagHasNamePredicate extends SafePredicate<EclipseEditorTag>{
 		private String tagName;
 		/**
 		 * @param 	tagName
@@ -671,7 +671,7 @@ public class ChameleonDocument extends Document {
 			this.tagName = tagName;
 		}
 		@Override
-		public boolean eval(ChameleonEditorPosition tag) {
+		public boolean eval(EclipseEditorTag tag) {
 			return tag.getName().equals(tagName);
 		}
 	}
@@ -679,13 +679,13 @@ public class ChameleonDocument extends Document {
 	/**
 	 * Predicate that checks wheter an EditorTag has a given tagname
 	 */
-	public static class EditorTagSurroundsOffsetPredicate extends SafePredicate<ChameleonEditorPosition>{
+	public static class EditorTagSurroundsOffsetPredicate extends SafePredicate<EclipseEditorTag>{
 		private int offset;
 		public EditorTagSurroundsOffsetPredicate(int offset) {
 			this.offset = offset;
 		}
 		@Override
-		public boolean eval(ChameleonEditorPosition editorTag) {
+		public boolean eval(EclipseEditorTag editorTag) {
 			return editorTag.includes(offset);
 		}
 	}

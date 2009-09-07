@@ -194,38 +194,46 @@
 		id="default" />
 	</extension>
 
-<extension point="org.eclipse.ui.views" >
-	<category 
-	   id="chameleon.editor.ChameleonEditorPlugin"
-	   name="Chameleon editor">
-	</category>
+  <extension point="org.eclipse.ui.views" >
+	  <category 
+	    id="chameleon.editor.ChameleonEditorPlugin"
+	    name="Chameleon editor">
+	  </category>
 	
-	<view 
-		id="chameleon.editor.ChameleonEditorPlugin.hierarchyview" 
-		name="Type Hierarchy"
-		icon="icons/type_hierarchy.gif"
-		category="chameleon.editor.ChameleonEditorPlugin"
-		class="chameleon.editor.presentation.hierarchy.HierarchyView" 
-	/>
+	  <view 
+		  id="chameleon.editor.ChameleonEditorPlugin.hierarchyview" 
+		  name="Type Hierarchy"
+		  icon="icons/type_hierarchy.gif"
+		  category="chameleon.editor.ChameleonEditorPlugin"
+		  class="chameleon.editor.presentation.hierarchy.HierarchyView"/>
 	
-	<view 
-		id="chameleon.editor.ChameleonEditorPlugin.callhierarchyview" 
-		name="Call Hierarchy"
-		icon="icons/call_hierarchy.gif"
-		category="chameleon.editor.ChameleonEditorPlugin"
-		class="chameleon.editor.presentation.callhierarchy.CallHierarchyView" 
-	/>
+	  <view 
+		  id="chameleon.editor.ChameleonEditorPlugin.callhierarchyview" 
+		  name="Call Hierarchy"
+		  icon="icons/call_hierarchy.gif"
+		  category="chameleon.editor.ChameleonEditorPlugin"
+		  class="chameleon.editor.presentation.callhierarchy.CallHierarchyView"/>
 	
-</extension>
-   
-   
-  <extension point="org.eclipse.ui.views">
     <view 
-		id="chameleon.editor.ChameleonEditorPlugin.modelview" 
-		name="Chameleon Model"
-		icon="icons/model.gif"
-		category="chameleon.editor.ChameleonEditorPlugin"
-		class="chameleon.editor.developertools.modelview.ModelView"/>
+		  id="chameleon.editor.ChameleonEditorPlugin.modelview" 
+		  name="Chameleon Model"
+		  icon="icons/model.gif"
+		  category="chameleon.editor.ChameleonEditorPlugin"
+		  class="chameleon.editor.developertools.modelview.ModelView"/>
+
+	  <view 
+		  id="chameleon.editor.ChameleonEditorPlugin.editortagtextview" 
+		  name="EditorTag Text View"
+		  icon="icons/model.gif"
+		  category="chameleon.editor.ChameleonEditorPlugin"
+		  class="chameleon.editor.developertools.tagview.EditorTagTextView"/>
+	
+	  <view 
+		  id="chameleon.editor.ChameleonEditorPlugin.editortaglistview" 
+		  name="EditorTag List View"
+		  icon="icons/model.gif"
+		  category="chameleon.editor.ChameleonEditorPlugin"
+		  class="chameleon.editor.developertools.tagview.EditorTagListView"/>
   </extension>
    
 </plugin>

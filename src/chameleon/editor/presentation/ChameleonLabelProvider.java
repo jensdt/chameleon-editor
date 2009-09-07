@@ -21,8 +21,8 @@ import chameleon.core.type.Type;
 import chameleon.core.type.TypeElement;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.ChameleonEditorExtension;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.hierarchy.HierarchyTypeNode;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
@@ -159,8 +159,8 @@ public class ChameleonLabelProvider implements ILabelProvider {
 				return node.getType();
 			} else if (modelObject instanceof Element) {
 				return (Element) modelObject;
-			} else if(modelObject instanceof ChameleonEditorPosition){
-				return ((ChameleonEditorPosition)modelObject).getElement();
+			} else if(modelObject instanceof EclipseEditorTag){
+				return ((EclipseEditorTag)modelObject).getElement();
 			}
 		} catch (MetamodelException e) {
 			e.printStackTrace();
@@ -186,8 +186,8 @@ public class ChameleonLabelProvider implements ILabelProvider {
 			}
 		}
 		// For EditorTags, append their name and offsets
-		if(modelObject instanceof ChameleonEditorPosition){
-			ChameleonEditorPosition tag = (ChameleonEditorPosition)modelObject;
+		if(modelObject instanceof EclipseEditorTag){
+			EclipseEditorTag tag = (EclipseEditorTag)modelObject;
 			int beginOffset = tag.getOffset();
 			int endOffset = beginOffset + tag.getLength();
 			label = label + " - " + tag.getName() + " (" + beginOffset + " - " + endOffset + ")";
@@ -236,7 +236,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 
 	/**
 	 * Returns a simple label for the given object. This is the label as given by the 
-	 * {@link ChameleonEditorExtension#getLabel(Element)} method of the tool extension
+	 * {@link EclipseEditorExtension#getLabel(Element)} method of the tool extension
 	 * of the current language.
 	 * 
 	 * @param modelObject
@@ -244,7 +244,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	public String getLabel(Object modelObject){
 		Element element = getElement(modelObject);
 		if(element != null) {
-			ChameleonEditorExtension ext = getLanguage().connector(ChameleonEditorExtension.class);
+			EclipseEditorExtension ext = getLanguage().connector(EclipseEditorExtension.class);
 			return ext.getLabel(element);
 		} else {
 			return modelObject.toString();

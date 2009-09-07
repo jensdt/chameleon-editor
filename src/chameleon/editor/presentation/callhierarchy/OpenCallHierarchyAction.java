@@ -16,7 +16,7 @@ import org.rejuse.predicate.SafePredicate;
 
 import chameleon.core.language.Language;
 import chameleon.core.method.Method;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
@@ -75,13 +75,13 @@ public abstract class OpenCallHierarchyAction extends Action {
 						TextSelection textSel = (TextSelection) sel;
 						final int offset = textSel.getOffset();
 						// build a predicate that checks if the EditorTag includes the offset and is a method:
-						SafePredicate<ChameleonEditorPosition> predicate = new SafePredicate<ChameleonEditorPosition>(){
+						SafePredicate<EclipseEditorTag> predicate = new SafePredicate<EclipseEditorTag>(){
 							@Override
-							public boolean eval(ChameleonEditorPosition editorTag) {
+							public boolean eval(EclipseEditorTag editorTag) {
 								return editorTag.includes(offset) && (editorTag.getElement() instanceof Method);
 							}
 						};
-						Collection<ChameleonEditorPosition> result = new TreeSet<ChameleonEditorPosition>(ChameleonEditorPosition.lengthComparator);
+						Collection<EclipseEditorTag> result = new TreeSet<EclipseEditorTag>(EclipseEditorTag.lengthComparator);
 						doc.getEditorTagsWithPredicate(predicate, result);
 						if(result.size()>0){
 							Method currentMethod = (Method)result.iterator().next().getElement();

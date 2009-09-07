@@ -28,7 +28,7 @@ import org.eclipse.ui.part.ViewPart;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
 import chameleon.editor.presentation.TreeViewerActions;
@@ -172,8 +172,8 @@ public class ModelView extends ViewPart {
 				IMenuManager subMenuMgr = new MenuManager("Show editor tag in editor");
 				Collection<Tag> tags = element.tags();
 				for(Tag currentTag : tags){
-					if(currentTag instanceof ChameleonEditorPosition){
-						subMenuMgr.add(new ShowEditorTagAction(modelViewer, (ChameleonEditorPosition)currentTag));
+					if(currentTag instanceof EclipseEditorTag){
+						subMenuMgr.add(new ShowEditorTagAction(modelViewer, (EclipseEditorTag)currentTag));
 					}
 				}
 				// Add submenu to menu:
@@ -189,8 +189,8 @@ public class ModelView extends ViewPart {
 	 */
 	private class ShowEditorTagAction extends Action {
 		private TreeViewer modelViewer;
-		private ChameleonEditorPosition editorTag;
-		public ShowEditorTagAction(TreeViewer modelViewer, ChameleonEditorPosition editorTag) {
+		private EclipseEditorTag editorTag;
+		public ShowEditorTagAction(TreeViewer modelViewer, EclipseEditorTag editorTag) {
 			super(editorTag.getName() + " (" + editorTag.getOffset() + " - " + (editorTag.getOffset()+editorTag.getLength()) + ")");
 			this.modelViewer = modelViewer;
 			this.editorTag = editorTag;
@@ -222,7 +222,7 @@ public class ModelView extends ViewPart {
 				if(selectedObject instanceof Element){
 					Element element = ((Element) selectedObject);
 					ChameleonEditor editor = ChameleonEditor.getCurrentActiveEditor();
-					boolean succeeded = ChameleonEditor.showInEditor(element, false, editor, true, ChameleonEditorPosition.ALL_TAG);
+					boolean succeeded = ChameleonEditor.showInEditor(element, false, editor, true, EclipseEditorTag.ALL_TAG);
 					// if no document of element found, just highlight the EditorTag in the current active editor:
 					// eg. Modifiers cannot be highlighted with showInEditor
 					if(!succeeded && editor != null){
@@ -245,7 +245,7 @@ public class ModelView extends ViewPart {
 				Object selectedObject = ((StructuredSelection)sel).getFirstElement();
 				if(selectedObject instanceof Element){
 					Element element = ((Element) selectedObject);
-					ChameleonEditor.showInEditor(element, true, null, true, ChameleonEditorPosition.ALL_TAG);
+					ChameleonEditor.showInEditor(element, true, null, true, EclipseEditorTag.ALL_TAG);
 				}
 			}
 		}

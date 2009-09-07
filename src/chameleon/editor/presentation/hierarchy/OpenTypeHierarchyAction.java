@@ -28,7 +28,7 @@ import chameleon.core.language.Language;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeReference;
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
@@ -138,19 +138,19 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 						// get type editor tag around selection with predicate
 						final int offset = textSel.getOffset();
 						// build a predicate that checks if the EditorTag includes the offset and is a type(reference):
-						SafePredicate<ChameleonEditorPosition> predicate = new SafePredicate<ChameleonEditorPosition>(){
+						SafePredicate<EclipseEditorTag> predicate = new SafePredicate<EclipseEditorTag>(){
 							@Override
-							public boolean eval(ChameleonEditorPosition editorTag) {
+							public boolean eval(EclipseEditorTag editorTag) {
 								return editorTag.includes(offset) && 
 								(	(editorTag.getElement() instanceof Type) 
 										|| (editorTag.getElement() instanceof TypeReference)
 								);
 							}
 						};
-						Collection<ChameleonEditorPosition> tags = new TreeSet<ChameleonEditorPosition>(ChameleonEditorPosition.lengthComparator);
+						Collection<EclipseEditorTag> tags = new TreeSet<EclipseEditorTag>(EclipseEditorTag.lengthComparator);
 						doc.getEditorTagsWithPredicate(predicate, tags);
 						if(tags != null && tags.size()>0){
-							for(ChameleonEditorPosition tag : tags ){
+							for(EclipseEditorTag tag : tags ){
 								if(tag!=null && tag.getElement() instanceof Type){
 									return (Type)tag.getElement();
 								} else if(tag!=null && tag.getElement() instanceof TypeReference){

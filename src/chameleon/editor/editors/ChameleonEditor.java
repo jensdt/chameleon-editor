@@ -57,7 +57,7 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
@@ -321,10 +321,10 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be folded
 	 */
-	public void fold(Vector<ChameleonEditorPosition> positions){
+	public void fold(Vector<EclipseEditorTag> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
 			for (int i = 0; i < positions.size(); i++) {
-				ChameleonEditorPosition dec = positions.get(i);
+				EclipseEditorTag dec = positions.get(i);
 					if(chamAnnot.getPosition().getOffset()==dec.getOffset() &&
 					   chamAnnot.getPosition().getLength()==dec.getLength()	){
 						annotationModel.collapse(chamAnnot.getAnnotation());
@@ -340,10 +340,10 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be unfolded
 	 */
-	public void unfold(Vector<ChameleonEditorPosition> positions){
+	public void unfold(Vector<EclipseEditorTag> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
 			for (int i = 0; i < positions.size(); i++) {
-				ChameleonEditorPosition dec = positions.get(i);
+				EclipseEditorTag dec = positions.get(i);
 					if(chamAnnot.getPosition().getOffset()==dec.getOffset() &&
 					   chamAnnot.getPosition().getLength()==dec.getLength()	){
 					annotationModel.expand(chamAnnot.getAnnotation());
@@ -530,7 +530,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * 			for extra options
 	 */
 	public void highLightElement(Element element){
-		highLightElement(element, true, ChameleonEditorPosition.NAME_TAG);
+		highLightElement(element, true, EclipseEditorTag.NAME_TAG);
 	}
 
 	/**
@@ -556,16 +556,16 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 			resetHighlight(selectElement);
 			return;
 		} else if(element.hasTag(editorTagName)){
-			ChameleonEditorPosition tag = (ChameleonEditorPosition)element.tag(editorTagName);
+			EclipseEditorTag tag = (EclipseEditorTag)element.tag(editorTagName);
 			start = tag.getOffset();
 			length = tag.getLength();
-		} else if(element.hasTag(ChameleonEditorPosition.ALL_TAG)){
-			ChameleonEditorPosition tag = (ChameleonEditorPosition)element.tag(ChameleonEditorPosition.ALL_TAG);
+		} else if(element.hasTag(EclipseEditorTag.ALL_TAG)){
+			EclipseEditorTag tag = (EclipseEditorTag)element.tag(EclipseEditorTag.ALL_TAG);
 			start = tag.getOffset();
 			length = tag.getLength();
 		} else { // gebruik een willekeurige editorTag
 			Collection<Tag> tags = element.tags();
-			ChameleonEditorPosition firstTag = (ChameleonEditorPosition) tags.iterator().next();
+			EclipseEditorTag firstTag = (EclipseEditorTag) tags.iterator().next();
 			start = firstTag.getOffset();
 			length = firstTag.getLength();
 		}
@@ -616,7 +616,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @result	true if the element is shown, false when failed or (element is part of closed editor and openNewEditor == false)
 	 */
 	public static boolean showInEditor(Element element, boolean openNewEditor, ChameleonEditor chamEditor){
-		return showInEditor(element, openNewEditor, chamEditor, true, ChameleonEditorPosition.NAME_TAG);
+		return showInEditor(element, openNewEditor, chamEditor, true, EclipseEditorTag.NAME_TAG);
 	}
 
 	/**

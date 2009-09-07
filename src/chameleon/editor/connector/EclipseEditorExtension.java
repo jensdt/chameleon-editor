@@ -11,7 +11,7 @@ import chameleon.tool.ConnectorImpl;
 /**
  * @author Marko van Dooren
  */
-public abstract class ChameleonEditorExtension extends ConnectorImpl {
+public abstract class EclipseEditorExtension extends ConnectorImpl {
 
 //	  public ChameleonEditorExtension(ChameleonProjectNature nature) {
 //	  	_projectNature = nature;

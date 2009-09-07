@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Image;
 import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.method.RegularMethod;
-import chameleon.editor.connector.ChameleonEditorExtension;
+import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.presentation.ChameleonLabelProvider;
 
@@ -72,7 +72,7 @@ public class CompletionProposalBuilder {
 	 */
 	public static ICompletionProposal buildTemplateProposal(RegularMethod method, ChameleonDocument document, int offset){
 		// get the pattern from the ChameleonEditorExtention (parameters are template regions)
-		ChameleonEditorExtension ext = document.getProjectNature().getModel().language().connector(ChameleonEditorExtension.class);
+		EclipseEditorExtension ext = document.getProjectNature().getModel().language().connector(EclipseEditorExtension.class);
 		String patternString = ext.getMethodTemplatePattern(method);
 		// use ChameleonLabelProvider for label and icon:
 		ChameleonLabelProvider labelProvider = new ChameleonLabelProvider(method.language(), true, true, false);

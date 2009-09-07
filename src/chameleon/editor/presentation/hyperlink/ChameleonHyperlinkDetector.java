@@ -12,7 +12,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 
 import chameleon.core.element.Element;
 import chameleon.core.reference.CrossReference;
-import chameleon.editor.connector.ChameleonEditorPosition;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 
 /**
@@ -45,7 +45,7 @@ public class ChameleonHyperlinkDetector implements IHyperlinkDetector {
 		// print out the word covered by the mousepointer while holding CTRL:
 		// System.out.println("Mouse-over word: " + document.findWord(region.getOffset()) ); // debugging
 		// get the editorTag:
-		ChameleonEditorPosition editorTag = document.getReferenceEditorTagAtRegion(region);
+		EclipseEditorTag editorTag = document.getReferenceEditorTagAtRegion(region);
 		if(editorTag == null)
 			return null;
 		// get the element:

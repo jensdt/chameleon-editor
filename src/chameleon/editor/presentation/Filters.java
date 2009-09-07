@@ -27,7 +27,7 @@ import chameleon.core.namespacepart.NamespacePart;
 import chameleon.core.type.Type;
 import chameleon.core.variable.MemberVariable;
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.connector.ChameleonEditorExtension;
+import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.util.Util;
 
@@ -235,7 +235,7 @@ public class Filters {
 	public static void addModifierFiltersSubmenu(StructuredViewer viewer, IContributionManager mgr, Language language){
 		if(language != null){
 			IMenuManager filtersSubmenu = new MenuManager("Modifier filters (" + language.name()+")");
-			ChameleonEditorExtension ext = language.connector(ChameleonEditorExtension.class);
+			EclipseEditorExtension ext = language.connector(EclipseEditorExtension.class);
 			if(ext != null){
 				List<Modifier> modifiers = ext.getFilterModifiers();
 				for(Modifier mod : modifiers){
