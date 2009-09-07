@@ -100,12 +100,12 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 			if(doc.getLength() == 0) {
 				System.out.println("Empty document.");
 			}
-			if(element.hasTag(tagType)) {
-				element.removeTag(tagType);
-				System.out.println("Removed duplicate "+tagType+" tag for element of type "+element.getClass().getName());
+			if(! element.hasTag(tagType)) {
+//				element.removeTag(tagType);
+//				System.out.println("Removed duplicate "+tagType+" tag for element of type "+element.getClass().getName());
+				EclipseEditorTag dec = new EclipseEditorTag(offset,length,element,tagType);
+				doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
 			}
-			EclipseEditorTag dec = new EclipseEditorTag(offset,length,element,tagType);
-			doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
 //			element.setTag(dec,dectype);
 		} catch (BadLocationException e) {
 			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);

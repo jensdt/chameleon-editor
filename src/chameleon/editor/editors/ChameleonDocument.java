@@ -620,7 +620,7 @@ public class ChameleonDocument extends Document {
 	 */
 	public Collection<EclipseEditorTag> getEditorTagsAtOffset(int offset, Comparator<EclipseEditorTag> comparator){
 		// build a predicate that checks if the EditorTag includes the offset:
-		SafePredicate<EclipseEditorTag> predicate = new EditorTagSurroundsOffsetPredicate(offset);
+		SafePredicate<EclipseEditorTag> predicate = new EclipseEditorTag.SurroundsOffsetPredicate(offset);
 		Collection<EclipseEditorTag> tags = new TreeSet<EclipseEditorTag>(comparator);
 		getEditorTagsWithPredicate(predicate, tags);
 		return tags;
@@ -658,37 +658,23 @@ public class ChameleonDocument extends Document {
 		}
 	}
 	
-	/**
-	 * Predicate that checks wheter an EditorTag has a given tagname
-	 */
-	public static class EditorTagHasNamePredicate extends SafePredicate<EclipseEditorTag>{
-		private String tagName;
-		/**
-		 * @param 	tagName
-		 * 			Must be a constant of EditorTagTypes
-		 */
-		public EditorTagHasNamePredicate(String tagName) {
-			this.tagName = tagName;
-		}
-		@Override
-		public boolean eval(EclipseEditorTag tag) {
-			return tag.getName().equals(tagName);
-		}
-	}
-	
-	/**
-	 * Predicate that checks wheter an EditorTag has a given tagname
-	 */
-	public static class EditorTagSurroundsOffsetPredicate extends SafePredicate<EclipseEditorTag>{
-		private int offset;
-		public EditorTagSurroundsOffsetPredicate(int offset) {
-			this.offset = offset;
-		}
-		@Override
-		public boolean eval(EclipseEditorTag editorTag) {
-			return editorTag.includes(offset);
-		}
-	}
+//	/**
+//	 * Predicate that checks wheter an EditorTag has a given tagname
+//	 */
+//	public static class EditorTagHasNamePredicate extends SafePredicate<EclipseEditorTag>{
+//		private String tagName;
+//		/**
+//		 * @param 	tagName
+//		 * 			Must be a constant of EditorTagTypes
+//		 */
+//		public EditorTagHasNamePredicate(String tagName) {
+//			this.tagName = tagName;
+//		}
+//		@Override
+//		public boolean eval(EclipseEditorTag tag) {
+//			return tag.getName().equals(tagName);
+//		}
+//	}
 	
 	/**
 	 * Returns the word found in document including the given offset.

@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
+import org.rejuse.predicate.Predicate;
 import org.rejuse.predicate.True;
 
 import chameleon.editor.ChameleonEditorPlugin;
@@ -36,7 +37,9 @@ import chameleon.editor.presentation.ChameleonLabelProvider;
  * @author Tim Vermeiren
  */
 public class EditorTagListView extends ViewPart {
-
+  //FIXME: does not correctly highlight multiple positions with the same name (keyword) for a single element
+	//FIXME: does not show positions if their range is the same.
+	
 	TableViewer viewer;
 	Label label;
 	ChameleonEditor editor;
@@ -101,42 +104,38 @@ public class EditorTagListView extends ViewPart {
 		label.setFocus();
 	}
 
-
-	private class ShowEditorTagListAction extends Action {
-		public ShowEditorTagListAction() {
-			super("Show Editor Tags");
+	private class PredicateShowEditorTagListAction extends Action {
+		private Predicate<EclipseEditorTag> _predicate;
+		
+		public PredicateShowEditorTagListAction(String message, Predicate<EclipseEditorTag> predicate) {
+			super(message);
+			_predicate = predicate;
 		}
+
 		@Override
 		public void run() {
 			editor = ChameleonEditor.getCurrentActiveEditor();
 			if(editor != null){
 				ChameleonDocument doc = editor.getDocument();
 				// set filter predicate to True
-				((EditorTagContentProvider)viewer.getContentProvider()).filterPredicate = new True<EclipseEditorTag>();
+				((EditorTagContentProvider)viewer.getContentProvider()).setFilter(_predicate);
 				viewer.setLabelProvider(new ChameleonLabelProvider(doc.language(), false, false, true));
 				viewer.setInput(doc);
 			} else {
 				ChameleonEditorPlugin.showMessageBox("Error", "Error while trying to open Editor Tag List View.\nNo Chameleon editor found.\nThe current active editor must be an Chameleon Editor.", SWT.ICON_ERROR);
 			}
 		}
+}
+
+	private class ShowEditorTagListAction extends PredicateShowEditorTagListAction {
+		public ShowEditorTagListAction() {
+			super("Show Editor Tags",new True<EclipseEditorTag>());
+		}
 	}
 
-	private class ShowAllEditorTagListAction extends Action {
+	private class ShowAllEditorTagListAction extends PredicateShowEditorTagListAction {
 		public ShowAllEditorTagListAction() {
-			super("Show ALL-Editor Tags");
-		}
-		@Override
-		public void run() {
-			editor = ChameleonEditor.getCurrentActiveEditor();
-			if(editor != null){
-				ChameleonDocument doc = editor.getDocument();
-				// set filter predicate to "only all-editor tags"
-				((EditorTagContentProvider)viewer.getContentProvider()).filterPredicate = new ChameleonDocument.EditorTagHasNamePredicate(EclipseEditorTag.ALL_TAG);
-				viewer.setLabelProvider(new ChameleonLabelProvider(doc.language(), false, false, false));
-				viewer.setInput(doc);
-			} else {
-				ChameleonEditorPlugin.showMessageBox("Error", "Error while trying to open Editor Tag List View.\nNo Chameleon editor found.\nThe current active editor must be an Chameleon Editor.", SWT.ICON_ERROR);
-			}
+			super("Show ALL-Editor Tags",new EclipseEditorTag.NamePredicate(EclipseEditorTag.ALL_TAG));
 		}
 	}
 
@@ -152,7 +151,7 @@ public class EditorTagListView extends ViewPart {
 				ChameleonDocument doc = editor.getDocument(); // can throw NullPointerException
 				int offset = ((TextSelection)editor.getSelectionProvider().getSelection()).getOffset(); // can throw ClassCastException or NullPointerException
 				// set filter predicate to "only all-editor tags"
-				((EditorTagContentProvider)viewer.getContentProvider()).filterPredicate = new ChameleonDocument.EditorTagSurroundsOffsetPredicate(offset);
+				((EditorTagContentProvider)viewer.getContentProvider()).setFilter(new EclipseEditorTag.SurroundsOffsetPredicate(offset));
 				viewer.setLabelProvider(new ChameleonLabelProvider(doc.language(), false, false, false));
 				viewer.setInput(doc);
 				} else {
@@ -164,6 +163,7 @@ public class EditorTagListView extends ViewPart {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
 	private class ClearAction extends Action {
@@ -190,7 +190,8 @@ public class EditorTagListView extends ViewPart {
 					IWorkbenchPage page = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
 					page.bringToTop(editor);
 					// hightlight element
-					editor.highLightElement(tag.getElement(), true, tag.getName());
+//					editor.highLightElement(tag.getElement(), true, tag.getName());
+					editor.highlight(tag, true);
 				}
 			}
 		}
@@ -203,7 +204,9 @@ public class EditorTagListView extends ViewPart {
 				Object selectedObject = ((StructuredSelection)sel).getFirstElement();
 				if(selectedObject instanceof EclipseEditorTag){
 					EclipseEditorTag tag = ((EclipseEditorTag) selectedObject);
-					ChameleonEditor.showInEditor(tag.getElement(), true, editor, true, tag.getName());
+					editor.highlight(tag, true);
+					// FIXME: why is this static? and why a different invocation than in the selection changed listener?
+//					ChameleonEditor.showInEditor(tag.getElement(), true, editor, true, tag.getName());
 				}
 			}
 		}

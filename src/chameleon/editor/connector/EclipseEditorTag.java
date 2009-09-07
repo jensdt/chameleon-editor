@@ -8,6 +8,7 @@ import org.rejuse.predicate.SafePredicate;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.tag.Tag;
+import chameleon.editor.editors.ChameleonDocument;
 
 /**
  * A tag intended for linking a position to a model element.
@@ -22,6 +23,10 @@ import chameleon.core.tag.Tag;
  */
 public class EclipseEditorTag extends Position implements Tag {
 
+	// FIXME: We should keep a reference to the ChameleonDocument.
+	//        We need this to switch documents if this tag is moved to
+	//        another element.
+	
 	/**
 	 * Initialize a new Chameleon editor position with the given offset and length, and
 	 * with the given name.
@@ -53,19 +58,23 @@ public class EclipseEditorTag extends Position implements Tag {
   }
   
   public void setElement(Element element, String name) {
-  	//FIXME: remove this check and exception signalling
-  	if(element == null) {
-  		throw new ChameleonProgrammerException("Changing element of decorator with name "+name+" to null");
-  	}
+		Element old = _element;
   	if(element != _element) {
+  		// Set new pointer, backup old for removal.
+  		_element = element;
   		// Remove from current element.
   		if((_element != null) && (_element.tag(name) == this)){
   			_element.removeTag(name);
   		}
-  		_element = element;
+  		// Add to new element.
   		if((_element != null) && (_element.tag(name) != this)) {
   		  _element.setTag(this, name);
   		}
+  	}
+  	if(element == null) {
+  		this.delete();
+//  		ChameleonDocument doc = null;
+//  		doc.removePosition(this);
   	}
   }
 
@@ -168,18 +177,24 @@ public class EclipseEditorTag extends Position implements Tag {
 	 */
 	public static Comparator<EclipseEditorTag> beginoffsetComparator = new Comparator<EclipseEditorTag>() {
 		public int compare(EclipseEditorTag t1, EclipseEditorTag t2) {
-			// compare by offset:
+			// 1) compare by offset:
 			int compare = new Integer(t1.getOffset()).compareTo(t2.getOffset());
 			// if no difference found
-			if(compare!=0)
-				return compare;
-			// compare by length:
-			compare = new Integer(t1.getLength()).compareTo(t2.getLength());
+			if(compare==0) {
+				// 2) compare by length:
+				compare = new Integer(t1.getLength()).compareTo(t2.getLength());
+			}
 			// if still the same
-			if(compare!=0)
-				return compare;
-			// compare by hashCode:
-			return new Integer(t1.hashCode()).compareTo(t2.hashCode());
+			if(compare==0) {
+				// 3) compare by tag name:
+				compare = t1.getName().compareTo(t2.getName());
+			}
+			// if still the same
+			if(compare==0) {
+				// 4) order does not matter. MUST NOT RETURN 0, that would remove the tag in the treeset.
+				compare = -1;
+			}
+			return compare;
 		}
 	};
 
@@ -200,6 +215,22 @@ public class EclipseEditorTag extends Position implements Tag {
 		@Override
 		public boolean eval(EclipseEditorTag tag) {
 			return tag.getName().equals(_tagName);
+		}
+	}
+
+
+
+	/**
+	 * Predicate that checks wheter an EditorTag has a given tagname
+	 */
+	public static class SurroundsOffsetPredicate extends SafePredicate<EclipseEditorTag>{
+		private int offset;
+		public SurroundsOffsetPredicate(int offset) {
+			this.offset = offset;
+		}
+		@Override
+		public boolean eval(EclipseEditorTag editorTag) {
+			return editorTag.includes(offset);
 		}
 	}
 	

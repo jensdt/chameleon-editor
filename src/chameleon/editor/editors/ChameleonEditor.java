@@ -569,6 +569,18 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 			start = firstTag.getOffset();
 			length = firstTag.getLength();
 		}
+		setHighlightOrSelection(selectElement, start, length);
+	}
+	
+	public void highlight(EclipseEditorTag tag, boolean selectElement) {
+		if(tag != null) {
+			int start = tag.getOffset();
+			int length = tag.getLength();
+			setHighlightOrSelection(selectElement, start, length);
+		}
+	}
+
+	private void setHighlightOrSelection(boolean selectElement, int start, int length) {
 		if(selectElement){
 			ISelectionProvider selProv = getEditorSite().getSelectionProvider();
 			if(selProv != null){

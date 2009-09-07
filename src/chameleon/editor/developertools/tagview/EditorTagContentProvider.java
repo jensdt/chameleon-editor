@@ -22,18 +22,26 @@ import chameleon.editor.editors.ChameleonDocument;
 public class EditorTagContentProvider implements IStructuredContentProvider {
 	
 	EditorTagListView view;
-	Predicate<EclipseEditorTag> filterPredicate;
+	private Predicate<EclipseEditorTag> _filterPredicate;
+	
+	void setFilter(Predicate<EclipseEditorTag> filter) {
+		_filterPredicate = filter;
+	}
+	
+	public Predicate<EclipseEditorTag> filter() {
+		return _filterPredicate;
+	}
 	
 	public EditorTagContentProvider(EditorTagListView view, Predicate<EclipseEditorTag> filterPredicate) {
 		this.view = view;
-		this.filterPredicate = filterPredicate;
+		this._filterPredicate = filterPredicate;
 	}
 
 	public Object[] getElements(Object inputObject) {
 		if(inputObject instanceof ChameleonDocument){
 			ChameleonDocument doc = (ChameleonDocument)inputObject;
 			Collection<EclipseEditorTag> tags = new TreeSet<EclipseEditorTag>(EclipseEditorTag.beginoffsetComparator);
-			doc.getEditorTagsWithPredicate(filterPredicate, tags);
+			doc.getEditorTagsWithPredicate(_filterPredicate, tags);
 			// set label of view:
 			view.label.setText(tags.size() + " editor tags found for document "+doc.getFile());
 			return tags.toArray();
