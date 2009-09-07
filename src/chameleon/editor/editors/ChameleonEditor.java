@@ -61,6 +61,7 @@ import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
 import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
+import chameleon.editor.presentation.hierarchy.HierarchyView;
 import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 import chameleon.input.ParseException;
 
@@ -89,14 +90,20 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	//The chameleonAnnotations for this editor
 	private Vector<ChameleonAnnotation> chameleonAnnotations;
 	
-	//The outline page with its content for this editor
-	private ChameleonOutlinePage _fOutlinePage;
 	
 	//The document that this editor uses.
 	private ChameleonDocument document;
 	
-//	private Vector<Decorator> positions;
+  //FIXME: make this scalable wrt the number of views	
+	
+	//The outline page with its content for this editor
+	private ChameleonOutlinePage _fOutlinePage;
 
+	public ChameleonOutlinePage outlinePage() {
+		return _fOutlinePage;
+	}
+	
+	private HierarchyView _hierarchyView;
 
 	/**
 	 * Creates a new Editor that is properly configured
@@ -366,7 +373,6 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 				List<String> defaultAllowedOutlineElements = getPresentationManager().getDefaultOutlineElements();
 				List<String> allowedElements = getPresentationManager().getPresentationModel().getOutlineElementsSimple();
 				_fOutlinePage= new ChameleonOutlinePage(language, this, allowedElements, defaultAllowedOutlineElements);
-				getDocument().getProjectNature().setOutlinePage(_fOutlinePage);
 			}
 			return _fOutlinePage;
 		}

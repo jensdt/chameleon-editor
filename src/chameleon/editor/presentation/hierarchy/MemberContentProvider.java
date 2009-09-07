@@ -21,6 +21,11 @@ public class MemberContentProvider implements IStructuredContentProvider {
 	 * If inputElement is a Type, the direct members are returned
 	 */
 	public Object[] getElements(Object inputElement) {
+		try {
+			throw new Exception("MEMBER CONTENT PROVIDER GET ELEMENTS");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if(inputElement instanceof Type){
 			Type type = (Type)inputElement;
 			return type.directlyDeclaredMembers().toArray();
@@ -33,7 +38,7 @@ public class MemberContentProvider implements IStructuredContentProvider {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
+		System.out.println("INPUT CHANGED!!!!:   old: " + oldInput +"new: "+newInput);
 	}
 
 }

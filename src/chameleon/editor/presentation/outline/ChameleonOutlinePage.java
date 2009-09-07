@@ -38,11 +38,6 @@ import chameleon.editor.presentation.TreeViewerActions;
  * The contents & labels come from the ChameleonTreeContentsProvider & ChameleonLabelProvider 
  */
 public class ChameleonOutlinePage extends ContentOutlinePage {
-
-	// might create memory-leak:
-//	//contains all trees created during the life of the workbench (for 1 session)
-//	private static Vector<ChameleonContentOutlinePage> allTrees;
-
 	
 	//the current language used in the editor
 	private Language currentLanguage;
@@ -274,11 +269,13 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 
 	private void buildTree() {
 		try{
+			System.out.println("BUILDING OUTLINE TREE");
 			chameleonTree = new ChameleonOutlineTree();
 			chameleonTree.composeTree(currentLanguage, getTreeRootElement());
 			try {
 				treeViewer.setInput(chameleonTree);
 				treeViewer.refresh();
+				System.out.println("BUILT OUTLINE TREE");
 			} catch (RuntimeException e) {} // voor bij het afsluiten
 		}
 		catch(Exception e){

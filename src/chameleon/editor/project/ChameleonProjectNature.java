@@ -262,24 +262,6 @@ public class ChameleonProjectNature implements IProjectNature{
 
 	
 
-	//The meta model factory that this document can use
-//	private IMetaModelFactory _metaModelFactory;
-	
-	//The meta model for this factory
-//	private Namespace _metaModel;
-	
-	private ChameleonOutlinePage _outlinePage;
-	
-
-//	/**
-//	 * Sets model as the new model for this ChameleonDocument
-//	 * @param model
-//	 * 		The new model.
-//	 */
-//	private void setModel(Namespace model){
-//		_metaModel = model;
-//	}
-	
 
 	/* (non-Javadoc)
 	 * @see chameleonEditor.editors.IChameleonDocument#getModel()
@@ -303,8 +285,7 @@ public class ChameleonProjectNature implements IProjectNature{
 			modelElements.remove(same);
 		}
 		modelElements.add(document);
-		// SPEED: does this really reparse all documents?
-			updateModel(document);
+		updateModel(document);
 	}
 
 	public List<ChameleonDocument> documents(){
@@ -377,17 +358,6 @@ public class ChameleonProjectNature implements IProjectNature{
 		} 
 	}
 	
-	public void updateOutline() {
-		if (_outlinePage!=null) {
-		  _outlinePage.updateOutline();
-		}
-	}
-
-	public void setOutlinePage(ChameleonOutlinePage outlinePage) {
-		this._outlinePage = outlinePage;
-		
-	}
-
 	public ChameleonDocument documentOfPath(IPath path) {
 		ChameleonDocument result = null;
 		for(ChameleonDocument doc:modelElements) {

@@ -35,6 +35,7 @@ import chameleon.editor.presentation.formatting.ChameleonAutoEditStrategy;
 import chameleon.editor.presentation.formatting.ChameleonFormatterStrategy;
 import chameleon.editor.presentation.hyperlink.ChameleonHyperlinkDetector;
 import chameleon.editor.presentation.hyperlink.ChameleonHyperlinkPresenter;
+import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 
 
 /**
@@ -53,21 +54,62 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	//The presentationReconciler from this ChameleonConfiguration
 	//private ChameleonPresentationReconciler presrec;
 	
-	
+	//FIXME: attach listeners when constructing the views.
+	private final class HighlightingReconcilingListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			if(_presentationReconciler.getDocument()!=null){ //anders is het document gesloten
+				_presentationReconciler.doPresentation();
+			}}
+	}
+
+	private final class OutlineReconcilingListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					ChameleonOutlinePage outlinePage = null;
+					if(_chameleonEditor != null) {
+						outlinePage=_chameleonEditor.outlinePage();
+					}
+					if(outlinePage != null) {
+					  outlinePage.updateOutline();
+					}
+				}
+			});	
+			
+		}
+	}
+
+	private final class HierarchyMemberReconcilingListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					ChameleonOutlinePage outlinePage = null;
+					if(_chameleonEditor != null) {
+						_chameleonEditor.outlinePage();
+					}
+					if(outlinePage != null) {
+					  outlinePage.updateOutline();
+					}
+				}
+			});	
+			
+		}
+	}
+
 	/*
 	 * The strategy that is being used for this particular configuration
 	 */
-	private ChameleonReconcilingStrategy chameleonReconcilingStrategy;
+	private ChameleonReconcilingStrategy _chameleonReconcilingStrategy;
 	
 	
 	//The editor for which this configuration applies;
-	private ChameleonEditor ChamEditor;
+	private ChameleonEditor _chameleonEditor;
 
 	//The reconciler for this configuration
-	private ChameleonReconciler reconciler;
+	private ChameleonReconciler _reconciler;
 
 	//The presentation reconciler for this configuration
-	private ChameleonPresentationReconciler presentationReconciler;
+	private ChameleonPresentationReconciler _presentationReconciler;
 	
 	/**
 	 * Wheter the hyperlinks should be colored according to their accessibility
@@ -78,33 +120,19 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * Creates a new configuration for the given editor.
 	 * A new reconciling strategy is made. The reconciler & the reconciler for the presentation
 	 * are added to the strategy.
+	 * 
 	 * A listener is attached, to detect updates
 	 * @param editor
 	 * 		The editor for this configuration. May not be null;
 	 */
 	public ChameleonSourceViewerConfiguration(ChameleonEditor editor){
 		//Assert.isNotNull(editor);
-		ChamEditor = editor;
-		chameleonReconcilingStrategy=new ChameleonReconcilingStrategy(this);
-		presentationReconciler = new ChameleonPresentationReconciler(ChamEditor,chameleonReconcilingStrategy);
-		reconciler = new ChameleonReconciler(chameleonReconcilingStrategy,true,100);
-		chameleonReconcilingStrategy.addUpdateListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				if(presentationReconciler.getDocument()!=null){ //anders is het document gesloten
-					presentationReconciler.doPresentation();
-				}}});
-		
-		chameleonReconcilingStrategy.addUpdateListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						ChamEditor.getDocument().getProjectNature().updateOutline();
-					}
-				});	
-				
-			}});
+		_chameleonEditor = editor;
+		_chameleonReconcilingStrategy=new ChameleonReconcilingStrategy(this);
+		_presentationReconciler = new ChameleonPresentationReconciler(_chameleonEditor,_chameleonReconcilingStrategy);
+		_reconciler = new ChameleonReconciler(_chameleonReconcilingStrategy,true,25);
+		_chameleonReconcilingStrategy.addUpdateListener(new HighlightingReconcilingListener());
+		_chameleonReconcilingStrategy.addUpdateListener(new OutlineReconcilingListener());
 	}
 	
 	/** 
@@ -114,8 +142,8 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * 		The sourceViewer used. may <u>not</u> be null
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer){
-		chameleonReconcilingStrategy.setDocument((ChameleonDocument) sourceViewer.getDocument());	
-		return reconciler;
+		_chameleonReconcilingStrategy.setDocument((ChameleonDocument) sourceViewer.getDocument());	
+		return _reconciler;
 	}
 	
 	
@@ -128,8 +156,8 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 */
 //	 De getPresentationReconciler wordt het eerst opgeroepen bij het opstarten van eclipse
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		chameleonReconcilingStrategy.setDocument((ChameleonDocument) sourceViewer.getDocument());
-		return presentationReconciler;
+		_chameleonReconcilingStrategy.setDocument((ChameleonDocument) sourceViewer.getDocument());
+		return _presentationReconciler;
 	}
 	
 	
@@ -148,7 +176,7 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * @return the ChameleonPresentationReconciler from this configuration
 	 */
 	public ChameleonPresentationReconciler getChameleonPresentationReconciler(){
-		return presentationReconciler;
+		return _presentationReconciler;
 	}
 	
 	/**
@@ -156,7 +184,7 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * @return the ChameleonReconciler from this configuration
 	 */
 	public ChameleonReconciler getChameleonReconciler(){
-		return reconciler;
+		return _reconciler;
 	}
 
 	/**
@@ -164,7 +192,7 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	 * @return the editor this configuration is for
 	 */
 	public ChameleonEditor getChameleonEditor() {
-		return ChamEditor;
+		return _chameleonEditor;
 	}
 	
 	/**

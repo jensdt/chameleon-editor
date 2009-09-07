@@ -27,6 +27,7 @@ import chameleon.input.ModelFactory;
  * @author Jef Geerinckx
  * @author Manuel Van Wesemael 
  * @author Joeri Hendrickx 
+ * @author Marko van Dooren
  * 
  * This class does the actual reconciling. it starts & initiates the reconciling 
  */
@@ -189,7 +190,8 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						// A. Verwijderen decorators van element
 						
 						getDocument().removePosition(EclipseEditorTag.CHAMELEON_CATEGORY,position);
-						removeEmbeddedPos(position, positions, status);						
+						// FIXME: positions is always null, making this call useless
+//						removeEmbeddedPos(position, positions, status);						
 		
 						Element element = position.getElement();
 						
@@ -242,7 +244,8 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 			pos.getElement().disconnect();
 			try{
 				getDocument().removePosition(EclipseEditorTag.CHAMELEON_CATEGORY,pos);				
-				removeEmbeddedPos(pos, positions, status);
+				// FIXME: positions is always null, making this call useless
+//				removeEmbeddedPos(pos, positions, status);
 			}catch(Exception error){
 				error.printStackTrace();
 			}	
@@ -255,11 +258,9 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	}
 	
 	private void fireModelUpdated() {
-		for (Iterator<ActionListener> iter = modelListeners.iterator(); iter.hasNext();) {
-			ActionListener listener = iter.next();
+		for (ActionListener listener: modelListeners) {
 			listener.actionPerformed(null);
 		}
-		
 	}
 
 	/*

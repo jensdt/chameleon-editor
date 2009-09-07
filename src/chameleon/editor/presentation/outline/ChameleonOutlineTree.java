@@ -156,6 +156,8 @@ public class ChameleonOutlineTree {
 					children.get(i).composeTree(lang, children.get(i).getElement());
 				}
 			}
+		} else {
+			System.out.println("WARNING composeTree called with a null tree element.");
 		}
 	}
 	

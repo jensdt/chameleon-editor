@@ -164,7 +164,7 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 				return chamEditor.getDocument().compilationUnit().descendants(Type.class).iterator().next();
 			}
 		} catch (MetamodelException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return null;
 	}

@@ -22,14 +22,14 @@ import chameleon.core.type.Type;
  */
 public class TypeChangedListener implements ISelectionChangedListener {
 	
-	protected HierarchyView hierarhcyView;
+	protected HierarchyView _hierarchyView;
 	
 	public TypeChangedListener(HierarchyView hierarchyView) {
-		this.hierarhcyView = hierarchyView;
+		this._hierarchyView = hierarchyView;
 	}
 	
 	protected StructuredViewer getMethodViewer(){
-		return hierarhcyView.getMemberViewer();
+		return _hierarchyView.getMemberViewer();
 	}
 	
 	/**
@@ -60,6 +60,9 @@ public class TypeChangedListener implements ISelectionChangedListener {
 			}
 		}
 	}
-	
+
+	public void update() {
+		getMethodViewer().refresh();
+	}
 	
 }

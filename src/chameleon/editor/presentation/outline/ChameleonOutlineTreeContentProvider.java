@@ -35,6 +35,11 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+//		try {
+//			throw new Exception("Input has Changed");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		System.out.println("ChameleonTreeContents inputChanged");
 		
 		this.viewer = (TreeViewer)viewer;
@@ -120,6 +125,7 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	}
 
 	public void fireChanged() {
+		System.out.println("fire changed");
 		viewer.refresh();
 	}
 	
