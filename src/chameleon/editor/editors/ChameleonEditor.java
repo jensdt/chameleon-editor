@@ -288,7 +288,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	{
 		
 	    
-		Vector<Position> positions = getDocument().getFoldablePositions();
+		List<Position> positions = getDocument().getFoldablePositions();
+		System.out.println("Found "+positions.size()+" foldable positions.");
 		chameleonAnnotations.clear();
 		
 		Annotation[] annotations = new Annotation[positions.size()];
@@ -300,13 +301,14 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	   {
 		   //ChameleonAnnotation annotation = new ChameleonAnnotation( positions.get(i),false,false);
 		   ProjectionAnnotation annotation = new ProjectionAnnotation();
-		   int offset =positions.get(i).offset;
-		   int length = positions.get(i).length;
+		   Position position = positions.get(i);
+			 int offset =position.offset;
+		   int length = position.length;
 		   Position pos =new Position(offset,length);
-	      newAnnotations.put(annotation,pos );
-	      ChameleonAnnotation chamAnnotation = new ChameleonAnnotation(annotation,pos,false);
-	      chameleonAnnotations.add(chamAnnotation);
-	      annotations[i] = annotation;
+	     newAnnotations.put(annotation,pos );
+	     ChameleonAnnotation chamAnnotation = new ChameleonAnnotation(annotation,pos,false);
+	     chameleonAnnotations.add(chamAnnotation);
+	     annotations[i] = annotation;
 	   }
 	   
 	   boolean go=false;
@@ -328,10 +330,9 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be folded
 	 */
-	public void fold(Vector<EclipseEditorTag> positions){
+	public void fold(List<EclipseEditorTag> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
-			for (int i = 0; i < positions.size(); i++) {
-				EclipseEditorTag dec = positions.get(i);
+			for (EclipseEditorTag dec : positions) {
 					if(chamAnnot.getPosition().getOffset()==dec.getOffset() &&
 					   chamAnnot.getPosition().getLength()==dec.getLength()	){
 						annotationModel.collapse(chamAnnot.getAnnotation());

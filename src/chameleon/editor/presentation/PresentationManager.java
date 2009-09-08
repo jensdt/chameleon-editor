@@ -10,6 +10,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 
+import chameleon.core.element.Element;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 
@@ -101,7 +102,8 @@ public class PresentationManager {
 	 * 		
 	 */
 	private boolean isFoldable(EclipseEditorTag decorator) {
-		PresentationStyle presStyle = _presentationModel.getRule(decorator.getElement().getClass().getName().toLowerCase(), decorator.getName());
+		Element element = decorator.getElement();
+		PresentationStyle presStyle = _presentationModel.getRule(element.getClass().getName().toLowerCase(), decorator.getName());
 		if(presStyle != null && presStyle.isfoldable())
 			return true;
 		else
@@ -113,12 +115,13 @@ public class PresentationManager {
 	 * @return all the positions which are foldable, by definition of the XML file
 	 * 		   if no foldable positions are found, then an empty Vector is returned
 	 */
-	public Vector<Position> getFoldablePositions(){
+	public List<Position> getFoldablePositions(){
 		try {
-			if(document == null)
-				throw new NullPointerException();
+			if(document == null) {
+				return new ArrayList<Position>();
+			}
 			Position[] poss = document.getPositions(EclipseEditorTag.CHAMELEON_CATEGORY);
-			Vector<Position> foldablePos= new Vector<Position>(0);
+			List<Position> foldablePos= new ArrayList<Position>();
  			for (int i = 0; i < poss.length; i++) {
 				if(isFoldable(((EclipseEditorTag) poss[i]))){
 					foldablePos.add( poss[i]);
@@ -127,11 +130,12 @@ public class PresentationManager {
  			
  			return foldablePos;
 		} catch (BadPositionCategoryException e) {
+			e.printStackTrace();
+			return new ArrayList<Position>();
 		} catch (NullPointerException npe){
-		}
-		//in case there are nog foldablePositions
-		return new Vector<Position>(0);
-		
+			npe.printStackTrace();
+			return new ArrayList<Position>();
+		} 
 	}
 	
 	/**

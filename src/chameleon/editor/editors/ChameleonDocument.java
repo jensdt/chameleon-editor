@@ -359,7 +359,7 @@ public class ChameleonDocument extends Document {
 	 * @return 
 	 *   the foldable positions
 	 */
-	public Vector<Position> getFoldablePositions() {
+	public List<Position> getFoldablePositions() {
 		return getPresentationManager().getFoldablePositions();
 	}
 
@@ -367,7 +367,7 @@ public class ChameleonDocument extends Document {
 	 * 
 	 * @return the elements which are folded
 	 */
-	public Vector<EclipseEditorTag> getFoldedElementsFromModel() {
+	public List<EclipseEditorTag> getFoldedElementsFromModel() {
 		return getPresentationManager().getFoldedElementsFromModel();
 	}
 
