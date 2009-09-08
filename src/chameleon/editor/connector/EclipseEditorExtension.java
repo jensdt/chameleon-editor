@@ -5,7 +5,7 @@ import java.util.List;
 import chameleon.core.element.Element;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.Modifier;
-import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.editor.presentation.DeclarationCategorizer;
 import chameleon.tool.ConnectorImpl;
 
 /**
@@ -46,5 +46,7 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
   	 */
   	//FIXME: filter based on properties!!!!
   	public abstract List<Modifier> getFilterModifiers();
+  	
+  	public abstract DeclarationCategorizer declarationCategorizer();
 
 }

@@ -7,6 +7,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Chameleon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rejuse"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Chameleon Support"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

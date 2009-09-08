@@ -642,9 +642,11 @@ public class ChameleonDocument extends Document {
 		try {
 			Position[] positions = getPositions(EclipseEditorTag.CHAMELEON_CATEGORY); // throws BadPositionCategoryException
 			for (Position position : positions) {
+				int count=1;
 				if(position instanceof EclipseEditorTag ){
 					EclipseEditorTag editorTag = (EclipseEditorTag) position;
 					if(predicate.eval(editorTag)){
+						System.out.println(count+" Found cross reference tag at offset: " +editorTag.getOffset()+"with length: "+editorTag.getLength());
 						result.add(editorTag);
 					}
 				}

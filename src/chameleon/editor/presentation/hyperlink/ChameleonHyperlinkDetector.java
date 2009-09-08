@@ -46,16 +46,19 @@ public class ChameleonHyperlinkDetector implements IHyperlinkDetector {
 		// System.out.println("Mouse-over word: " + document.findWord(region.getOffset()) ); // debugging
 		// get the editorTag:
 		EclipseEditorTag editorTag = document.getReferenceEditorTagAtRegion(region);
-		if(editorTag == null)
+		if(editorTag == null) {
 			return null;
-		// get the element:
-		Element element = editorTag.getElement();
-		if (element instanceof CrossReference) {
-			IRegion refRegion = new Region(editorTag.getOffset(), editorTag.getLength());
-			ChameleonHyperlink hyperlink = new ChameleonHyperlink((CrossReference) element, refRegion, document);
-			return new IHyperlink[] { hyperlink };
 		} else {
-			return null;
+			System.out.println("Found cross-reference taf at offset: "+editorTag.getOffset() +" length: "+editorTag.getLength());
+			// get the element:
+			Element element = editorTag.getElement();
+			if (element instanceof CrossReference) {
+				IRegion refRegion = new Region(editorTag.getOffset(), editorTag.getLength());
+				ChameleonHyperlink hyperlink = new ChameleonHyperlink((CrossReference) element, refRegion, document);
+				return new IHyperlink[] { hyperlink };
+			} else {
+				return null;
+			}
 		}
 	} 
 

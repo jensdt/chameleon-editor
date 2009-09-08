@@ -21,10 +21,11 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
+import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
 import chameleon.editor.presentation.Filters;
-import chameleon.editor.presentation.MembersComparator;
+import chameleon.editor.presentation.OutlineComparator;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.TreeViewerActions;
 
@@ -40,13 +41,13 @@ import chameleon.editor.presentation.TreeViewerActions;
 public class ChameleonOutlinePage extends ContentOutlinePage {
 	
 	//the current language used in the editor
-	private Language currentLanguage;
+	private Language _currentLanguage;
 
 	//The treeviewer that is used to store and view our tree
 	private TreeViewer treeViewer;
 
 	//the editor where this ChameleonContentOutlinePage is used
-	private ChameleonEditor editor;
+	private ChameleonEditor _editor;
 
 	//The chameleonTree used by this content outline
 	private ChameleonOutlineTree chameleonTree;
@@ -71,9 +72,10 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	public ChameleonOutlinePage(Language language, ChameleonEditor editor, List<String> allowedElements, List<String> defaultAllowedElements) {
 		super();
 		try {
-			if(editor == null)
+			if(editor == null) {
 				throw new NullPointerException("editor is not available, ouline is not created");
-			this.editor = editor;
+			}
+			this._editor = editor;
 			//this.allowedTreeElements = allowedElements;
 			changeLanguage(language);
 		} catch (NullPointerException npe){
@@ -91,18 +93,18 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	 * 	The language to be switched at
 	 * 	 */
 	public void changeLanguage(Language language) {
-		if(currentLanguage != null && ! currentLanguage.equals(language)){
+		if(_currentLanguage != null && ! _currentLanguage.equals(language)){
 			updateMenu();
 		}
-		currentLanguage = language;
+		_currentLanguage = language;
 	}
 
 	/**
 	 * 
 	 * @return the current language used
 	 */
-	public Language getCurrentLanguage() {
-		return currentLanguage;
+	public Language language() {
+		return _currentLanguage;
 	}
 
 	@Override
@@ -127,7 +129,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		// Create content providers for the tree viewer
 		//---------------------------------------------
 		treeViewer.setContentProvider(new ChameleonOutlineTreeContentProvider());
-		treeViewer.setLabelProvider(new ChameleonLabelProvider(currentLanguage, true, false, false)); 
+		treeViewer.setLabelProvider(new ChameleonLabelProvider(_currentLanguage, true, false, false)); 
 
 		// Set initial expansion level
 		//----------------------------
@@ -184,7 +186,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		mgr.add(new Separator());
 
 		Filters.addGlobalFilters(treeViewer, mgr);
-		Filters.addModifierFiltersSubmenu(treeViewer, mgr, currentLanguage);
+		Filters.addModifierFiltersSubmenu(treeViewer, mgr, _currentLanguage);
 	}
 
 	public class ShowRootAction extends Action{
@@ -233,21 +235,25 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 			super("Sort elements by category and name", AS_CHECK_BOX);
 			setImageDescriptor(ChameleonEditorPlugin.getImageDescriptor("alphabetical_sort.gif"));
 			this.treeViewer = treeViewer;
-			if(membersComparator.equals(treeViewer.getComparator())){
+			if(outlineComparator().equals(treeViewer.getComparator())){
 				setChecked(true);
 			}
 		}
 		@Override
 		public void run() {
-			if(! membersComparator.equals(treeViewer.getComparator())){
+			OutlineComparator outlineComparator = outlineComparator();
+			if(! outlineComparator.equals(treeViewer.getComparator())){
 				// if not yet sorted
-				treeViewer.setComparator(membersComparator);
+				treeViewer.setComparator(outlineComparator);
 			} else {
 				treeViewer.setComparator(null);
 			}
 		}
 	}
-	public static final MembersComparator membersComparator = new MembersComparator();
+	
+	public OutlineComparator outlineComparator() {
+		return new OutlineComparator();
+	}
 
 	/**
 	 * This responds to a SelectionChangedEvent.
@@ -259,11 +265,11 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 
 		ISelection selection= event.getSelection();
 		if (selection.isEmpty())
-			editor.resetHighlightRange();
+			_editor.resetHighlightRange();
 		else {
 			ChameleonOutlineTree segment= (ChameleonOutlineTree) ((IStructuredSelection) selection).getFirstElement();
 			Element element = segment.getElement();
-			editor.highLightElement(element);
+			_editor.highLightElement(element);
 		}
 	}
 
@@ -271,7 +277,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		try{
 			System.out.println("BUILDING OUTLINE TREE");
 			chameleonTree = new ChameleonOutlineTree();
-			chameleonTree.composeTree(currentLanguage, getTreeRootElement());
+			chameleonTree.composeTree(_currentLanguage, getTreeRootElement());
 			try {
 				treeViewer.setInput(chameleonTree);
 				treeViewer.refresh();
@@ -299,7 +305,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	 * @return the editor where this is used
 	 */
 	private ChameleonEditor getEditor() {
-		return editor;
+		return _editor;
 	}
 
 	/**

@@ -21,11 +21,11 @@ public class MemberContentProvider implements IStructuredContentProvider {
 	 * If inputElement is a Type, the direct members are returned
 	 */
 	public Object[] getElements(Object inputElement) {
-		try {
-			throw new Exception("MEMBER CONTENT PROVIDER GET ELEMENTS");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			throw new Exception("MEMBER CONTENT PROVIDER GET ELEMENTS");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		if(inputElement instanceof Type){
 			Type type = (Type)inputElement;
 			return type.directlyDeclaredMembers().toArray();

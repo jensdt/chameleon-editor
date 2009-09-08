@@ -4,6 +4,9 @@
  */
 package chameleon.editor.presentation.hierarchy;
 
+import static chameleon.editor.presentation.hierarchy.OpenTypeHierarchyAction.SUBTYPE;
+import static chameleon.editor.presentation.hierarchy.OpenTypeHierarchyAction.SUPERTYPE;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
@@ -27,13 +30,14 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.IViewDescriptor;
 
+import chameleon.core.language.Language;
+import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
+import chameleon.editor.presentation.DeclarationCategorizer;
 import chameleon.editor.presentation.Filters;
-import chameleon.editor.presentation.MembersComparator;
+import chameleon.editor.presentation.OutlineComparator;
 import chameleon.editor.presentation.TreeViewerActions;
-
-import static chameleon.editor.presentation.hierarchy.OpenTypeHierarchyAction.SUBTYPE;
-import static chameleon.editor.presentation.hierarchy.OpenTypeHierarchyAction.SUPERTYPE;;
 
 /**
  * The Chameleon hierarchy type view. 
@@ -128,10 +132,13 @@ public class HierarchyView extends ViewPart {
 		layoutData.verticalAlignment = GridData.FILL;
 		hierarchyViewer.getControl().setLayoutData(layoutData);
 		
+//		ChameleonEditor editor = ChameleonEditor.getCurrentActiveEditor();
+//		Language language = editor.getDocument().language();
+//		DeclarationCategorizer categorizer = language.connector(EclipseEditorExtension.class).declarationCategorizer();
 		// create the member table viewer
 		memberViewer = new TableViewer(sashForm);
 		memberViewer.setContentProvider(new MemberContentProvider());
-		memberViewer.setComparator(new MembersComparator());
+		memberViewer.setComparator(new OutlineComparator());
 		// layout the tree viewer below the text field
 		layoutData = new GridData();
 		layoutData.grabExcessHorizontalSpace = true;

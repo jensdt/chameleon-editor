@@ -247,7 +247,12 @@ public class ChameleonLabelProvider implements ILabelProvider {
 			EclipseEditorExtension ext = getLanguage().connector(EclipseEditorExtension.class);
 			return ext.getLabel(element);
 		} else {
-			return modelObject.toString();
+			if(modelObject != null) {
+			  return modelObject.toString();
+			} else {
+				System.out.println("object given to label provider was null");
+				return "";
+			}
 		}
 	}
 

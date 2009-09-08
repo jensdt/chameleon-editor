@@ -16,13 +16,13 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import chameleon.core.MetamodelException;
 import chameleon.core.element.Element;
 import chameleon.core.expression.ExpressionWithTarget;
+import chameleon.core.expression.Invocation;
 import chameleon.core.expression.InvocationTarget;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupStrategy;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.support.member.simplename.method.RegularMethodInvocation;
 
 /**
  * Generates the auto completion proposals.
@@ -94,8 +94,8 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 				Language language = ((ChameleonDocument)viewer.getDocument()).getProjectNature().getModel().language();
 				EclipseEditorExtension ext = language.connector(EclipseEditorExtension.class);
 				String elementLabel = ext.getLabel(element);
-				if(element instanceof RegularMethodInvocation){
-					RegularMethodInvocation method = (RegularMethodInvocation) element;
+				if(element instanceof Invocation){
+					Invocation method = (Invocation) element;
 					elementLabel = ext.getLabel(method.getMethod());
 					return new IContextInformation[]{new ContextInformation(elementLabel, elementLabel)};
 				} else {
