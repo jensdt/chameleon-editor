@@ -66,8 +66,8 @@ public class ChameleonHyperlink implements IHyperlink {
 		return this._element;
 	}
 	
-	public Declaration getReferencedElement() throws MetamodelException {
-		return getReference().getElement();
+	public Declaration getDeclarator() throws MetamodelException {
+		return getReference().getDeclarator();
 	}
 	
 	public String getTypeLabel() {
@@ -100,7 +100,7 @@ public class ChameleonHyperlink implements IHyperlink {
 	public String getStatus(){
 		try {
 			// perform lookup:
-			Declaration<?,?,?,?> refElement = getReferencedElement();
+			Declaration<?,?,?,?> refElement = getDeclarator();
 			if(refElement==null)
 				return INVALID_STATUS;
 			// check wheter the compilationUnit and the document are found:
@@ -121,7 +121,7 @@ public class ChameleonHyperlink implements IHyperlink {
 	
 	public void open() {
 		try {
-			Declaration<?,?,?,? > referencedElement = getReferencedElement();
+			Declaration<?,?,?,? > referencedElement = getDeclarator();
 			if (referencedElement != null) {
 				ChameleonEditor.showInEditor(referencedElement, true, null);
 			}
