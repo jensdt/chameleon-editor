@@ -15,9 +15,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 import chameleon.core.MetamodelException;
 import chameleon.core.element.Element;
-import chameleon.core.expression.ExpressionWithTarget;
 import chameleon.core.expression.Invocation;
-import chameleon.core.expression.InvocationTarget;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupStrategy;
 import chameleon.editor.connector.EclipseEditorExtension;
@@ -47,16 +45,22 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 //					ContextElement element = (ContextElement)el;
 					LookupStrategy context;
 					// see if element has a target (e.g. car.getOwner())
-					if(el instanceof ExpressionWithTarget){
-						InvocationTarget target = ((ExpressionWithTarget)el).getTarget();
-						if(target != null) {
-							context = target.targetContext();
-						} else {
-							context = el.lexicalLookupStrategy();
-						}
-					} else {
-						context = el.lexicalLookupStrategy();
-					}
+
+					//CHANGE COMMENTED OUT, NEEDS BETTER SOLUTION
+//					if(el instanceof ExpressionWithTarget){
+//						InvocationTarget target = ((ExpressionWithTarget)el).getTarget();
+//						if(target != null) {
+//							context = target.targetContext();
+//						} else {
+//							context = el.lexicalLookupStrategy();
+//						}
+//					} else {
+//						context = el.lexicalLookupStrategy();
+//					}
+					
+					
+					
+					
 					// search for elements:
 					Language language = chamDoc.getProjectNature().getModel().language();
 //					SafePredicate<Type> typePredicate = el.getTypePredicate();
@@ -76,9 +80,11 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 					}
 					return result;
 			}
-		} catch (MetamodelException e) {
-			e.printStackTrace();
-		} catch (BadLocationException e) {
+		} 
+//		catch (LookupException e) {
+//			e.printStackTrace();
+//		} 
+		catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 		return null;
