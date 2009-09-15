@@ -75,6 +75,7 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 					int i = 0;
 					for (Element currElement : foundElements) {
 						ICompletionProposal proposal;
+//						proposal = language.connector(EclipseEditorExtension.class).completionProposal(currElement, chamDoc, offset);
 						proposal = CompletionProposalBuilder.buildProposal(currElement, chamDoc, offset);
 						result[i++] = proposal;						
 					}

@@ -7,9 +7,7 @@ package chameleon.editor.editors;
 import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.method.Method;
-import chameleon.core.method.MethodListener;
 import chameleon.core.type.Type;
-import chameleon.core.type.TypeListener;
 import chameleon.editor.connector.EclipseEditorTag;
 
 
@@ -21,7 +19,7 @@ import chameleon.editor.connector.EclipseEditorTag;
  * A class used to synchronize a ChameleonDocument.
  * It detects when the document is changed and reacts accordingly
  */
-public class DocumentSynchronizer implements TypeListener, MethodListener{
+public class DocumentSynchronizer {
 	
 	private ChameleonDocument _document; // the document to sync
 	

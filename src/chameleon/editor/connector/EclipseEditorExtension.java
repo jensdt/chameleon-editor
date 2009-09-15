@@ -13,17 +13,7 @@ import chameleon.tool.ConnectorImpl;
  */
 public abstract class EclipseEditorExtension extends ConnectorImpl {
 
-//	  public ChameleonEditorExtension(ChameleonProjectNature nature) {
-//	  	_projectNature = nature;
-//	  }
-//	
     public abstract String getLabel(Element element);
-    
-//    public ChameleonProjectNature projectNature() {
-//    	return _projectNature;
-//    }
-//    
-//    private ChameleonProjectNature _projectNature;
 
     /**
   	 * Returns the string for the template for the given method.
@@ -34,19 +24,18 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
   	 * 
   	 * @param method the method to be converted to a (pattern) string
   	 * @return patternstring for a template
-  	 * @author Tim Vermeiren
   	 */
   	public abstract String getMethodTemplatePattern(Method method);
       
   	/**
   	 * Returns all modifiers for which we want to define a filter
   	 * (to filter the type hierarchy or the outline)
-  	 * 
-  	 * @author Tim Vermeiren
   	 */
   	//FIXME: filter based on properties!!!!
   	public abstract List<Modifier> getFilterModifiers();
   	
   	public abstract DeclarationCategorizer declarationCategorizer();
+  	
+//  	public abstract ICompletionProposal completionProposal(Element element, ChameleonDocument document, int offset);
 
 }

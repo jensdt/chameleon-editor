@@ -179,67 +179,6 @@ public class ChameleonDocument extends Document {
 		addPositionUpdater(new DefaultPositionUpdater(EclipseEditorTag.CHAMELEON_CATEGORY));
 	}
 
-	/**
-	 * prints debugging stuff
-	 * @param chameleon_category
-	 */
-	public void printPositionsAndParents(){
-		Position[] pos;
-		try {
-				pos = getPositions(EclipseEditorTag.CHAMELEON_CATEGORY);
-				System.out.println("***********************\n" +
-								   "***********************\n" +
-								   "* elements with __ALL decorator\n " +
-								   "***********************");
-				for(int i=0; i<pos.length; i++){
-					String elementname = ((EclipseEditorTag)pos[i]).getElement().getClass().getName();
-					String decoratorName =((EclipseEditorTag)pos[i]).getName();
-					if (decoratorName.equals("__ALL")){
-						System.out.println(elementname);
-					}
-				}
-		
-		
-		
-				System.out.println("***********************\n" +
-						   "***********************\n" +
-						   "* elements with __ALL decorator and its parent\n " +
-						   "***********************");
-
-			for(int i=0; i<pos.length; i++){
-				String elementname = ((EclipseEditorTag)pos[i]).getElement().getClass().getName();
-				String decoratorName =((EclipseEditorTag)pos[i]).getName();
-				if (decoratorName.equals("__ALL")
-						&&
-					(elementname.equals("org.jnome.mm.compilationunit.CompilationUnit")||
-					elementname.equals("org.jnome.mm.type.JavaClass")||
-					elementname.equals("chameleon.core.variable.MemberVariable")||
-					elementname.equals("org.jnome.mm.method.Constructor")||
-					elementname.equals("chameleon.core.method.RegularMethod")||
-					elementname.equals("org.jnome.mm.type.JavaInnerClass"))
-					
-					
-				){
-					String parentDecorator;
-
-					try {
-						parentDecorator= ((EclipseEditorTag)pos[i]).getParentDecorator().getElement().getClass().getName();
-						
-					} catch (Exception e) {
-						parentDecorator = "parentDecorator not found" ;
-					}
-					
-					System.out.println("element: "+elementname+ "\t" + "ParentDecorator: "
-										+  parentDecorator
-										);
-				}
-			}
-		} catch (BadPositionCategoryException e1) {
-			
-			e1.printStackTrace();
-		}
-		
-	}
 
 	/**
 	 * Sets the compilation unit for this document
