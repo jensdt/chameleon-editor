@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.Image;
 import org.rejuse.logic.ternary.Ternary;
 
 import chameleon.core.MetamodelException;
+import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.language.ObjectOrientedLanguage;
@@ -23,7 +24,6 @@ import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.connector.EclipseEditorTag;
-import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.hierarchy.HierarchyTypeNode;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
 import chameleon.output.Syntax;
@@ -66,6 +66,9 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	 * @param showElementClassName Show the classname (e.g. JavaClass or RegularMethodInvocation) of the elements
 	 */
 	public ChameleonLabelProvider(Language language, boolean showDefingType, boolean showDeclaringElementFqn, boolean showElementClassName){
+		if(language == null) {
+			throw new ChameleonProgrammerException("The language of a label provider cannot be set to null");
+		}
 		_language = language;
 		this.showDeclaringElementFqn = showDeclaringElementFqn;
 		this.showDefingType = showDefingType;
