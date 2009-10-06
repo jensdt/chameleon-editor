@@ -264,9 +264,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 
 	private ChameleonTextListener _listener;
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	/**
+	 * The source viewer manages the annotation on the vertical ruler bar.
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent,IVerticalRuler ruler, int styles){
 		ISourceViewer viewer = new ProjectionViewer(parent, ruler,getOverviewRuler(), isOverviewRulerVisible(), styles);
