@@ -14,7 +14,6 @@ import chameleon.core.MetamodelException;
 import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.core.language.ObjectOrientedLanguage;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
@@ -26,6 +25,7 @@ import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.presentation.hierarchy.HierarchyTypeNode;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
+import chameleon.oo.language.ObjectOrientedLanguage;
 import chameleon.output.Syntax;
 
 /**
