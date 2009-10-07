@@ -56,7 +56,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public ChameleonProjectNature() {
 		//Disable caching, or things will fail.
 		Config.setCaching(false);
-		modelElements=new ArrayList<ChameleonDocument>();
+		_documents=new ArrayList<ChameleonDocument>();
 	}
 	
 	//the project this natures resides
@@ -68,7 +68,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public static final String CHAMELEON_PROJECT_FILE_EXTENSION = "CHAMPROJECT";
 
 	//The elements in the model of this nature
-	private ArrayList<ChameleonDocument> modelElements;
+	private ArrayList<ChameleonDocument> _documents;
 	
 	public static final String NATURE = "ChameleonEditor.ChameleonNature";
 	
@@ -162,7 +162,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public void updateAllModels() {
 
 			try {
-				for (ChameleonDocument doc : modelElements) {
+				for (ChameleonDocument doc : _documents) {
 					updateModel(doc);
 				}
 				if (Config.DEBUG) {
@@ -171,7 +171,7 @@ public class ChameleonProjectNature implements IProjectNature{
 					// the number will keep getting bigger while the size of the source
 					// files remains constant.
 					ChameleonReconcilingStrategy.showSize(language().defaultNamespace());
-					for (Iterator<ChameleonDocument> iter = modelElements.iterator(); iter.hasNext();) {
+					for (Iterator<ChameleonDocument> iter = _documents.iterator(); iter.hasNext();) {
 						ChameleonDocument element = iter.next();
 						System.out.println(element);
 					}
@@ -206,7 +206,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 *
 	 */
 	public void loadDocuments(){
-		modelElements.clear();
+		_documents.clear();
 		IResource[] resources;
 		try {
 			resources = getProject().members();
@@ -241,7 +241,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		System.out.println("ADDING :: "+resource.getName());
 		
 		if (resource instanceof IFile)  {
-			addToModel(new ChameleonDocument(_project,(IFile)resource,resource.getFullPath()));
+			addToModel(new ChameleonDocument(this,(IFile)resource,resource.getFullPath()));
 		}
 		if (resource instanceof IFolder) {
 			IFolder folder = (IFolder) resource ;
@@ -276,20 +276,20 @@ public class ChameleonProjectNature implements IProjectNature{
 	 */
 	public void addToModel(ChameleonDocument document) {
 		ChameleonDocument same = null;
-		for (ChameleonDocument element: modelElements) {
+		for (ChameleonDocument element: _documents) {
 			if (element.isSameDocument(document)) {
 				same = element;
 			}
 		}
 		if (same!=null) {
-			modelElements.remove(same);
+			_documents.remove(same);
 		}
-		modelElements.add(document);
+		_documents.add(document);
 		updateModel(document);
 	}
 
 	public List<ChameleonDocument> documents(){
-		return new ArrayList<ChameleonDocument>(modelElements);
+		return new ArrayList<ChameleonDocument>(_documents);
 	}
 	
 	/**
@@ -301,7 +301,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 */
 	public ChameleonDocument document(Element<?,?> element) {
 		CompilationUnit cu = element.nearestElement(CompilationUnit.class);
-		for(ChameleonDocument doc : modelElements) {
+		for(ChameleonDocument doc : _documents) {
 			if(doc.compilationUnit().equals(cu)) {
 				return doc;
 			}
@@ -333,7 +333,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 	*/
 	public void removeModelElement(IDocument document){
-		modelElements.remove(document);
+		_documents.remove(document);
 		
 	}
 
@@ -350,7 +350,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 
 	public void addModelElement(ChameleonDocument document, Element parent) {
-		modelElements.add(document);
+		_documents.add(document);
 		try {
 			modelFactory().addToModel(document.get(), document.compilationUnit());
 		} catch (ParseException e) {
@@ -360,7 +360,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	
 	public ChameleonDocument documentOfPath(IPath path) {
 		ChameleonDocument result = null;
-		for(ChameleonDocument doc:modelElements) {
+		for(ChameleonDocument doc:_documents) {
 			if(doc.path().equals(path)) {
 				result = doc;
 				break;
@@ -377,7 +377,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	public ChameleonDocument documentOfFile(IFile file){
 		if(file == null)
 			return null;
-		for(ChameleonDocument doc : modelElements){
+		for(ChameleonDocument doc : _documents){
 			if(file.equals(doc.getFile())){
 				return doc;
 			}

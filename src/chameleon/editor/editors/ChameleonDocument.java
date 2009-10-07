@@ -60,8 +60,11 @@ public class ChameleonDocument extends Document {
 	
 	//The compilation unit of the document
 	private CompilationUnit _cu;
-	//The project where this document is found
-	private IProject _project;
+	
+	// Marko: I am going to replace this by the project nature.
+	
+//	//The project where this document is found
+//	private IProject _project;
 	//manages the presentation
 	private PresentationManager _presentationManager;
 	//the path to the file of which this document is made
@@ -89,18 +92,17 @@ public class ChameleonDocument extends Document {
 	 * @param file 
 	 *
 	 */
-	public ChameleonDocument(IProject project, IFile file, IPath path){
-		
+	public ChameleonDocument(ChameleonProjectNature projectNature, IFile file, IPath path){
 		super();
 		
 		setCompilationUnit(new CompilationUnit());
-		if(project==null){
+		if(projectNature==null){
 			ChameleonEditorPlugin.showMessageBox("Illegal project", "This document is part of an illegal project. \nCheck if the project is a Chameleon Project.", SWT.ICON_ERROR);
 		}
 
 		_parseErrors = new ArrayList<ParseException>();
 		
-		_project = project;
+		_projectNature = projectNature;
 		initialize();
 		
 		this._path=path;
@@ -117,7 +119,7 @@ public class ChameleonDocument extends Document {
 			}
 		} else{
 		   IPath projPath = path.removeFirstSegments(1);	 
-		   file = project.getFile(projPath);
+		   file = projectNature.getProject().getFile(projPath);
 		   _name = file.getName();
 		   _relativePathName = projPath.toString();
 		   
@@ -154,7 +156,7 @@ public class ChameleonDocument extends Document {
 		return _path.toOSString().equals(cd._path.toOSString());
 	}
 	
-	//parses the givenfile
+	//parses the given file
 	private void parseFile(IFile file) throws CoreException, IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 		String nxt = "";
@@ -192,33 +194,36 @@ public class ChameleonDocument extends Document {
 	
 	
 
-	/**
-	 * 
-	 * @return the project where this compilation unit is in
-	 */
-	public IProject getProject() {
-		return _project;
-	}
+//	/**
+//	 * 
+//	 * @return the project where this compilation unit is in
+//	 */
+//	public IProject getProject() {
+//		return _project;
+//	}
+	
+	private ChameleonProjectNature _projectNature;
 	
 	/**
 	 * Returns the project nature of the project of this 
 	 * @return
 	 */
 	public ChameleonProjectNature getProjectNature(){
-		try {
-			IProjectNature nature = _project.getNature(ChameleonProjectNature.NATURE);
-			return (ChameleonProjectNature) nature;
-		}
-		//TODO : Marko : why are all these exceptions caught here?
-		catch (NullPointerException e) {
-			return null;
-		} 
-		catch (CoreException e) {
-			return null;
-		}
-		catch (ClassCastException e) {
-			return null;
-		}
+		return _projectNature;
+//		try {
+//			IProjectNature nature = _project.getNature(ChameleonProjectNature.NATURE);
+//			return (ChameleonProjectNature) nature;
+//		}
+//		//TODO : Marko : why are all these exceptions caught here?
+//		catch (NullPointerException e) {
+//			return null;
+//		} 
+//		catch (CoreException e) {
+//			return null;
+//		}
+//		catch (ClassCastException e) {
+//			return null;
+//		}
 	}
 	
 	public Object getModel(){
@@ -264,12 +269,7 @@ public class ChameleonDocument extends Document {
 	}
 
 	public Language language() {
-		try {
-			return ((ChameleonProjectNature)_project.getNature(ChameleonProjectNature.NATURE)).language();
-		} catch (CoreException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return getProjectNature().language();
 	}
 
 	/**

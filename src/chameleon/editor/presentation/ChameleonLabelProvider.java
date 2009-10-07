@@ -207,7 +207,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	public String getExtraInfo(Element<?,?> element, boolean noFirstSeparator) {
 		String label = "";
 		// don't show extra info for types and constructors:
-		if(!(element instanceof Type) && (!(element instanceof Method) || !(((Method)element).is(element.language(ObjectOrientedLanguage.class).CONSTRUCTOR) == Ternary.TRUE )) ){
+		if((element != null) && !(element instanceof Type) && (!(element instanceof Method) || !(((Method)element).is(element.language(ObjectOrientedLanguage.class).CONSTRUCTOR) == Ternary.TRUE )) ){
 			// show types for type elements
 			
 			//CHANGE: NO TYPE LABELS FOR NOW, Need alternative for TypeDefiningElement (whose name is wrong) 

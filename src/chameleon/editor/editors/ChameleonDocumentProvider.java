@@ -63,7 +63,7 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 			document = nature.documentOfPath(path);
 		}
 		if(document == null) {
-			document = createEmptyChameleonDocument(project, path);
+			document = createEmptyChameleonDocument(nature, path);
 			newDocument = true;
 		} else {
 			System.out.println("Document exists");
@@ -94,8 +94,8 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 	/*
 	 * creates a new Chameleon document that is empty in the sense that there is no text in it yet
 	 */
-	protected ChameleonDocument createEmptyChameleonDocument(IProject project, IPath path) {
-		return new ChameleonDocument(project, null, path);
+	protected ChameleonDocument createEmptyChameleonDocument(ChameleonProjectNature nature, IPath path) {
+		return new ChameleonDocument(nature, null, path);
 	}
 	
 

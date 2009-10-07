@@ -421,10 +421,6 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @return the document from this editor
 	 */
 	public ChameleonDocument getDocument(){
-//		try {
-//		return (ChameleonDocument) ((ChameleonConfiguration)getSourceViewerConfiguration()).getChameleonReconciler().getDocument();
-//		} catch (ClassCastException e){
-//			return null;}
 		return document;
 	}
 
@@ -439,7 +435,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		
 		this.document = document;
 		
-		if (document.getProject()==null){
+		if (document.getProjectNature()==null){
 			ChameleonEditorPlugin.showMessageBox("Decreased Functionality", "This document is not part of a Chameleon Project. " +
 					"The editor will work in restricted mode. Thank you for reading this.", SWT.ICON_ERROR);		
 		} 

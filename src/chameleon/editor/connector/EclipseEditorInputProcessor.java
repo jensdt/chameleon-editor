@@ -96,33 +96,41 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 
 	private void setSingleLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String tagType) {
 		ChameleonDocument doc = document(compilationUnit);
-		try {
+//		try {
 			if(doc.getLength() == 0) {
 				System.out.println("Empty document.");
 			}
 			if(! element.hasTag(tagType)) {
-//				element.removeTag(tagType);
-//				System.out.println("Removed duplicate "+tagType+" tag for element of type "+element.getClass().getName());
-				EclipseEditorTag dec = new EclipseEditorTag(offset,length,element,tagType);
-				doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
-			}
-//			element.setTag(dec,dectype);
-		} catch (BadLocationException e) {
-			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
-			System.err.println("Document length: "+doc.getLength());
-			System.err.println("Trying to show text starting from offset:");
-			try {
-				for(int i=0;i<length;i++) {
-					System.err.println(doc.getChar(offset+i));
+				Element ancestor = element.furthestAncestor();
+				boolean cleanup = false;
+				if(element != compilationUnit) {
+					cleanup = true;
+					ancestor.setUniParent(compilationUnit);
 				}
-			} catch(BadLocationException exc) {
 				
+				EclipseEditorTag dec = new EclipseEditorTag(doc,offset,length,element,tagType);
+//				doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
+				
+				if(cleanup) {
+					ancestor.setUniParent(null);
+				}
 			}
-			e.printStackTrace();
-		} catch (BadPositionCategoryException e) {
-			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
-			e.printStackTrace();
-		}
+//		} catch (BadLocationException e) {
+//			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
+//			System.err.println("Document length: "+doc.getLength());
+//			System.err.println("Trying to show text starting from offset:");
+//			try {
+//				for(int i=0;i<length;i++) {
+//					System.err.println(doc.getChar(offset+i));
+//				}
+//			} catch(BadLocationException exc) {
+//				
+//			}
+//			e.printStackTrace();
+//		} catch (BadPositionCategoryException e) {
+//			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
+//			e.printStackTrace();
+//		}
 	}
 
 }

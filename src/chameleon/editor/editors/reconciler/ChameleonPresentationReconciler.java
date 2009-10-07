@@ -111,15 +111,14 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 			int length = positionTag.getLength();
 			attributes.put(IMarker.CHAR_START, offset);
 			attributes.put(IMarker.CHAR_END, offset + length);
-			try {
-				MarkerUtilities.createMarker(getDocument().getFile(),attributes,IMarker.PROBLEM);
-
-			} catch (CoreException e) {
-
-				e.printStackTrace();
-			}
 		} else {
+			attributes.put(IMarker.LINE_NUMBER, 1);
 			System.out.println("ERROR: element of type "+problem.element().getClass().getName()+" is invalid, but there is no position attached.");
+		}
+		try {
+			MarkerUtilities.createMarker(getDocument().getFile(),attributes,IMarker.PROBLEM);
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
 	}
 

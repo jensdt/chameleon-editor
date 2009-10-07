@@ -2,6 +2,8 @@ package chameleon.editor.connector;
 
 import java.util.Comparator;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Position;
 import org.rejuse.predicate.SafePredicate;
 
@@ -36,13 +38,27 @@ public class EclipseEditorTag extends Position implements Tag {
 	 * @param element
 	 * @param name
 	 */
-	public EclipseEditorTag(int offset, int length, Element element, String name){
+	public EclipseEditorTag(ChameleonDocument document, int offset, int length, Element element, String name){
 		super(Math.max(0,offset),Math.max(0,length));
   	if(element == null) {
   		throw new ChameleonProgrammerException("Initializing decorator with null element");
   	}
+  	_document = document;
+  	try {
+			_document.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,this);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		} catch (BadPositionCategoryException e) {
+			e.printStackTrace();
+		}
 		setElement(element,name);
 		setName(name);
+	}
+	
+	private ChameleonDocument _document;
+	
+	public ChameleonDocument getDocument() {
+		return _document;
 	}
 
 	/**
@@ -71,11 +87,25 @@ public class EclipseEditorTag extends Position implements Tag {
   		  _element.setTag(this, name);
   		}
   	}
-  	if(element == null) {
-  		this.delete();
-//  		ChameleonDocument doc = null;
-//  		doc.removePosition(this);
-  	}
+  	ChameleonDocument chameleonDocument = getDocument();
+		ChameleonDocument newDocument = chameleonDocument.getProjectNature().document(element);
+		_document = newDocument;
+		if(newDocument != chameleonDocument) {
+  		try {
+  			if(chameleonDocument != null) {
+  			  chameleonDocument.removePosition(EclipseEditorTag.CHAMELEON_CATEGORY,this);
+  			}
+  			if(newDocument != null) {
+				  newDocument.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,this);
+  			}
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			} catch(NullPointerException e) {
+				e.printStackTrace();
+			} catch (BadPositionCategoryException e) {
+				e.printStackTrace();
+			}
+		}
   }
 
 /**
@@ -98,11 +128,11 @@ public class EclipseEditorTag extends Position implements Tag {
 	}
 
 	
-	public EclipseEditorTag getParentDecorator(){
-		Element parentElem = getElement().parent();
-		EclipseEditorTag parentDeco = (EclipseEditorTag)parentElem.tag(ALL_TAG);
-		return parentDeco;
-	}
+//	public EclipseEditorTag getParentDecorator(){
+//		Element parentElem = getElement().parent();
+//		EclipseEditorTag parentDeco = (EclipseEditorTag)parentElem.tag(ALL_TAG);
+//		return parentDeco;
+//	}
 	
 	/** Decorator spanning an entire element **/
 	public final static String ALL_TAG= "__ALL";
@@ -115,9 +145,9 @@ public class EclipseEditorTag extends Position implements Tag {
 		return "Offset : "+getOffset()+"\tLength : "+getLength()+"\tElement : "+getElement();
 	}
 
-	public EclipseEditorTag clonePosition() {
-		return new EclipseEditorTag(getOffset(),getLength(),getElement(),_name);
-	}
+//	public EclipseEditorTag clonePosition() {
+//		return new EclipseEditorTag(getOffset(),getLength(),getElement(),_name);
+//	}
 
 
 	// FIXME Tim wrote a hashCode() method, but no equals. Do we need the hashCode method?
