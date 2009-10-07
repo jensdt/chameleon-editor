@@ -1,13 +1,22 @@
 package chameleon.editor.editors.reconciler;
 
 
-import org.eclipse.jface.text.IDocument;
+import java.util.HashMap;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
+import chameleon.core.compilationunit.CompilationUnit;
+import chameleon.core.validation.BasicProblem;
+import chameleon.core.validation.Invalid;
+import chameleon.core.validation.VerificationResult;
+import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 
@@ -72,10 +81,46 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 		
 		doFolding();
 		doColoring();
-
+    doVerificationErrors();
 		
 		presenting = false;
+	}
+	
+	private void doVerificationErrors() {
+		CompilationUnit cu = getDocument().compilationUnit();
+		VerificationResult result = cu.verify();
+		if(result instanceof Invalid) {
+		  for(BasicProblem problem: ((Invalid)result).problems()) {
+			  markError(problem);
+		  }
+		}
+	}
+	
+	@Override
+	public ChameleonDocument getDocument() {
+		return (ChameleonDocument)super.getDocument();
+	}
+	
+	public void markError(BasicProblem problem) {
+		HashMap<String, Object> attributes = new HashMap<String, Object>();
+		attributes.put(IMarker.SEVERITY,IMarker.SEVERITY_ERROR);
+		attributes.put(IMarker.MESSAGE, problem.message());
+		EclipseEditorTag positionTag = (EclipseEditorTag) problem.element().tag(EclipseEditorTag.ALL_TAG);
+		if(positionTag != null) {
+			int offset = positionTag.getOffset();
+			int length = positionTag.getLength();
+			attributes.put(IMarker.CHAR_START, offset);
+			attributes.put(IMarker.CHAR_END, offset + length);
+			try {
+				MarkerUtilities.createMarker(getDocument().getFile(),attributes,IMarker.PROBLEM);
 
+			} catch (CoreException e) {
+
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("ERROR: element of type "+problem.element().getClass().getName()+" is invalid, but there is no position attached.");
+		}
 	}
 
 	//Do the coloring

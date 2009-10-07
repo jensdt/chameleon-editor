@@ -30,7 +30,7 @@ public class ChameleonTextListener implements ITextListener  {
 	}
 
 	public void textChanged(TextEvent event) {
-		// CHANGE: in Tim's laster version, the offset and length are ignored
+		// CHANGE: in Tim's later version, the offset and length are ignored
 		//         The method in ChameleonDocument that takes an offset and length
 		//         as arguments is commented out.
 //		document.doPresentation(viewer, event.getOffset(), event.getLength());

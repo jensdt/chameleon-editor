@@ -464,13 +464,17 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * It removes all problem markers, and then adds the ones needed.
 	 */
 	public void actionPerformed(ActionEvent arg0)  {
-		
-		ChameleonDocument doc = getDocument();
-		IFile file = doc.getProject().getFile(getDocument().getRelativePathName());
+		System.out.println("XXXXXXXXXXXXXXXXXX EVENT RECEIVED");
+
+		IFile file = getFile();
 		removeMarkers(file ,IMarker.PROBLEM);
 		addProblemMarkers(file);
 		
 		
+	}
+
+	public IFile getFile() {
+		return getDocument().getFile();
 	}
 	
 	//adds problem markers for the given file

@@ -275,13 +275,13 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 
 	private void buildTree() {
 		try{
-			System.out.println("BUILDING OUTLINE TREE");
+//			System.out.println("BUILDING OUTLINE TREE");
 			chameleonTree = new ChameleonOutlineTree();
 			chameleonTree.composeTree(_currentLanguage, getTreeRootElement());
 			try {
 				treeViewer.setInput(chameleonTree);
 				treeViewer.refresh();
-				System.out.println("BUILT OUTLINE TREE");
+//				System.out.println("BUILT OUTLINE TREE");
 			} catch (RuntimeException e) {} // voor bij het afsluiten
 		}
 		catch(Exception e){
