@@ -96,7 +96,7 @@ public class ChameleonOutlineTree {
 	 */
 	public static boolean isAllowedInTree(Language language, Element elementChild) {
 		 return (elementChild instanceof Declaration) &&
-		        ((elementChild.hasTags()) && 
+		        ( //(elementChild.hasTags()) && 
 				    (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
 	}
 	
@@ -136,13 +136,16 @@ public class ChameleonOutlineTree {
 		node = treeElement;
 		if(treeElement !=null){
 			List<Element> treeElementChildren = getChildren(lang, treeElement);
-			if(! treeElementChildren.isEmpty()){ //Als er dus kinderen zijn
-				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
-					Element element = (Element) iter.next();
-					if (!isAllowedInTree(lang, element))
-						treeElementChildren.remove(element);
-					
-				}
+			if(! treeElementChildren.isEmpty()){ 
+			
+				//Filtering is already done in getChildren() no need to do it twice.
+				
+//				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
+//					Element element = (Element) iter.next();
+//					if (!isAllowedInTree(lang, element))
+//						treeElementChildren.remove(element);
+//					
+//				}
 				//adds the children
 				
 				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
