@@ -7,8 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import chameleon.core.declaration.Declaration;
+import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
+import chameleon.core.lookup.LookupException;
 
 /**
  * @author Manuel Van Wesemael 
@@ -78,12 +80,16 @@ public class ChameleonOutlineTree {
 	 * @param element
 	 * 	The parent element for which the displayed children are returned
 	 */
-	public List<Element> getChildren(Language lang, Element<?,?> element) {
+	public List<Element> getChildren(Language lang, DeclarationContainer<?,?> element) {
 		List<Element> children = new ArrayList<Element>();
-		for(Element elementChild : element.children()){
-			if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
-	  		children.add(elementChild);
- 			}
+		try {
+			for(Element elementChild : element.declarations()){
+				if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
+					children.add(elementChild);
+				}
+			}
+		} catch (LookupException e) {
+			// simply stop processing if the declarations cannot be computed.
 		}
 		return children;
 	}
@@ -134,8 +140,8 @@ public class ChameleonOutlineTree {
 	 */
 	public void composeTree(Language lang, Element treeElement) {
 		node = treeElement;
-		if(treeElement !=null){
-			List<Element> treeElementChildren = getChildren(lang, treeElement);
+		if(treeElement instanceof DeclarationContainer){
+			List<Element> treeElementChildren = getChildren(lang, (DeclarationContainer)treeElement);
 			if(! treeElementChildren.isEmpty()){ 
 			
 				//Filtering is already done in getChildren() no need to do it twice.
