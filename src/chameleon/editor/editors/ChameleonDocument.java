@@ -399,13 +399,16 @@ public class ChameleonDocument extends Document {
 //				parseErrors.add(exc);
 		boolean alreadyPresent = false;
 		for (ParseException exception : _parseErrors) {
-			if (exception.toString().equals(exc.toString()))
+			if (exception.toString().equals(exc.toString())) {
 				 alreadyPresent = true;
+			}
 		}
-		if(!alreadyPresent)
+		if(!alreadyPresent) {
 			_parseErrors.add(exc);
-		if (_parseErrorActionListener!=null) 
+		}
+		if (_parseErrorActionListener!=null) { 
 			_parseErrorActionListener.actionPerformed(null);
+		}
 		
 	}
 

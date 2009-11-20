@@ -465,8 +465,6 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		IFile file = getFile();
 		removeMarkers(file ,IMarker.PROBLEM);
 		addProblemMarkers(file);
-		
-		
 	}
 
 	public IFile getFile() {

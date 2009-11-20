@@ -204,6 +204,7 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 						
 						//System.out.println("  verwerken positie geslaagd\n");
 					}catch(Exception e){
+						e.printStackTrace();
 						reparseEntireDocument(status, positions, i);
 					}
 					status[i] = false;

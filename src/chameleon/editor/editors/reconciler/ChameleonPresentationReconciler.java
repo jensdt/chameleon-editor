@@ -2,9 +2,11 @@ package chameleon.editor.editors.reconciler;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -102,24 +104,47 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	}
 	
 	public void markError(BasicProblem problem) {
-		HashMap<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put(IMarker.SEVERITY,IMarker.SEVERITY_ERROR);
-		attributes.put(IMarker.MESSAGE, problem.message());
+		String message = problem.message();
+		HashMap<String, Object> attributes = createProblemMarkerMap(message);
 		EclipseEditorTag positionTag = (EclipseEditorTag) problem.element().tag(EclipseEditorTag.ALL_TAG);
+		ChameleonDocument document = getDocument();
 		if(positionTag != null) {
 			int offset = positionTag.getOffset();
 			int length = positionTag.getLength();
-			attributes.put(IMarker.CHAR_START, offset);
-			attributes.put(IMarker.CHAR_END, offset + length);
+			setProblemMarkerPosition(attributes, offset, length,document);
 		} else {
 			attributes.put(IMarker.LINE_NUMBER, 1);
 			System.out.println("ERROR: element of type "+problem.element().getClass().getName()+" is invalid, but there is no position attached.");
 		}
+		addProblemMarker(attributes, document);
+	}
+
+	public static void addProblemMarker(Map<String, Object> attributes, ChameleonDocument document) {
 		try {
-			MarkerUtilities.createMarker(getDocument().getFile(),attributes,IMarker.PROBLEM);
+			MarkerUtilities.createMarker(document.getFile(),attributes,IMarker.PROBLEM);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void setProblemMarkerPosition(Map<String, Object> attributes, int offset, int length, ChameleonDocument document) {
+		int lineNumber;
+		try {
+			lineNumber = document.getLineOfOffset(offset);
+			lineNumber++;
+		} catch (BadLocationException e) {
+			lineNumber = 0;
+		}
+    attributes.put(IMarker.CHAR_START, offset);
+		attributes.put(IMarker.CHAR_END, offset + length);
+	  attributes.put(IMarker.LINE_NUMBER, lineNumber);
+	}
+
+	public static HashMap<String, Object> createProblemMarkerMap(String message) {
+		HashMap<String, Object> attributes = new HashMap<String, Object>();
+		attributes.put(IMarker.SEVERITY,IMarker.SEVERITY_ERROR);
+		attributes.put(IMarker.MESSAGE, message);
+		return attributes;
 	}
 
 	//Do the coloring

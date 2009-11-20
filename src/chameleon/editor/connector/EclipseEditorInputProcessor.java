@@ -1,7 +1,10 @@
 package chameleon.editor.connector;
 
+import java.util.Map;
+
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
+
+import com.sun.org.apache.bcel.internal.classfile.LineNumber;
 
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.ChameleonProgrammerException;
@@ -9,6 +12,7 @@ import chameleon.core.element.Element;
 import chameleon.core.modifier.Modifier;
 import chameleon.core.reference.CrossReference;
 import chameleon.editor.editors.ChameleonDocument;
+import chameleon.editor.editors.reconciler.ChameleonPresentationReconciler;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.input.InputProcessor;
 import chameleon.input.ParseException;
@@ -131,6 +135,26 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 //			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
 //			e.printStackTrace();
 //		}
+	}
+
+	public void markParseError(int offset, int length, String message,Element element) {
+		ChameleonDocument document = document(element);
+		String header;
+		int lineNumber;
+		try {
+			lineNumber = document.getLineOfOffset(offset);
+			int offsetWithinLine = offset - document.getLineOffset(lineNumber);
+			lineNumber++;
+			offsetWithinLine++;
+			header = "line "+lineNumber+":"+(offsetWithinLine);
+		} catch (BadLocationException e) {
+			header = "cannot determine position of syntax error:";
+			lineNumber = 0;
+		}
+		//FIXME don't like that all this static code is in ChameleonPresentationReconciler.
+		Map<String,Object> attributes = ChameleonPresentationReconciler.createProblemMarkerMap(header+" "+message);
+		ChameleonPresentationReconciler.setProblemMarkerPosition(attributes, offset, length, document);
+		ChameleonPresentationReconciler.addProblemMarker(attributes, document);
 	}
 
 }
