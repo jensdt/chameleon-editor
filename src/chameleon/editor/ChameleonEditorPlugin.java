@@ -169,9 +169,8 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 		 
 			String iconPath = "icons/";
 			iconPath = iconPath.concat(language.name().toLowerCase()).concat("/");
-			//System.out.println("---- searching label : " +name);
 		   try {
-		       URL installURL = getDefault().getDescriptor().getInstallURL();
+		       URL installURL = getDefault().getBundle().getEntry("/");
 		       URL url = new URL(installURL, iconPath + name);
 		       return ImageDescriptor.createFromURL(url);
 		   } catch (MalformedURLException e) {
