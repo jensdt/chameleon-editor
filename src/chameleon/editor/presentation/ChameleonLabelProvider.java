@@ -103,10 +103,9 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		Image image = imageCache.get(descriptor);
 		if (image == null) {
 			image = descriptor.createImage();
-			if(descriptor == ChameleonEditorPlugin.getDefaultImageDescriptor() || image == null) { //this occurs when no icon is found from the description
-				return null;
+			if(image != null) { //this occurs when no icon is found from the description
+				imageCache.put(descriptor, image);
 			}
-			imageCache.put(descriptor, image);
 		}
 		return image;
 	}
@@ -131,11 +130,11 @@ public class ChameleonLabelProvider implements ILabelProvider {
 					name = name+ ((modifier.getClass().getSimpleName()).toLowerCase());
 				}
 				name =name.concat(".png");
-				descriptor = ChameleonEditorPlugin.getImageDescriptor(name, getLanguage());
 			} else {
 				name =name.concat(".png");
-				descriptor = ChameleonEditorPlugin.getImageDescriptor(name, getLanguage());
 			}
+			System.out.println("Looking for "+name);
+			descriptor = ChameleonEditorPlugin.getImageDescriptor(name, getLanguage());
 		}
 		if(descriptor==null) {
 			descriptor = ChameleonEditorPlugin.getDefaultImageDescriptor();
@@ -251,10 +250,12 @@ public class ChameleonLabelProvider implements ILabelProvider {
 			return ext.getLabel(element);
 		} else {
 			if(modelObject != null) {
-			  return modelObject.toString();
+				throw new ChameleonProgrammerException("Requesting label of an object that is not an Element.");
+			  //return modelObject.toString();
 			} else {
-				System.out.println("object given to label provider was null");
-				return "";
+				throw new ChameleonProgrammerException("Requesting label of null.");
+//				System.out.println("Object given to label provider was null");
+//				return "";
 			}
 		}
 	}

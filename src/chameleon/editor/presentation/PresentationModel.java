@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -22,6 +24,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import chameleon.core.element.ChameleonProgrammerException;
+import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
@@ -41,29 +44,12 @@ import chameleon.editor.presentation.outline.ChameleonOutlineTree;
 public class PresentationModel {
 	
 	/*A vector containing the style rules */
-	private List<StyleRule> rules;
-	private List<String[]> outlineElements;
-	private List<String> defaultOutlineElements;
-	private List<String[]> indentElements;	
-	private List<String> defaultIndentElements;
-	private Language language;
-	
-	/**
-	 * Creates a model with no rules
-	 *
-	 */
-	public PresentationModel(Language lang){
-		language=lang;
-		initLists();
-	}
-
-	private void initLists() {
-		rules=new ArrayList<StyleRule>();
-		outlineElements = new ArrayList<String[]>();	
-		defaultOutlineElements = new ArrayList<String>();
-		indentElements = new ArrayList<String[]>();
-		defaultIndentElements = new ArrayList<String>();
-	}
+	private List<StyleRule> _rules = new ArrayList<StyleRule>();
+	private List<String[]> _outlineElements = new ArrayList<String[]>();
+	private List<String> _defaultOutlineElements = new ArrayList<String>();
+	private List<String[]> _indentElements = new ArrayList<String[]>();	
+	private List<String> _defaultIndentElements = new ArrayList<String>();;
+	private Language _language;
 	
 	/**
 	 * Creates a new presentation model with its rules from an XML document
@@ -77,8 +63,7 @@ public class PresentationModel {
 		if(XMLFile == null) {
 			throw new ChameleonProgrammerException("The input stream for presentation model is null.");
 		}
-		language=lang;
-		initLists();
+		_language=lang;
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -123,13 +108,13 @@ public class PresentationModel {
 				v[0] = child.getNodeValue();
 				v[1] = currNode.getAttributes().getNamedItem("description").getTextContent();
 				
-				outlineElements.add(v);
+				_outlineElements.add(v);
 				if (currNode.getAttributes().getNamedItem("default").getTextContent().equals("visible")){
-					defaultOutlineElements.add(child.getNodeValue());
-					String fieldNaam = "outlineElement_"+language.name()+"_"+child.getNodeValue();
+					_defaultOutlineElements.add(child.getNodeValue());
+					String fieldNaam = "outlineElement_"+_language.name()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				} else {
-					String fieldNaam = "outlineElement_"+language.name()+"_"+child.getNodeValue();
+					String fieldNaam = "outlineElement_"+_language.name()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				}
 			}
@@ -146,13 +131,13 @@ public class PresentationModel {
 				String[] v = new String[2];
 				v[0] = child.getNodeValue();
 				v[1] = currNode.getAttributes().getNamedItem("description").getTextContent();
-				indentElements.add(v);
+				_indentElements.add(v);
 				if (currNode.getAttributes().getNamedItem("default").getTextContent().equalsIgnoreCase("true")){
-					defaultIndentElements.add(child.getNodeValue());
-					String fieldNaam = "indentElement_"+language+"_"+child.getNodeValue();
+					_defaultIndentElements.add(child.getNodeValue());
+					String fieldNaam = "indentElement_"+_language+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				} else {
-					String fieldNaam = "indentElement_"+language+"_"+child.getNodeValue();
+					String fieldNaam = "indentElement_"+_language+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, false);
 				}
 			}
@@ -178,10 +163,10 @@ public class PresentationModel {
 		
 		addDefaultToStore(style, selector);
 		if (ruleSetInStore(selector)){
-			rules.add(new StyleRule(getFromStore(selector),selector));
+			_rules.add(new StyleRule(getFromStore(selector),selector));
 		}
 		else {
-			rules.add(new StyleRule(style, selector));
+			_rules.add(new StyleRule(style, selector));
 			addToStore(style, selector);
 		}
 	}
@@ -191,20 +176,20 @@ public class PresentationModel {
 	 */
 	private PresentationStyle getFromStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldname = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldname = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		return PresentationStyle.fromStore(store, fieldname);
 	}
 
 
 	private boolean ruleSetInStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_ruleSet";
+		String fieldNaam = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_ruleSet";
 		return store.getBoolean(fieldNaam);
 	}
 
 	private void addDefaultToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldNaam = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		store.setDefault(fieldNaam+"foreground_color",style.getForeground().getColorString());
 		store.setDefault(fieldNaam+"background_color",style.getBackground().getColorString());
 		store.setDefault(fieldNaam+"foreground_set",style.getForeground().isDefined());
@@ -218,7 +203,7 @@ public class PresentationModel {
 
 	private void addToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldName = "stylerule_"+language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldName = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		store.setValue(fieldName+"foreground_color",style.getForeground().getColorString());
 		store.setValue(fieldName+"background_color",style.getBackground().getColorString());
 		store.setValue(fieldName+"foreground_set",style.getForeground().isDefined());
@@ -252,7 +237,7 @@ public class PresentationModel {
 	 * @return the style if any, null otherwise
 	 */
 	public PresentationStyle getRule(String element, String decorator){
-		Iterator it = rules.iterator();
+		Iterator it = _rules.iterator();
 		while (it.hasNext()){
 			StyleRule sr = (StyleRule) it.next();
 			if (sr.selector.map(element, decorator))
@@ -290,7 +275,7 @@ public class PresentationModel {
 	public StyleRange map(int offset, int length, String element, String decname) {
 		//System.out.println("Mapping from "+this);
 
-		Iterator<StyleRule> it = rules.iterator();
+		Iterator<StyleRule> it = _rules.iterator();
 		while(it.hasNext())
 		{
 			StyleRule rule = it.next();
@@ -302,23 +287,23 @@ public class PresentationModel {
 	}
 
 	public List<String[]> getOutlineElements() {
-		return outlineElements;
+		return _outlineElements;
 	}
 
 	public void setOutlineElements(List<String[]> outlineElements) {
-		this.outlineElements = outlineElements;
+		this._outlineElements = outlineElements;
 	}
 
 	public List<String> getDefaultOutlineElements() {
-		return defaultOutlineElements;
+		return _defaultOutlineElements;
 	}
 
 	public List<String[]> getIndentElements() {
-		return indentElements;
+		return _indentElements;
 	}
 
 	public List<String> getDefaultIndentElements() {
-		return defaultIndentElements;
+		return _defaultIndentElements;
 	}
 
 	public List<String> getOutlineElementsSimple(){
@@ -344,7 +329,7 @@ public class PresentationModel {
 	public HashMap<Selector, PresentationStyle> getRules() {
 		HashMap<Selector, PresentationStyle> result = new HashMap<Selector, PresentationStyle>();
 		
-		for (Iterator<StyleRule> iter = rules.iterator(); iter.hasNext();) {
+		for (Iterator<StyleRule> iter = _rules.iterator(); iter.hasNext();) {
 			StyleRule element = iter.next();
 			result.put(element.selector, element.style);
 		}
@@ -354,7 +339,7 @@ public class PresentationModel {
 
 	public void updateRule(Selector selector, PresentationStyle style) {
 		addToStore(style, selector);
-		Iterator<StyleRule> it = rules.iterator();
+		Iterator<StyleRule> it = _rules.iterator();
 		while(it.hasNext())
 		{
 			StyleRule rule = it.next();
@@ -468,7 +453,7 @@ public class PresentationModel {
 	}
 
 	public void initIndentElementsByDefaults() {
-		initIndentElementsByDefaults(language.name(), getIndentElementsSimple(), getDefaultIndentElements());
+		initIndentElementsByDefaults(_language.name(), getIndentElementsSimple(), getDefaultIndentElements());
 	}
 
 	
