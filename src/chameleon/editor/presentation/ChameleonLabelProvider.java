@@ -109,6 +109,10 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		}
 		return image;
 	}
+	
+  public Image decorateImage(Image image, Object object)  {
+  	return null;
+  }
 
 	/**
 	 * 

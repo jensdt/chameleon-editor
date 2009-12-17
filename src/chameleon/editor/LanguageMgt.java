@@ -14,7 +14,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -37,6 +39,8 @@ import chameleon.output.Syntax;
  */
 public class LanguageMgt {
 
+	  public final static String LANGUAGE_EXTENSION_ID = "chameleon.eclipse.language";
+	
     /*
       * The instance of this language management
       */
@@ -59,10 +63,24 @@ public class LanguageMgt {
         languages = new HashMap<String, EclipseBootstrapper>();
         try {
             loadJars();
+            loadPlugins();
         }
         catch (IOException e) {
             System.err.println("Couldn't load languages : "+e.getMessage());
         }
+        catch (CoreException e) {
+        	  System.err.println("Couldn't load languages : "+e.getMessage());
+        	  e.printStackTrace();
+        }
+    }
+    
+    private void loadPlugins() throws CoreException {
+    	IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_ID);
+    	for (IConfigurationElement e : config) {
+				EclipseBootstrapper bootstrapper = (EclipseBootstrapper) e.createExecutableExtension("class");
+				addLanguage(bootstrapper);
+    	}
+
     }
 
     private void loadJars() throws IOException {
@@ -99,7 +117,7 @@ public class LanguageMgt {
 
     				try {
     					EclipseBootstrapper id = (EclipseBootstrapper) languageloader.loadClass(packagename+".LanguageModelID").newInstance();
-    					languages.put(id.getLanguageName(), id);
+    					addLanguage(id);
     					//                    ChameleonEditorExtension editorExt = (ChameleonEditorExtension)languageloader.loadClass(packagename+".tool."+id.getLanguageName()+"EditorExtension").newInstance();
     					//                    tools.put(id.getLanguageName(),editorExt);
     					System.out.println(filename+"\t"+packagename+"\t"+id.getLanguageName()+" "+id.getLanguageVersion()+"\t"+id.getDescription());
@@ -127,6 +145,10 @@ public class LanguageMgt {
     		}
     		System.out.println("Done.\n");
     }
+
+		private void addLanguage(EclipseBootstrapper bootstrapper) {
+			languages.put(bootstrapper.getLanguageName(), bootstrapper);
+		}
 
     /**
      * @return The one and only instance of this language management
