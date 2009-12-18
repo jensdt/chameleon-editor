@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ChameleonEditor Plug-in
-Bundle-SymbolicName: ChameleonEditor; singleton:=true
-Bundle-Version: 1.1
+Bundle-Name: Chameleon Eclipse Plugin
+Bundle-SymbolicName: be.chameleon.eclipse.core;singleton:=true
+Bundle-Version: 1.0.0
 Bundle-ClassPath: lib/antlr.jar,
  lib/junit.jar,
  lib/log4j-1.2.15.jar,
