@@ -27,6 +27,8 @@ import chameleon.core.language.Language;
 public class ChameleonEditorPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ChameleonEditorPlugin plugin;
+	
+	public final static String PLUGIN_ID="be.chameleon.eclipse";
 
 	public final static String CHAMELEON_EDITOR_ID = "chameleon.editor.editors.ChameleonEditor";
 

@@ -26,6 +26,7 @@ import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
+import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.EclipseEditorInputProcessor;
 import chameleon.editor.connector.EclipseSourceManager;
@@ -70,7 +71,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	//The elements in the model of this nature
 	private ArrayList<ChameleonDocument> _documents;
 	
-	public static final String NATURE = "ChameleonEditor.ChameleonNature";
+	public static final String NATURE = ChameleonEditorPlugin.PLUGIN_ID+".ChameleonNature";
 	
 	private PresentationModel _presentationModel;
 	

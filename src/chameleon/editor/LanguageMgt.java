@@ -85,7 +85,7 @@ public class LanguageMgt {
 
     private void loadJars() throws IOException {
     	URL url = FileLocator.toFileURL(FileLocator.find(
-    			Platform.getBundle("ChameleonEditor"),
+    			Platform.getBundle(ChameleonEditorPlugin.PLUGIN_ID),
     			new Path("languages/"), null));
     	FilenameFilter filter = new FilenameFilter(){
     		public boolean accept(File dir, String name) {
