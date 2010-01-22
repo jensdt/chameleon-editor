@@ -22,7 +22,6 @@ import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.Config;
 import chameleon.core.compilationunit.CompilationUnit;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
@@ -35,6 +34,7 @@ import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.editor.presentation.outline.ChameleonOutlinePage;
+import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.InputProcessor;
 import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;

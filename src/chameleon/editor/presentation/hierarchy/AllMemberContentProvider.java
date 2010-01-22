@@ -7,8 +7,8 @@ package chameleon.editor.presentation.hierarchy;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.type.Type;
+import chameleon.exception.ModelException;
 
 /**
  * returns all members (also inherited) of a type
@@ -28,7 +28,7 @@ public class AllMemberContentProvider implements IStructuredContentProvider {
 				Type type = (Type)inputElement;
 				return type.members().toArray();
 			}
-		} catch (MetamodelException e) {
+		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 		return null;

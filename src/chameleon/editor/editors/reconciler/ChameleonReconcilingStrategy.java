@@ -10,7 +10,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 
 import chameleon.core.Config;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
@@ -19,6 +18,7 @@ import chameleon.core.type.Type;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
+import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.ModelFactory;
 
 

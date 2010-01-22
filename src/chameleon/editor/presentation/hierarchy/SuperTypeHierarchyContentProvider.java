@@ -10,11 +10,11 @@ import java.util.List;
 
 import org.rejuse.java.collections.Visitor;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeReference;
 import chameleon.core.type.inheritance.InheritanceRelation;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ModelException;
 
 /**
  * This class will calculate the children of an element in the super type hierarchy
@@ -42,7 +42,7 @@ public class SuperTypeHierarchyContentProvider extends HierarchyContentProvider 
 					public void visit(InheritanceRelation element) {
 						try {
 							result.add(element.superClass());
-						} catch (MetamodelException e) {
+						} catch (ModelException e) {
 							e.printStackTrace();
 						}
 					}
@@ -51,7 +51,7 @@ public class SuperTypeHierarchyContentProvider extends HierarchyContentProvider 
 				Type[] typeArray = result.toArray(new Type[]{});
 				return HierarchyTypeNode.encapsulateInHierarchyTreeNodes(typeArray, projectNature, parentTypeNode);
 
-			} catch (MetamodelException e) {
+			} catch (ModelException e) {
 				e.printStackTrace();
 			}
 		} else if(element instanceof RootType){

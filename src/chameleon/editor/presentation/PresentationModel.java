@@ -23,13 +23,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.presentation.formatting.ChameleonFormatterStrategy;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
+import chameleon.exception.ChameleonProgrammerException;
 
 /***
  * @author Manuel Van Wesemael 

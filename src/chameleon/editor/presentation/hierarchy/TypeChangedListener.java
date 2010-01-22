@@ -10,8 +10,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.type.Type;
+import chameleon.exception.ModelException;
 
 /**
  * When a new type is selected in the hierarhcy viewer, the corresponding
@@ -54,7 +54,7 @@ public class TypeChangedListener implements ISelectionChangedListener {
 				try {
 					type = ((HierarchyTypeNode)firstElement).getType();
 					getMethodViewer().setInput(type);
-				} catch (MetamodelException e) {
+				} catch (ModelException e) {
 					e.printStackTrace();
 				}
 			}

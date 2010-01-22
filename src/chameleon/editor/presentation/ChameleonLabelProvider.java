@@ -10,8 +10,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.rejuse.logic.ternary.Ternary;
 
-import chameleon.core.MetamodelException;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.method.Method;
@@ -25,6 +23,8 @@ import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.presentation.hierarchy.HierarchyTypeNode;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
+import chameleon.exception.ChameleonProgrammerException;
+import chameleon.exception.ModelException;
 import chameleon.oo.language.ObjectOrientedLanguage;
 import chameleon.output.Syntax;
 
@@ -168,7 +168,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 			} else if(modelObject instanceof EclipseEditorTag){
 				return ((EclipseEditorTag)modelObject).getElement();
 			}
-		} catch (MetamodelException e) {
+		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 		return null;

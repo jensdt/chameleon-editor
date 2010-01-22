@@ -20,7 +20,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.declaration.Declaration;
 import chameleon.core.declaration.DeclarationContainer;
@@ -29,6 +28,7 @@ import chameleon.core.reference.CrossReference;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
+import chameleon.exception.ModelException;
 
 /**
  * The Hyperlink of a cross reference element in the editor. When clicked, it will open
@@ -66,7 +66,7 @@ public class ChameleonHyperlink implements IHyperlink {
 		return this._element;
 	}
 	
-	public Declaration getDeclarator() throws MetamodelException {
+	public Declaration getDeclarator() throws ModelException {
 		return getReference().getDeclarator();
 	}
 	
@@ -174,7 +174,7 @@ public class ChameleonHyperlink implements IHyperlink {
 //				}
 //				// marker.delete();
 //			}
-		} catch (MetamodelException exc) {
+		} catch (ModelException exc) {
 //			exc.printStackTrace();
 			System.out.println("Referenced element not found.");
 		}

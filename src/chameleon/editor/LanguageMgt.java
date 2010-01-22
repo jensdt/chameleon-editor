@@ -23,11 +23,11 @@ import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.PresentationModel;
+import chameleon.exception.ChameleonProgrammerException;
 import chameleon.output.Syntax;
 
 /**
@@ -62,12 +62,12 @@ public class LanguageMgt {
         presentationModels = new HashMap<String, PresentationModel>();
         languages = new HashMap<String, EclipseBootstrapper>();
         try {
-            loadJars();
+            //loadJars();
             loadPlugins();
         }
-        catch (IOException e) {
-            System.err.println("Couldn't load languages : "+e.getMessage());
-        }
+//        catch (IOException e) {
+//            System.err.println("Couldn't load languages : "+e.getMessage());
+//        }
         catch (CoreException e) {
         	  System.err.println("Couldn't load languages : "+e.getMessage());
         	  e.printStackTrace();

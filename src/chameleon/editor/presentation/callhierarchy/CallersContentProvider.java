@@ -13,11 +13,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.rejuse.predicate.SafePredicate;
 import org.rejuse.predicate.TypePredicate;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.element.Element;
 import chameleon.core.expression.Invocation;
 import chameleon.core.method.Method;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ModelException;
 
 /**
  * Calculates all the methods that call a given method.
@@ -48,7 +48,7 @@ public class CallersContentProvider implements ITreeContentProvider {
 				public boolean eval(Invocation invocation) {
 					try {
 						return method.equals(invocation.getMethod());
-					} catch (MetamodelException e) {
+					} catch (ModelException e) {
 						e.printStackTrace();
 						return false;
 					}

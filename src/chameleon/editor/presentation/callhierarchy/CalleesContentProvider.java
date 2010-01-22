@@ -11,9 +11,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rejuse.java.collections.Visitor;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.expression.Invocation;
 import chameleon.core.method.Method;
+import chameleon.exception.ModelException;
 
 /**
  * Calculates all the methods that are called by a given method
@@ -38,7 +38,7 @@ public class CalleesContentProvider implements ITreeContentProvider {
 				public void visit(Invocation invocation) {
 					try {
 						calledMethods.add(invocation.getMethod());
-					} catch (MetamodelException e) {
+					} catch (ModelException e) {
 						e.printStackTrace();
 					}
 				}

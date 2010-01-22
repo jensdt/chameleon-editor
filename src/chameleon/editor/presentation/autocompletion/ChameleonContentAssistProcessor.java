@@ -13,7 +13,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.element.Element;
 import chameleon.core.expression.Invocation;
 import chameleon.core.language.Language;
@@ -21,6 +20,7 @@ import chameleon.core.lookup.LookupStrategy;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
+import chameleon.exception.ModelException;
 
 /**
  * Generates the auto completion proposals.
@@ -109,7 +109,7 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 					return null;
 				}
 			}
-		} catch (MetamodelException e) {
+		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 		return null;

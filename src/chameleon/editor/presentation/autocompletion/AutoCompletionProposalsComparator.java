@@ -8,7 +8,6 @@ import java.util.Set;
 import org.rejuse.java.collections.Visitor;
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
@@ -16,6 +15,7 @@ import chameleon.core.type.Type;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.editors.preferences.ChameleonEditorPreferencePage;
 import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.exception.ModelException;
 
 /**
  * Used to sort the results of the auto-completion.

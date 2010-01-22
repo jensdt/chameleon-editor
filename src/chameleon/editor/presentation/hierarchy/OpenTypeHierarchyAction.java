@@ -21,8 +21,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.MetamodelException;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.type.Type;
@@ -32,6 +30,8 @@ import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.exception.ChameleonProgrammerException;
+import chameleon.exception.ModelException;
 
 /**
  * This class represents the action to open the super or subtype (==actionType in constructor) hierarchy.
@@ -163,7 +163,7 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 				// if no type(reference) surrounding selection found, get top type of compilation unit
 				return chamEditor.getDocument().compilationUnit().descendants(Type.class).iterator().next();
 			}
-		} catch (MetamodelException e) {
+		} catch (ModelException e) {
 //			e.printStackTrace();
 		}
 		return null;
@@ -182,7 +182,7 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 				try {
 					Type type = ((HierarchyTypeNode)firstObject).getType();
 					ChameleonEditor.showInEditor(type, true, getEditor());
-				} catch (MetamodelException e) {
+				} catch (ModelException e) {
 					e.printStackTrace();
 				}
 				//new TreeViewerActions.RefreshAction(view.getHierarchyViewer()).run();
@@ -209,7 +209,7 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 				try {
 					Type type = ((HierarchyTypeNode)firstObject).getType();
 					ChameleonEditor.showInEditor(type, false, getEditor());
-				} catch (MetamodelException e) {
+				} catch (ModelException e) {
 					e.printStackTrace();
 				}
 			} else if(firstObject instanceof Element){

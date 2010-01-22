@@ -52,7 +52,6 @@ import org.rejuse.java.collections.Visitor;
 import org.rejuse.predicate.SafePredicate;
 
 import chameleon.core.compilationunit.CompilationUnit;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
@@ -63,6 +62,7 @@ import chameleon.editor.presentation.PresentationManager;
 import chameleon.editor.presentation.annotation.ChameleonAnnotation;
 import chameleon.editor.presentation.hierarchy.HierarchyView;
 import chameleon.editor.presentation.outline.ChameleonOutlinePage;
+import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.ParseException;
 
 /**

@@ -7,10 +7,10 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Position;
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.tag.Tag;
 import chameleon.editor.editors.ChameleonDocument;
+import chameleon.exception.ChameleonProgrammerException;
 
 /**
  * A tag intended for linking a position to a model element.

@@ -10,11 +10,11 @@ import java.util.TreeSet;
 
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.element.Element;
 import chameleon.core.namespace.Namespace;
 import chameleon.core.type.Type;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ModelException;
 
 /**
  * This class will calculate the children of an element in the sub type hierarchy
@@ -79,7 +79,7 @@ public class SubTypeHierarchyContentProvider extends HierarchyContentProvider {
 			try {
 				List<Type> directSuperTypes = type.getDirectSuperTypes();
 				return directSuperTypes.contains(this.superType);
-			} catch (MetamodelException e) {
+			} catch (ModelException e) {
 				e.printStackTrace();
 				return false;
 			}

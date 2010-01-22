@@ -7,13 +7,13 @@ import org.eclipse.jface.text.BadLocationException;
 import com.sun.org.apache.bcel.internal.classfile.LineNumber;
 
 import chameleon.core.compilationunit.CompilationUnit;
-import chameleon.core.element.ChameleonProgrammerException;
 import chameleon.core.element.Element;
 import chameleon.core.modifier.Modifier;
 import chameleon.core.reference.CrossReference;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonPresentationReconciler;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.InputProcessor;
 import chameleon.input.ParseException;
 import chameleon.tool.Processor;

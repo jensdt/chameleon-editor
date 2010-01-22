@@ -6,12 +6,12 @@ package chameleon.editor.presentation.hierarchy;
 
 import org.eclipse.core.resources.IFile;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeReference;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ModelException;
 
 /**
  * This is just an ObjectWrapper to wrap round the root object
@@ -45,7 +45,7 @@ public class RootType implements HierarchyTreeNode {
 				_typeCache = type;
 				return new Object[]{new HierarchyTypeNode(type, projectNature, this)};
 			}
-		} catch (MetamodelException e) {
+		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 		// if not succeeded, try to get the element of the docFile

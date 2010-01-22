@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import chameleon.core.MetamodelException;
 import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
@@ -29,6 +28,7 @@ import chameleon.core.variable.MemberVariable;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.exception.ModelException;
 import chameleon.util.Util;
 
 /**
@@ -108,7 +108,7 @@ public class Filters {
 				try {
 					Declaration<?,?,?,?> decl = (Declaration)element;
 					return decl.scope().contains(decl.nearestAncestor(NamespacePart.class).namespace());
-				} catch (MetamodelException e) {
+				} catch (ModelException e) {
 					e.printStackTrace();
 					return false;
 				}
