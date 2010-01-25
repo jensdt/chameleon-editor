@@ -27,13 +27,9 @@ public class MemberContentProvider implements IStructuredContentProvider {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-		try {
 		if(inputElement instanceof Type){
 			Type type = (Type)inputElement;
 				return type.directlyDeclaredMembers().toArray();
-		}
-		} catch (LookupException e) {
-			return null;
 		}
 		return null;
 	}
