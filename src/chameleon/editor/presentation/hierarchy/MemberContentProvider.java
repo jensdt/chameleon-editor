@@ -7,6 +7,7 @@ package chameleon.editor.presentation.hierarchy;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import chameleon.core.lookup.LookupException;
 import chameleon.core.type.Type;
 
 /**
@@ -26,9 +27,13 @@ public class MemberContentProvider implements IStructuredContentProvider {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
+		try {
 		if(inputElement instanceof Type){
 			Type type = (Type)inputElement;
-			return type.directlyDeclaredMembers().toArray();
+				return type.directlyDeclaredMembers().toArray();
+		}
+		} catch (LookupException e) {
+			return null;
 		}
 		return null;
 	}
