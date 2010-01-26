@@ -26,10 +26,10 @@ public interface EclipseBootstrapper {
 	 */
 	String getLanguageVersion();
 	
-	/**
-	 * @return Version information of the Language Model
-	 */
-	String getVersion();
+//	/**
+//	 * @return Version information of the Language Model
+//	 */
+//	String getVersion();
 	
 	/**
 	 * @return General description of this language model

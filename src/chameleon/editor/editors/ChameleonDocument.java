@@ -285,7 +285,13 @@ public class ChameleonDocument extends Document {
 				public void run() {
 					// CHANGE in Tim's last version, the following line is absent.
 //					viewer.changeTextPresentation(_lastpresentation, false);
-					viewer.changeTextPresentation(_lastpresentation, true);
+					try {
+					  viewer.changeTextPresentation(_lastpresentation, true);
+					}
+					catch(Exception exc) {
+						System.out.println("PRESENTATION exception");
+						exc.printStackTrace();
+					}
 				}
 			});	
 		}catch (NullPointerException npe){

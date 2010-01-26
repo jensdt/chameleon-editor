@@ -89,13 +89,19 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	}
 	
 	private void doVerificationErrors() {
-		CompilationUnit cu = getDocument().compilationUnit();
-		VerificationResult result = cu.verify();
+		VerificationResult result =null;
+		try {
+		  CompilationUnit cu = getDocument().compilationUnit();
+		  result = cu.verify();
+		} catch(Exception exc) {
+			
+		}
 		if(result instanceof Invalid) {
 		  for(BasicProblem problem: ((Invalid)result).problems()) {
 			  markError(problem);
 		  }
 		}
+		
 	}
 	
 	@Override

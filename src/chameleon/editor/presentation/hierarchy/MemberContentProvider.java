@@ -15,6 +15,7 @@ import chameleon.core.type.Type;
  * Needed to populate the member viewer of the hierarchy view.
  * 
  * @author Tim Vermeiren
+ * @author Marko van Dooren
  */
 public class MemberContentProvider implements IStructuredContentProvider {
 	
