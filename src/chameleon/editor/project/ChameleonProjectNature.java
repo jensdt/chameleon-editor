@@ -301,10 +301,12 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * @return
 	 */
 	public ChameleonDocument document(Element<?,?> element) {
-		CompilationUnit cu = element.nearestElement(CompilationUnit.class);
-		for(ChameleonDocument doc : _documents) {
-			if(doc.compilationUnit().equals(cu)) {
-				return doc;
+		if(element != null) {
+			CompilationUnit cu = element.nearestElement(CompilationUnit.class);
+			for(ChameleonDocument doc : _documents) {
+				if(doc.compilationUnit().equals(cu)) {
+					return doc;
+				}
 			}
 		}
 		return null;
