@@ -123,7 +123,7 @@ public class ChameleonHyperlink implements IHyperlink {
 		try {
 			Declaration<?,?,?,? > referencedElement = getDeclarator();
 			if (referencedElement != null) {
-				ChameleonEditor.showInEditor(referencedElement, true, null);
+				ChameleonEditor.showInEditor(referencedElement, true, true, null);
 			}
 //				System.out.println("De link wordt geopend...");
 //				CompilationUnit cu = referencedElement.nearestAncestor(CompilationUnit.class);

@@ -33,10 +33,10 @@ public class MethodClickedListener implements IDoubleClickListener,
 			Object firstObject = selection.getFirstElement();
 			if(firstObject instanceof Method){
 				Method method = (Method)firstObject;
-				ChameleonEditor.showInEditor(method, false, null);
+				ChameleonEditor.showInEditor(method, false, false, null);
 			} else if(firstObject instanceof RootMethod){
 				Method method = ((RootMethod)firstObject).getMethod();
-				ChameleonEditor.showInEditor(method, false, null);
+				ChameleonEditor.showInEditor(method, false, false, null);
 			}
 		}
 	}
@@ -51,10 +51,10 @@ public class MethodClickedListener implements IDoubleClickListener,
 			Object firstObject = selection.getFirstElement();
 			if(firstObject instanceof Method){
 				Method method = (Method)firstObject;
-				ChameleonEditor.showInEditor(method, true, null);
+				ChameleonEditor.showInEditor(method, true, true, null);
 			} else if(firstObject instanceof RootMethod){
 				Method method = ((RootMethod)firstObject).getMethod();
-				ChameleonEditor.showInEditor(method, true, null);
+				ChameleonEditor.showInEditor(method, true, true, null);
 			}
 		}
 	}

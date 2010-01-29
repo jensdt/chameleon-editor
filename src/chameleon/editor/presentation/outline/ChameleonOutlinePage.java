@@ -269,7 +269,8 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		else {
 			ChameleonOutlineTree segment= (ChameleonOutlineTree) ((IStructuredSelection) selection).getFirstElement();
 			Element element = segment.getElement();
-			_editor.highLightElement(element);
+			ChameleonEditor.showInEditor(element, false, false, getEditor());
+//			_editor.highLightElement(element);
 		}
 	}
 

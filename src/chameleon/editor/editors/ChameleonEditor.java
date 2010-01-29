@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
@@ -50,6 +51,7 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.rejuse.java.collections.Visitor;
 import org.rejuse.predicate.SafePredicate;
+import org.rejuse.predicate.TypePredicate;
 
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
@@ -555,23 +557,36 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		}
 		int start = 0;
 		int length = 0;
-		if(element.tags().size()<1){
-			System.err.println("Element "+element.toString()+" has no Editor tags");
-			resetHighlight(selectElement);
-			return;
-		} else if(element.hasTag(editorTagName)){
-			EclipseEditorTag tag = (EclipseEditorTag)element.tag(editorTagName);
-			start = tag.getOffset();
-			length = tag.getLength();
-		} else if(element.hasTag(EclipseEditorTag.ALL_TAG)){
-			EclipseEditorTag tag = (EclipseEditorTag)element.tag(EclipseEditorTag.ALL_TAG);
-			start = tag.getOffset();
-			length = tag.getLength();
-		} else { // gebruik een willekeurige editorTag
-			Collection<Tag> tags = element.tags();
-			EclipseEditorTag firstTag = (EclipseEditorTag) tags.iterator().next();
-			start = firstTag.getOffset();
-			length = firstTag.getLength();
+		boolean no_result = true;
+		boolean different_origin = true;
+		while(no_result && different_origin) {
+			if(element.hasTag(editorTagName)){
+				EclipseEditorTag tag = (EclipseEditorTag)element.tag(editorTagName);
+				start = tag.getOffset();
+				length = tag.getLength();
+				no_result = false;
+			} else if(element.hasTag(EclipseEditorTag.ALL_TAG)){
+				EclipseEditorTag tag = (EclipseEditorTag)element.tag(EclipseEditorTag.ALL_TAG);
+				start = tag.getOffset();
+				length = tag.getLength();
+				no_result = false;
+			} else {
+				Collection<Tag> editorTags = element.tags();  
+				new TypePredicate<Tag,EclipseEditorTag>(EclipseEditorTag.class).filter(editorTags);
+				if(editorTags.isEmpty()) {
+					Element origin = element.origin();
+					if(origin != element) {
+						element = origin;
+					} else {
+						different_origin = false;
+					}
+				} else {
+					EclipseEditorTag firstTag = (EclipseEditorTag)editorTags.iterator().next();
+					start = firstTag.getOffset();
+					length = firstTag.getLength();
+					no_result = false;
+				}
+			}
 		}
 		setHighlightOrSelection(selectElement, start, length);
 	}
@@ -631,8 +646,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * 			if no Chameleon editor is opened, this reference is necessary to open a new Chameleon editor
 	 * @result	true if the element is shown, false when failed or (element is part of closed editor and openNewEditor == false)
 	 */
-	public static boolean showInEditor(Element element, boolean openNewEditor, ChameleonEditor chamEditor){
-		return showInEditor(element, openNewEditor, chamEditor, true, EclipseEditorTag.NAME_TAG);
+	public static boolean showInEditor(Element element, boolean openOtherEditor, boolean openNewEditor, ChameleonEditor chamEditor){
+		return showInEditor(element, openOtherEditor, openNewEditor, chamEditor, true, EclipseEditorTag.NAME_TAG);
 	}
 
 	/**
@@ -651,8 +666,23 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * 			the type of editortag that has to be highlighted (must be a constant of EditorTagTypes)
 	 * @result	true if the element is shown, false when failed or (element is part of closed editor and openNewEditor == false)
 	 */
-	public static boolean showInEditor(Element<?,?> element, boolean openNewEditor, ChameleonEditor chamEditor, boolean selectElement, String editorTagToHighlight){
+	public static boolean showInEditor(Element<?,?> element, boolean openOtherEditor, boolean openNewEditor, ChameleonEditor chamEditor, boolean selectElement, String editorTagToHighlight){
 		if(element==null){
+			chamEditor.resetHighlight(selectElement);
+			return false;
+		}
+		Element origin = element.origin();
+		// It's a visual action, creating a hashset will not be noticeable.
+		HashSet visited = new HashSet();
+		boolean loop = false;
+		while(element != origin && ! loop) {
+			//FIXME: check for infinite loop?
+			loop = visited.contains(element);
+			visited.add(element);
+			element = origin;
+			origin = element.origin();
+		}
+		if(loop) {
 			chamEditor.resetHighlight(selectElement);
 			return false;
 		}
@@ -674,7 +704,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 				if(activeEditor instanceof ChameleonEditor && elementCU.equals(((ChameleonEditor)activeEditor).getDocument().compilationUnit())){
 					((ChameleonEditor)activeEditor).highLightElement(element, selectElement, editorTagToHighlight);
 					return true;
-				} else {
+				} else if(openOtherEditor){
 					ChameleonDocument doc = chamEditor.getDocument().getProjectNature().document(elementCU);
 					if(doc!=null){
 						IFile file = doc.getFile();
@@ -694,12 +724,14 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 						}
 						// if desired open in new ChameleonEditor:
 						else if(openNewEditor){
-							// @invar chamEditor!=null && openedEditor==null
+							// doc == null && openNewEditor == true;
+							// chamEditor!=null && openedEditor==null
 							IWorkbenchPage page = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage();
 							openedEditor = (ChameleonEditor)IDE.openEditor(page, file, ChameleonEditorPlugin.CHAMELEON_EDITOR_ID);
 							openedEditor.highLightElement(element, selectElement, editorTagToHighlight);
 							return true;
 						} else {
+							// doc == null && openNewEditor == false;
 							chamEditor.resetHighlight(selectElement);
 							return false; // element not opened yet in an editor, and openNewEditor == false
 						}

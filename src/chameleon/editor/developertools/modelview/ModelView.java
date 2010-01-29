@@ -202,7 +202,7 @@ public class ModelView extends ViewPart {
 				Object selectedObject = ((StructuredSelection)sel).getFirstElement();
 				if(selectedObject instanceof Element){
 					Element element = ((Element) selectedObject);
-					ChameleonEditor.showInEditor(element, false, null, true, editorTag.getName());
+					ChameleonEditor.showInEditor(element, false, false, null, true, editorTag.getName());
 				}
 			}
 		}
@@ -222,7 +222,7 @@ public class ModelView extends ViewPart {
 				if(selectedObject instanceof Element){
 					Element element = ((Element) selectedObject);
 					ChameleonEditor editor = ChameleonEditor.getCurrentActiveEditor();
-					boolean succeeded = ChameleonEditor.showInEditor(element, false, editor, true, EclipseEditorTag.ALL_TAG);
+					boolean succeeded = ChameleonEditor.showInEditor(element, false, false, editor, true, EclipseEditorTag.ALL_TAG);
 					// if no document of element found, just highlight the EditorTag in the current active editor:
 					// eg. Modifiers cannot be highlighted with showInEditor
 					if(!succeeded && editor != null){
@@ -245,7 +245,7 @@ public class ModelView extends ViewPart {
 				Object selectedObject = ((StructuredSelection)sel).getFirstElement();
 				if(selectedObject instanceof Element){
 					Element element = ((Element) selectedObject);
-					ChameleonEditor.showInEditor(element, true, null, true, EclipseEditorTag.ALL_TAG);
+					ChameleonEditor.showInEditor(element, true, true, null, true, EclipseEditorTag.ALL_TAG);
 				}
 			}
 		}

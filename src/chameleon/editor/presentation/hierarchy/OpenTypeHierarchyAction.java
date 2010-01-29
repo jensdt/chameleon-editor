@@ -181,13 +181,13 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 			if(firstObject instanceof HierarchyTypeNode){
 				try {
 					Type type = ((HierarchyTypeNode)firstObject).getType();
-					ChameleonEditor.showInEditor(type, true, getEditor());
+					ChameleonEditor.showInEditor(type, true, true, getEditor());
 				} catch (ModelException e) {
 					e.printStackTrace();
 				}
 				//new TreeViewerActions.RefreshAction(view.getHierarchyViewer()).run();
 			} else if(firstObject instanceof Element){
-				ChameleonEditor.showInEditor((Element)firstObject, true, getEditor());
+				ChameleonEditor.showInEditor((Element)firstObject, true, true, getEditor());
 			}
 			new TypeChangedListener(view).selectionChanged(view.getHierarchyViewer().getSelection());//TOTEST
 			
@@ -208,12 +208,12 @@ public class OpenTypeHierarchyAction extends Action implements IDoubleClickListe
 			if(firstObject instanceof HierarchyTypeNode){
 				try {
 					Type type = ((HierarchyTypeNode)firstObject).getType();
-					ChameleonEditor.showInEditor(type, false, getEditor());
+					ChameleonEditor.showInEditor(type, false, false, getEditor());
 				} catch (ModelException e) {
 					e.printStackTrace();
 				}
 			} else if(firstObject instanceof Element){
-				ChameleonEditor.showInEditor((Element)firstObject, false, getEditor());
+				ChameleonEditor.showInEditor((Element)firstObject, false, false, getEditor());
 			}
 		} else if(event.getSelection().isEmpty()){
 			getEditor().resetHighlightRange();
