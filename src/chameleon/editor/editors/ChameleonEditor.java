@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -148,6 +150,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 *
 	 */
 	private void initEditor(){
+		Logger.getRootLogger().setLevel(Level.FATAL);
 
 		chameleonAnnotations = new Vector<ChameleonAnnotation>(0);
 		
