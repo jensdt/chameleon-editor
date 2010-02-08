@@ -137,7 +137,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 			} else {
 				name =name.concat(".png");
 			}
-			System.out.println("Looking for "+name);
+//			System.out.println("Looking for "+name);
 			descriptor = ChameleonEditorPlugin.getImageDescriptor(name, getLanguage());
 		}
 		if(descriptor==null) {

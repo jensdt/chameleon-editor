@@ -49,7 +49,7 @@ public class ChameleonHyperlinkDetector implements IHyperlinkDetector {
 		if(editorTag == null) {
 			return null;
 		} else {
-			System.out.println("Found cross-reference taf at offset: "+editorTag.getOffset() +" length: "+editorTag.getLength());
+//			System.out.println("Found cross-reference taf at offset: "+editorTag.getOffset() +" length: "+editorTag.getLength());
 			// get the element:
 			Element element = editorTag.getElement();
 			if (element instanceof CrossReference) {
