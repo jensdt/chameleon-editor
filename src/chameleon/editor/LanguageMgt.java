@@ -226,15 +226,15 @@ public class LanguageMgt {
      * supported, an empty model is loaded.
      */
     public PresentationModel getPresentationModel(String languageString) {
-        PresentationModel r = presentationModels.get(languageString);
-        Language language = createLanguage(languageString);
-        if (r == null) {
-                String filename = "/xml/presentation.xml";
-                InputStream stream = language.getClass().getClassLoader().getResourceAsStream(filename);
-                r = new PresentationModel(language, stream);
-                presentationModels.put(languageString, r);
-        }
-        return r;
+    	PresentationModel r = presentationModels.get(languageString);
+    	if (r == null) {
+    		EclipseBootstrapper bootstrapper = languages.get(languageString);
+    		String filename = "/xml/presentation.xml";
+    		InputStream stream = bootstrapper.getClass().getClassLoader().getResourceAsStream(filename);
+    		r = new PresentationModel(languageString, stream);
+    		presentationModels.put(languageString, r);
+    	}
+    	return r;
     }
 
 }

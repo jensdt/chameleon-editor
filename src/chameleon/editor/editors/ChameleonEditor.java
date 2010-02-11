@@ -703,7 +703,8 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 					return false;
 				}
 				// if already opened in the active editor, highlight element
-				IEditorPart activeEditor = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+//				IEditorPart activeEditor = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				IEditorPart activeEditor = chamEditor.getSite().getPage().getActiveEditor();
 				if(activeEditor instanceof ChameleonEditor && elementCU.equals(((ChameleonEditor)activeEditor).getDocument().compilationUnit())){
 					((ChameleonEditor)activeEditor).highLightElement(element, selectElement, editorTagToHighlight);
 					return true;

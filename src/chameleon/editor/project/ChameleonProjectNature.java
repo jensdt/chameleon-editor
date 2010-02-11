@@ -76,13 +76,14 @@ public class ChameleonProjectNature implements IProjectNature{
 	private PresentationModel _presentationModel;
 	
 	public PresentationModel presentationModel() {
-		PresentationModel result = _presentationModel;
-		if(result == null) {
-      String filename = "/xml/presentation.xml";
-      InputStream stream = language().getClass().getClassLoader().getResourceAsStream(filename);
-      result = new PresentationModel(language(), stream);
-		}
-		return result;
+		return LanguageMgt.getInstance().getPresentationModel(_language.name());
+//		PresentationModel result = _presentationModel;
+//		if(result == null) {
+//      String filename = "/xml/presentation.xml";
+//      InputStream stream = language().getClass().getClassLoader().getResourceAsStream(filename);
+//      result = new PresentationModel(language().name(), stream);
+//		}
+//		return result;
 	}
 
 	public void init(Language language){

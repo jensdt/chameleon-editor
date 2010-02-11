@@ -60,10 +60,7 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	private void performChoices(){
 		
-		Set<String> languages = options.keySet();
-		
-		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
-			String language = iter.next();
+		for (String language : options.keySet()) {
 			
 			HashMap<Selector, Vector<FieldEditor>> fieldsBySelector = options.get(language);
 			
@@ -248,7 +245,11 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 
 	}
 
-	public void init(IWorkbench workbench) {}
+	public void init(IWorkbench workbench) {
+		_workbench = workbench;
+	}
+	
+	private IWorkbench _workbench;
 	
 	//reads the configuration for a specific language and gets it from the xml file
 	private HashMap<String, HashMap<Selector, PresentationStyle>> readConfigurables() {

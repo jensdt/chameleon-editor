@@ -254,22 +254,22 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			
-			if (oldInput == fDocument) {
+			if (oldInput == _document) {
 				
-				if (fDocument != null)
-					fDocument.removeDocumentListener(this);
+				if (_document != null)
+					_document.removeDocumentListener(this);
 					
 				if (fIsIncrementalReconciler) {
 					fDirtyRegionQueue.purgeQueue();
-					if (fDocument != null && fDocument.getLength() > 0) {
-						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), null);
+					if (_document != null && _document.getLength() > 0) {
+						DocumentEvent e= new DocumentEvent(_document, 0, _document.getLength(), null);
 						createDirtyRegion(e);
 						fThread.reset();
 						fThread.suspendCallerWhileDirty();
 					}
 				}
 				
-				fDocument= null;
+				_document= null;
 			}
 		}
 		
@@ -277,20 +277,14 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 		 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-				
-				
-			
-				fDocument= newInput;
-				if (fDocument == null)
+				_document = (ChameleonDocument) newInput;
+				if (_document == null) {
 					return;
+				}
+				reconcilerDocumentChanged((ChameleonDocument) _document);
 				
-				reconcilerDocumentChanged((ChameleonDocument) fDocument);
-				
-				fDocument.addDocumentListener(this);
+				_document.addDocumentListener(this);
 				startReconciling();
-				
-				
-				
 		}			
 	}
 	
@@ -308,9 +302,9 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	private IProgressMonitor fProgressMonitor;
 
 	/** The text viewer's document. */
-	protected IDocument fDocument;
+	protected ChameleonDocument _document;
 	/** The text viewer */
-	protected ITextViewer fViewer;
+	protected ITextViewer _textViewer;
 	
 	
 	/**
@@ -394,7 +388,7 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	 * @return the reconciler document
 	 */
 	public IDocument getDocument() {
-		return fDocument;
+		return _document;
 	}
 	
 	/**
@@ -403,7 +397,7 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	 * @return the text viewer this reconciler is installed on
 	 */
 	protected ITextViewer getTextViewer() {
-		return fViewer;
+		return _textViewer;
 	}
 	
 	/**
@@ -427,10 +421,10 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 			fThread= new BackgroundThread(getClass().getName());
 		}
 		
-		fViewer= textViewer;
+		_textViewer= textViewer;
 		
 		fListener= new Listener();
-		fViewer.addTextInputListener(fListener);
+		_textViewer.addTextInputListener(fListener);
 		
 		fDirtyRegionQueue= new DirtyRegionQueue();
 	}
@@ -441,8 +435,8 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	public void uninstall() {
 		if (fListener != null) {
 			
-			fViewer.removeTextInputListener(fListener);
-			if (fDocument != null) fDocument.removeDocumentListener(fListener);
+			_textViewer.removeTextInputListener(fListener);
+			if (_document != null) _document.removeDocumentListener(fListener);
 			fListener= null;
 			
             synchronized (this) {
@@ -505,10 +499,10 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	 */
 	protected void forceReconciling() {
 		
-		if (fDocument != null) {
+		if (_document != null) {
 			
 			if (fIsIncrementalReconciler) {
-				DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), fDocument.get());
+				DocumentEvent e= new DocumentEvent(_document, 0, _document.getLength(), _document.get());
 				createDirtyRegion(e);
 			}
 			

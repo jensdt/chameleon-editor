@@ -156,7 +156,7 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	//Do the coloring
 	private void doColoring(){
 		try {
-			((ChameleonDocument)this.fDocument).doPresentation(fViewer);
+			((ChameleonDocument)this._document).doPresentation(_textViewer);
 		} catch (ClassCastException e){
 			e.printStackTrace();
 		}
@@ -205,7 +205,7 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 		doPresentation();
 
 		//FIXME als er elementen gefold zijn, en er wordt tekst bijgetypt, dan worden alle foldings ongedaan gemaakt
-		getEditor().fold(((ChameleonDocument)fDocument).getFoldedElementsFromModel());
+		getEditor().fold(((ChameleonDocument)_document).getFoldedElementsFromModel());
 
 		
 
@@ -217,7 +217,7 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	 */
 	public void reColor() {
 		try {
-			((ChameleonDocument)this.fDocument).doPresentation(fViewer);
+			((ChameleonDocument)this._document).doPresentation(_textViewer);
 		} catch (ClassCastException e){}
 	}
 	
@@ -225,7 +225,7 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	 * returns the text viewer
 	 */
 	public ITextViewer getTextViewer(){
-		return fViewer;
+		return _textViewer;
 	}
 
 	@Override

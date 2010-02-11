@@ -49,21 +49,20 @@ public class PresentationModel {
 	private List<String> _defaultOutlineElements = new ArrayList<String>();
 	private List<String[]> _indentElements = new ArrayList<String[]>();	
 	private List<String> _defaultIndentElements = new ArrayList<String>();;
-	private Language _language;
 	
 	/**
 	 * Creates a new presentation model with its rules from an XML document
 	 * @param XMLFile
 	 * 		The XML document being used
 	 */
-	public PresentationModel(Language lang, InputStream XMLFile){
-		if(lang == null) {
-			throw new ChameleonProgrammerException("The language for presentation model is null.");
+	public PresentationModel(String name, InputStream XMLFile){
+		if(name == null) {
+			throw new ChameleonProgrammerException("The language name for the presentation model is null.");
 		}
 		if(XMLFile == null) {
-			throw new ChameleonProgrammerException("The input stream for presentation model is null.");
+			throw new ChameleonProgrammerException("The input stream for the presentation model is null.");
 		}
-		_language=lang;
+		_name=name;
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -111,10 +110,10 @@ public class PresentationModel {
 				_outlineElements.add(v);
 				if (currNode.getAttributes().getNamedItem("default").getTextContent().equals("visible")){
 					_defaultOutlineElements.add(child.getNodeValue());
-					String fieldNaam = "outlineElement_"+_language.name()+"_"+child.getNodeValue();
+					String fieldNaam = "outlineElement_"+languageName()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				} else {
-					String fieldNaam = "outlineElement_"+_language.name()+"_"+child.getNodeValue();
+					String fieldNaam = "outlineElement_"+languageName()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				}
 			}
@@ -134,10 +133,10 @@ public class PresentationModel {
 				_indentElements.add(v);
 				if (currNode.getAttributes().getNamedItem("default").getTextContent().equalsIgnoreCase("true")){
 					_defaultIndentElements.add(child.getNodeValue());
-					String fieldNaam = "indentElement_"+_language+"_"+child.getNodeValue();
+					String fieldNaam = "indentElement_"+languageName()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, true);
 				} else {
-					String fieldNaam = "indentElement_"+_language+"_"+child.getNodeValue();
+					String fieldNaam = "indentElement_"+languageName()+"_"+child.getNodeValue();
 					store.setDefault(fieldNaam, false);
 				}
 			}
@@ -176,20 +175,20 @@ public class PresentationModel {
 	 */
 	private PresentationStyle getFromStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldname = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldname = "stylerule_"+languageName()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		return PresentationStyle.fromStore(store, fieldname);
 	}
 
 
 	private boolean ruleSetInStore(Selector selector) {
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_ruleSet";
+		String fieldNaam = "stylerule_"+languageName()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_ruleSet";
 		return store.getBoolean(fieldNaam);
 	}
 
 	private void addDefaultToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldNaam = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldNaam = "stylerule_"+languageName()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		store.setDefault(fieldNaam+"foreground_color",style.getForeground().getColorString());
 		store.setDefault(fieldNaam+"background_color",style.getBackground().getColorString());
 		store.setDefault(fieldNaam+"foreground_set",style.getForeground().isDefined());
@@ -203,7 +202,7 @@ public class PresentationModel {
 
 	private void addToStore(PresentationStyle style, Selector selector){
 		IPreferenceStore store = ChameleonEditorPlugin.getDefault().getPreferenceStore();
-		String fieldName = "stylerule_"+_language.name()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
+		String fieldName = "stylerule_"+languageName()+"_"+selector.getElementType()+"_"+selector.getPositionType()+"_";
 		store.setValue(fieldName+"foreground_color",style.getForeground().getColorString());
 		store.setValue(fieldName+"background_color",style.getBackground().getColorString());
 		store.setValue(fieldName+"foreground_set",style.getForeground().isDefined());
@@ -453,8 +452,12 @@ public class PresentationModel {
 	}
 
 	public void initIndentElementsByDefaults() {
-		initIndentElementsByDefaults(_language.name(), getIndentElementsSimple(), getDefaultIndentElements());
+		initIndentElementsByDefaults(languageName(), getIndentElementsSimple(), getDefaultIndentElements());
 	}
 
+	public String languageName() {
+		return _name;
+	}
 	
+	private String _name;
 }
