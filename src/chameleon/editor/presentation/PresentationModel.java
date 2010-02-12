@@ -158,8 +158,6 @@ public class PresentationModel {
 	 * adds a rule to the rules. A new styleRule is made from the style and the selector
 	 */
 	private void addRule(PresentationStyle style, Selector selector)	{
-		
-		
 		addDefaultToStore(style, selector);
 		if (ruleSetInStore(selector)){
 			_rules.add(new StyleRule(getFromStore(selector),selector));

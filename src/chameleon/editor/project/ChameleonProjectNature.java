@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +15,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
@@ -33,7 +36,6 @@ import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.InputProcessor;
 import chameleon.input.ModelFactory;
@@ -109,8 +111,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * Deconfigures this nature. To be called before object destruction.
 	 */
 	public void deconfigure() throws CoreException {
-		
-//		later om de builders in te steken (compiler?)
+		getProject().getWorkspace().removeResourceChangeListener(_projectListener);
 	}
 
 	/**
@@ -126,23 +127,64 @@ public class ChameleonProjectNature implements IProjectNature{
 	 */
 	public void setProject(IProject project) {
 		if(project != _project) {
-		this._project = project;
-		
-		try {
-			BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/."+CHAMELEON_PROJECT_FILE_EXTENSION)));
-			String lang = f.readLine();
-			f.close();
-			Language language = LanguageMgt.getInstance().createLanguage(lang);
-			init(language);
-			loadDocuments();
-//			updateAllModels();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("No initfile...");
-		}
+			IProject old = _project;
+			this._project = project;
+			if(project != null) {
+			try {
+				BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/."+CHAMELEON_PROJECT_FILE_EXTENSION)));
+				String lang = f.readLine();
+				f.close();
+				Language language = LanguageMgt.getInstance().createLanguage(lang);
+				init(language);
+				loadDocuments();
+				_projectListener = new ProjectChangeListener();
+				getProject().getWorkspace().addResourceChangeListener(_projectListener, IResourceChangeEvent.POST_CHANGE);
+				//			updateAllModels();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("No initfile...");
+			}
+			} else {
+				old.getWorkspace().removeResourceChangeListener(_projectListener);
+			}
 		}
 	}
 	
+	private IResourceChangeListener _projectListener;
+	
+	private class ProjectChangeListener implements IResourceChangeListener {
+
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta delta = event.getDelta();
+			try {
+				delta.accept( new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta) {
+						IProject affectedProject = delta.getResource().getProject();
+						if(affectedProject == _project) {
+							switch (delta.getKind()) {
+							case IResourceDelta.ADDED :
+								// handle added resource
+								break;
+							case IResourceDelta.REMOVED :
+								// handle removed resource
+								break;
+							case IResourceDelta.CHANGED :
+								// handle changed resource
+								break;
+							}
+						}
+						return true;
+					}
+				}
+				);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 //	private void setMetaModelFactory(IMetaModelFactory mMF) {
 //		_metaModelFactory = mMF;
 //	}
@@ -212,15 +254,17 @@ public class ChameleonProjectNature implements IProjectNature{
 		IResource[] resources;
 		try {
 			resources = getProject().members();
-
+			List<String> extensions = LanguageMgt.getInstance().extensions(language());
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				if((resource instanceof IFile)){
-					if(!((resource.getFullPath().getFileExtension().equals("project"))
-						||
-						((resource.getFullPath().getFileExtension().equals(CHAMELEON_PROJECT_FILE_EXTENSION))
-						)))
-						addResourceToModel(resource);
+					if(!(isEclipseProjectFile(resource) || (isChameleonProjectFile(resource)))) {
+						IPath fullPath = resource.getFullPath();
+						String fileExtension = fullPath.getFileExtension();
+						if(extensions.contains(fileExtension)) {
+						  addResourceToModel(resource);
+						}
+					}
 				}
 				else //tis ne folder
 					if (resource instanceof IFolder) {
@@ -233,6 +277,14 @@ public class ChameleonProjectNature implements IProjectNature{
 			e.printStackTrace();
 		}
 		
+	}
+
+	private boolean isChameleonProjectFile(IResource resource) {
+		return resource.getFullPath().getFileExtension().equals(CHAMELEON_PROJECT_FILE_EXTENSION);
+	}
+
+	private boolean isEclipseProjectFile(IResource resource) {
+		return resource.getFullPath().getFileExtension().equals("project");
 	}
 
 	/**

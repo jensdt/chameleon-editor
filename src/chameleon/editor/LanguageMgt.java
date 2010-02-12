@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -236,5 +237,9 @@ public class LanguageMgt {
     	}
     	return r;
     }
+
+		public List<String> extensions(Language language) {
+			return languages.get(language.name()).fileExtensions();
+		}
 
 }

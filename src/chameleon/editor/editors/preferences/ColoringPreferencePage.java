@@ -94,7 +94,7 @@ public class ColoringPreferencePage extends FieldEditorPreferencePage implements
 	//recolors all open editors.
 	private void recolorAll() {
 		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
-			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbench workbench = _workbench;
 			public void run() {
 				// Collect dirtyParts
 				//ArrayList dirtyParts = new ArrayList();

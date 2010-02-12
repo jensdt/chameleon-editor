@@ -21,19 +21,20 @@ public class PresentationStyle {
 	public PresentationStyle(NodeList childNodes) {
 		for (int i=0; i<childNodes.getLength();i++) {
 			Node current = childNodes.item(i);
-			if (current.getNodeName().equals("foreground"))
+			String nodeName = current.getNodeName();
+			if (nodeName.equals("foreground"))
 				foreground = new OptionalColor(current.getTextContent());
-			else if (current.getNodeName().equals("background"))
+			else if (nodeName.equals("background"))
 				background = new OptionalColor(current.getTextContent());
-			else if (current.getNodeName().equals("bold"))
+			else if (nodeName.equals("bold"))
 				bold = true;
-			else if (current.getNodeName().equals("italic"))
+			else if (nodeName.equals("italic"))
 				italic = true;
-			else if (current.getNodeName().equals("underline"))
+			else if (nodeName.equals("underline"))
 				underline = true;
-			else if (current.getNodeName().equals("fold"))
+			else if (nodeName.equals("fold"))
 				fold = true;
-			else if (current.getNodeName().equals("foldable"))
+			else if (nodeName.equals("foldable"))
 				foldable = true;
 		}
 			
@@ -61,7 +62,7 @@ public class PresentationStyle {
 			fg.setColor(store.getString(fieldName+"foreground_color"));
 		}
 		if (store.getBoolean(fieldName+"background_set")){
-			fg.setColor(store.getString(fieldName+"background_color"));
+			bg.setColor(store.getString(fieldName+"background_color"));
 		}
 		
 		PresentationStyle ps = new PresentationStyle(fg, bg, bold, italic, underline, foldable, folded);
