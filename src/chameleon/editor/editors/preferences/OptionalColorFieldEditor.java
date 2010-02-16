@@ -40,7 +40,9 @@ public class OptionalColorFieldEditor extends FieldEditor{
 	}
 
 	public OptionalColor getOptionalColor() {
-		if (!booleanfield.getBooleanValue()) return new OptionalColor();
+		if (!booleanfield.getBooleanValue()) {
+			return new OptionalColor();
+		}
 		return new OptionalColor(colorfield.getColorSelector().getColorValue());
 	}
 

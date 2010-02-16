@@ -227,6 +227,11 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 	}
 
+	/**
+	 * Removes the old file markers and document positions, and asks the model factory
+	 * to replace the contents of the compilation unit associated with the document.
+	 * @param doc
+	 */
 	public void updateModel(ChameleonDocument doc) {
 		try {
 			doc.getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
@@ -291,7 +296,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * Adds another resource to the model. This can be either a file or a folder
 	 * @param resource
 	 */
-	private void addResourceToModel(IResource resource) {
+	public void addResourceToModel(IResource resource) {
 		System.out.println("ADDING :: "+resource.getName());
 		
 		if (resource instanceof IFile)  {
@@ -329,6 +334,8 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * @param document
 	 */
 	public void addToModel(ChameleonDocument document) {
+		//FIXME: why do we remove the 'same' document and add the new one if
+		//       the document was already in the model?
 		ChameleonDocument same = null;
 		for (ChameleonDocument element: _documents) {
 			if (element.isSameDocument(document)) {
