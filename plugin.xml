@@ -27,6 +27,7 @@
          	<run class="chameleon.editor.project.ChameleonProjectNature">
          </run>
       </runtime>
+      <builder id="be.chameleon.eclipse.ChameleonBuilder"/>
    </extension>
    
    <extension
@@ -199,5 +200,22 @@
 		  category="chameleon.editor.ChameleonEditorPlugin"
 		  class="chameleon.editor.developertools.tagview.EditorTagListView"/>
   </extension>
+  <extension
+       id="ChameleonBuilder"
+       name="Chameleon Builder" 
+       point="org.eclipse.core.resources.builders">
+       <builder hasNature="true"> 
+       <run class="chameleon.editor.builder.ChameleonBuilder"/> 
+      </builder>
+  </extension>
+   
+   
+   <extension point="org.eclipse.ui.ide.projectNatureImages">
+     <image id="chameleon.natureImage"
+            natureId="be.chameleon.eclipse.ChameleonNature"
+            icon="icons/chameleon.png">
+     </image>
+   </extension>
+
    
 </plugin>

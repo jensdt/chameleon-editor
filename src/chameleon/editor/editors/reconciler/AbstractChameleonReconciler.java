@@ -235,15 +235,17 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 			
-			if (!fThread.isDirty()&& fThread.isAlive())
+			if (!fThread.isDirty()&& fThread.isAlive()) {
 				aboutToBeReconciled();
+			}
 			
-			if (fProgressMonitor != null && fThread.isActive())
+			if (fProgressMonitor != null && fThread.isActive()) {
 				fProgressMonitor.setCanceled(true);
+			}
 				
-			if (fIsIncrementalReconciler)
+			if (fIsIncrementalReconciler) {
 				createDirtyRegion(e);
-				
+			}
 			
 			fThread.reset();
 			

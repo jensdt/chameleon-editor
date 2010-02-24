@@ -9,18 +9,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.Config;
@@ -30,6 +35,7 @@ import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
+import chameleon.editor.builder.ChameleonBuilder;
 import chameleon.editor.connector.EclipseEditorInputProcessor;
 import chameleon.editor.connector.EclipseSourceManager;
 import chameleon.editor.editors.ChameleonDocument;
@@ -102,10 +108,42 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * Configures this nature. to be called after initialisation.
 	 */
 	public void configure() throws CoreException {
-		
+		System.out.println("Configuring Chameleon project nature.");
 		//later om de builders in te steken (compiler?)
+		addBuilder(getProject(), ChameleonBuilder.BUILDER_ID);
+		new Job("Chameleon Project Build"){
 		
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					getProject().build(ChameleonBuilder.FULL_BUILD, ChameleonBuilder.BUILDER_ID, null, monitor);
+					return Status.OK_STATUS;
+				}catch(CoreException exc) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+		}.schedule();
 	}
+	
+  private void addBuilder(IProject project, String id) throws CoreException {
+    IProjectDescription desc = project.getDescription();
+    ICommand[] commands = desc.getBuildSpec();
+    for (int i = 0; i < commands.length; ++i) {
+       if (commands[i].getBuilderName().equals(id)) {
+          return;
+       }
+    }
+    //add builder to project
+    ICommand command = desc.newCommand();
+    command.setBuilderName(id);
+    ICommand[] nc = new ICommand[commands.length + 1];
+    // Add it before other builders.
+    System.arraycopy(commands, 0, nc, 1, commands.length);
+    nc[0] = command;
+    desc.setBuildSpec(nc);
+    project.setDescription(desc, null);
+ }
+
 
 	/**
 	 * Deconfigures this nature. To be called before object destruction.
@@ -152,29 +190,25 @@ public class ChameleonProjectNature implements IProjectNature{
 	
 	private IResourceChangeListener _projectListener;
 	
-	private class ProjectChangeListener implements IResourceChangeListener {
+	public class ProjectChangeListener implements IResourceChangeListener {
 
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta delta = event.getDelta();
 			try {
-				delta.accept( new IResourceDeltaVisitor() {
-					public boolean visit(IResourceDelta delta) {
-						IProject affectedProject = delta.getResource().getProject();
-						if(affectedProject == _project) {
-							switch (delta.getKind()) {
-							case IResourceDelta.ADDED :
-								// handle added resource
-								break;
-							case IResourceDelta.REMOVED :
-								// handle removed resource
-								break;
-							case IResourceDelta.CHANGED :
-								// handle changed resource
-								break;
-							}
-						}
-						return true;
+				delta.accept( new ResourceDeltaVisitor() {
+
+					@Override
+					public void handleAdded(IResourceDelta delta) throws CoreException {
 					}
+
+					@Override
+					public void handleChanged(IResourceDelta delta) throws CoreException {
+					}
+
+					@Override
+					public void handleRemoved(IResourceDelta delta) throws CoreException {
+					}
+					
 				}
 				);
 			} catch (CoreException e) {
@@ -182,7 +216,6 @@ public class ChameleonProjectNature implements IProjectNature{
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 //	private void setMetaModelFactory(IMetaModelFactory mMF) {

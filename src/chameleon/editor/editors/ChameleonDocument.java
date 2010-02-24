@@ -273,8 +273,8 @@ public class ChameleonDocument extends Document {
 	}
 
 	/**
-	 * The textrepresentation for the viewer is changed to the presentation we get from 
-	 * our presenation manager.
+	 * The text representation for the viewer is changed to the presentation we get from 
+	 * our presentation manager.
 	 * that representation is now the last known one.
 	 * @param viewer
 	 */

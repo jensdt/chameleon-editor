@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -26,6 +27,7 @@ import org.xml.sax.SAXException;
 
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
+import chameleon.editor.builder.ChameleonBuilder;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.exception.ChameleonProgrammerException;
@@ -81,7 +83,6 @@ public class LanguageMgt {
 				EclipseBootstrapper bootstrapper = (EclipseBootstrapper) e.createExecutableExtension("class");
 				addLanguage(bootstrapper);
     	}
-
     }
 
     private void loadJars() throws IOException {

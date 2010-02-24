@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -92,7 +91,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	private Annotation[] oldAnnotations;
 	
 	//The chameleonAnnotations for this editor
-	private Vector<ChameleonAnnotation> chameleonAnnotations;
+	private List<ChameleonAnnotation> chameleonAnnotations;
 	
 	
 	//The document that this editor uses.
@@ -152,7 +151,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	private void initEditor(){
 		Logger.getRootLogger().setLevel(Level.FATAL);
 
-		chameleonAnnotations = new Vector<ChameleonAnnotation>(0);
+		chameleonAnnotations = new ArrayList<ChameleonAnnotation>(0);
 		
 	}
 		
@@ -260,10 +259,12 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	    _projViewer.enableProjection();
 	    updateTextListener(document);
 	    
-
-	    
 	    annotationModel = _projViewer.getProjectionAnnotationModel();
-	   
+	    // need to call this here, or otherwise there are no folding markers until the document has been updated.
+	    // there is syntax highlighting though.
+	    // I do not like this. It seems like a hack, but it's better than the infinite loop 
+	    // that the students wrote in ChameleonPresentationReconciler. It just looped until the call above had been executed.
+	    updateFoldingStructure();
 	}
 	
 
@@ -314,19 +315,10 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	     chameleonAnnotations.add(chamAnnotation);
 	     annotations[i] = annotation;
 	   }
-	   
-	   boolean go=false;
-	   do {
-		   
-		   try {
-			   annotationModel.modifyAnnotations(oldAnnotations, newAnnotations,null);
-			   go=false;
-		   } catch(NullPointerException e){
-			   go=true;
-		   }
-	   } while (go);
-		   oldAnnotations = annotations;
-
+		 if(annotationModel != null) {
+			 annotationModel.modifyAnnotations(oldAnnotations, newAnnotations,null);
+		 }
+		 oldAnnotations = annotations;
 	}
 	
 	/**
@@ -352,7 +344,7 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param positions
 	 * 	The positions to be unfolded
 	 */
-	public void unfold(Vector<EclipseEditorTag> positions){
+	public void unfold(List<EclipseEditorTag> positions){
 		for(ChameleonAnnotation chamAnnot : chameleonAnnotations){
 			for (int i = 0; i < positions.size(); i++) {
 				EclipseEditorTag dec = positions.get(i);
