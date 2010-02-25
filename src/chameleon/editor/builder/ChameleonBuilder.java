@@ -9,15 +9,40 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
+import chameleon.editor.LanguageMgt;
+import chameleon.editor.connector.Builder;
+import chameleon.editor.connector.EclipseBootstrapper;
+import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.editor.project.ResourceDeltaFileVisitor;
 
 public class ChameleonBuilder extends IncrementalProjectBuilder {
 
+	public ChameleonBuilder() {
+		super();
+	}
+	
+	public Builder builder() {
+		return _builder;
+	}
+	
+	public void setupBuilder() throws CoreException {
+		if(_builder == null) {
+			ChameleonProjectNature nature = (ChameleonProjectNature)getProject().getNature(ChameleonProjectNature.NATURE);
+			Language language = nature.language();
+			//FIXME ACTUAL BUILDER MUST BE A CONNECTOR 
+			_builder = LanguageMgt.getInstance().createBuilder(language);
+		}
+	}
+	
+	private Builder _builder;
+	
 	public static final String BUILDER_ID = ChameleonEditorPlugin.PLUGIN_ID+".ChameleonBuilder";
 	
 	@Override
 	protected IProject[] build(int kind, Map arguments, IProgressMonitor monitor) throws CoreException {
+		setupBuilder();
 		if(kind == INCREMENTAL_BUILD || kind == AUTO_BUILD) {
 			return incrementalBuild(arguments, monitor);
 		} else {

@@ -72,5 +72,5 @@ public abstract class EclipseBootstrapper {
 	 */
 	public abstract Syntax getCodeWriter();
 	
-	
+	public abstract Builder createBuilder(Language source);
 }
