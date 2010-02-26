@@ -497,5 +497,13 @@ public class ChameleonProjectNature implements IProjectNature{
 		return null;
 	}
 
+	public List<CompilationUnit> compilationUnits() {
+		ArrayList<CompilationUnit> result = new ArrayList<CompilationUnit>();
+		for(ChameleonDocument document: documents()) {
+			result.add(document.compilationUnit());
+		}
+		return result;
+	}
+
 
 }

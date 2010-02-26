@@ -1,5 +1,6 @@
 package chameleon.editor.connector;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,16 @@ public abstract class EclipseBootstrapper {
 	 */
 	public abstract String getLicense();
 	
+	/**
+	 * Create the language object, and attach at least the following extensions:
+	 * <ul>
+	 *   <li>chameleon.output.Syntax</li>
+	 *   <li>chameleon.editor.connector.EclipseEditorExtension</li>
+	 * </ul>
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public abstract Language createLanguage() throws IOException, ParseException;
 	
 	/**
@@ -72,5 +83,8 @@ public abstract class EclipseBootstrapper {
 	 */
 	public abstract Syntax getCodeWriter();
 	
-	public abstract Builder createBuilder(Language source);
+	public Builder createBuilder(Language source, File projectDirectory) {
+		return null;
+	}
+
 }
