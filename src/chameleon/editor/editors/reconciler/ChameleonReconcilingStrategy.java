@@ -146,13 +146,13 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		  System.out.println("starting reconciling,in chameleonReconcilingStrategy");
 		}
 		clonedPositions.clear();
-		if(DEBUG) {
-		  try {
-				System.out.println("Number of positions in document: "+getDocument().getPositions(EclipseEditorTag.CHAMELEON_CATEGORY).length);
-			} catch (BadPositionCategoryException e) {
-				e.printStackTrace();
-			}
-		}
+//		if(DEBUG) {
+//		  try {
+//				System.out.println("Number of positions in document: "+getDocument().getPositions(EclipseEditorTag.CHAMELEON_CATEGORY).length);
+//			} catch (BadPositionCategoryException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		
 		if(isWholeDocumentDirty()){
 			if(DEBUG) {
@@ -421,18 +421,18 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		Language language = getDocument().compilationUnit().language();
 		if(language != null) {
 			Namespace root = language.defaultNamespace();
-			if(DEBUG) {
-				try {
-					System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
-					System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
-					System.out.println("Number of namespacesparts in model: "+root.descendants(NamespacePart.class).size());
-					System.out.println("Number of types in model: "+root.descendants(Type.class).size());
-					showSize(root);
-					showTypeSize(root);
-				} catch(Exception exc) {
-
-				}
-			}
+//			if(DEBUG) {
+//				try {
+//					System.out.println("Number of elements in model: "+root.descendants(Element.class).size());
+//					System.out.println("Number of namespaces in model: "+root.descendants(Namespace.class).size());
+//					System.out.println("Number of namespacesparts in model: "+root.descendants(NamespacePart.class).size());
+//					System.out.println("Number of types in model: "+root.descendants(Type.class).size());
+////					showSize(root);
+////					showTypeSize(root);
+//				} catch(Exception exc) {
+//
+//				}
+//			}
 			System.out.println("reconciling dirtyregion & subregion,in chameleonReconcilingStrategy");
 			//if(_firstDR == false){
 			if(_firstDR == true){

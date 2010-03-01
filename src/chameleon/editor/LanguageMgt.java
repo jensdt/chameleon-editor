@@ -1,12 +1,14 @@
 package chameleon.editor;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ import chameleon.exception.ChameleonProgrammerException;
 import chameleon.output.Syntax;
 
 /**
+ * @author Marko van Dooren
  * @author Manuel Van Wesemael
  * @author Joeri Hendrickx
  *
@@ -85,15 +88,10 @@ public class LanguageMgt {
     }
 
     private void loadJars() throws IOException {
-    	URL url = FileLocator.toFileURL(FileLocator.find(
-    			Platform.getBundle(ChameleonEditorPlugin.PLUGIN_ID),
-    			new Path("languages/"), null));
-    	FilenameFilter filter = new FilenameFilter(){
-    		public boolean accept(File dir, String name) {
-    			return name.contains(".jar");
-    		}};
-    		File[] files = (new File(url.getFile())).listFiles(filter);
-    		URL[] urls = new URL[files.length];
+    	URL url = pluginURL(ChameleonEditorPlugin.PLUGIN_ID, "languages/");
+    	FilenameFilter filter = fileNameFilter(".jar");
+    	File[] files = (new File(url.getFile())).listFiles(filter);
+    	URL[] urls = new URL[files.length];
 
     		for (int i = 0; i < urls.length; i++) {
     			try {
@@ -146,6 +144,47 @@ public class LanguageMgt {
     		}
     		System.out.println("Done.\n");
     }
+    
+    public static List<File> allFiles(URL directory, FilenameFilter filter) {
+    	File file = new File(directory.getFile());
+    	return allFiles(file, filter);
+    }
+    
+    /**
+     * Return all files directly or indirectly in the given directory that satisfy the
+     * given file name filter.
+     */
+    public static List<File> allFiles(File dir, FilenameFilter filter) {
+    	List<File> files = new ArrayList<File>();
+    	File[] local = dir.listFiles(filter);
+    	for(int i=0; i<local.length;i++) {
+    		files.add(local[i]);
+    	}
+    	local = dir.listFiles(new FileFilter(){
+				public boolean accept(File pathname) {
+					return pathname.isDirectory();
+				}
+			});
+    	for(int i=0; i<local.length;i++) {
+    		files.addAll(allFiles(local[i],filter));
+    	}
+    	return files;
+    }
+
+		public static FilenameFilter fileNameFilter(final String extension) {
+			FilenameFilter filter = new FilenameFilter(){
+    		public boolean accept(File dir, String name) {
+    			return name.endsWith(extension);
+    		}};
+			return filter;
+		}
+
+		public static URL pluginURL(String pluginID, String directory) throws IOException {
+			URL url = FileLocator.toFileURL(FileLocator.find(
+    			Platform.getBundle(pluginID),
+    			new Path(directory), null));
+			return url;
+		}
 
 		private void addLanguage(EclipseBootstrapper bootstrapper) {
 			languages.put(bootstrapper.getLanguageName(), bootstrapper);

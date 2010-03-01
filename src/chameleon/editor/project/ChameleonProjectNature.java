@@ -58,13 +58,7 @@ import chameleon.input.SourceManager;
  * of the nature, the language of the project, and knows the project it is created for.
  */
 public class ChameleonProjectNature implements IProjectNature{
-	static {
-  	BasicConfigurator.configure();
-	}
-
 	public ChameleonProjectNature() {
-		//Disable caching, or things will fail.
-		Config.setCaching(false);
 		_documents=new ArrayList<ChameleonDocument>();
 	}
 	
@@ -242,17 +236,17 @@ public class ChameleonProjectNature implements IProjectNature{
 				for (ChameleonDocument doc : _documents) {
 					updateModel(doc);
 				}
-				if (Config.DEBUG) {
-					// DEBUG: This prints the size of the entire model so memory problems
-					// can be detected. If there is a problem,
-					// the number will keep getting bigger while the size of the source
-					// files remains constant.
-					ChameleonReconcilingStrategy.showSize(language().defaultNamespace());
-					for (Iterator<ChameleonDocument> iter = _documents.iterator(); iter.hasNext();) {
-						ChameleonDocument element = iter.next();
-						System.out.println(element);
-					}
-				}
+//				if (Config.DEBUG) {
+//					// DEBUG: This prints the size of the entire model so memory problems
+//					// can be detected. If there is a problem,
+//					// the number will keep getting bigger while the size of the source
+//					// files remains constant.
+//					ChameleonReconcilingStrategy.showSize(language().defaultNamespace());
+//					for (Iterator<ChameleonDocument> iter = _documents.iterator(); iter.hasNext();) {
+//						ChameleonDocument element = iter.next();
+//						System.out.println(element);
+//					}
+//				}
 			} catch (Exception exc) {
 				exc.printStackTrace();
 

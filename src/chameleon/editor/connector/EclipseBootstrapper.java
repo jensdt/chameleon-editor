@@ -83,6 +83,7 @@ public abstract class EclipseBootstrapper {
 	 */
 	public abstract Syntax getCodeWriter();
 	
+	// FIXME: must be a language/project extension (or move to editor extension)
 	public Builder createBuilder(Language source, File projectDirectory) {
 		return null;
 	}

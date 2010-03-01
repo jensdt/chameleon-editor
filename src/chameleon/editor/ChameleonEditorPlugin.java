@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.BasicConfigurator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchPage;
@@ -13,6 +14,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import chameleon.core.Config;
 import chameleon.core.language.Language;
 
 
@@ -54,6 +56,10 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 	public ChameleonEditorPlugin() {
 		super();
 		plugin = this;
+  	BasicConfigurator.configure();
+  	// We can't enable caching because the point of an IDE is to modify the model
+  	// which breaks caching until we have implemented a bread crumb dependency tracker.
+    Config.setCaching(false);
 	}
 
 	/**
