@@ -220,7 +220,7 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 	@Override
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer){
 		if(USE_COLORED_HYPERLINKS){
-			return new ChameleonHyperlinkPresenter(new Color(null, 0, 0, 255), new Color(null, 0, 200, 0), new Color(null, 255, 0, 0), new Color(null, 255, 128, 0));
+			return new ChameleonHyperlinkPresenter(new Color(null, 0, 0, 255), new Color(null, 0, 200, 0), new Color(null, 255, 0, 0), new Color(null, 170, 170, 170));
 		} else {
 			return super.getHyperlinkPresenter(sourceViewer);
 		}
