@@ -499,5 +499,10 @@ public class ChameleonProjectNature implements IProjectNature{
 		return result;
 	}
 
+	public void flushProjectCache() {
+		for(CompilationUnit compilationUnit: compilationUnits()) {
+			compilationUnit.flushCache();
+		}
+	}
 
 }

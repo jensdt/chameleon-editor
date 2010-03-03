@@ -2,6 +2,7 @@ package chameleon.editor.builder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,10 +67,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 
 	protected IProject[] fullBuild(Map arguments, IProgressMonitor monitor) throws CoreException {
 		System.out.println("RUNNING FULL BUILD!");
-		List<CompilationUnit> compilationsUnits = chameleonNature().compilationUnits();
-		for(CompilationUnit cu: compilationsUnits) {
-			build(cu);
-		}
+		build(chameleonNature().compilationUnits());
 		return new IProject[0];
 	}
 
@@ -94,7 +92,9 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				ChameleonDocument doc = chameleonNature().documentOfPath(path);
 				System.out.println("build: changed "+delta.getProjectRelativePath());
 				CompilationUnit cu = doc.compilationUnit();
-				build(cu);
+				List<CompilationUnit> cus = new ArrayList<CompilationUnit>();
+				cus.add(cu);
+				build(cus);
 			}
 
 			@Override
@@ -105,6 +105,13 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		return new IProject[0];
 	}
 
+	public void build(List<CompilationUnit> compilationUnits) throws CoreException {
+		chameleonNature().flushProjectCache();
+		for(CompilationUnit cu: compilationUnits) {
+			build(cu);
+		}
+	}
+	
 	public void build(CompilationUnit cu) {
 		try {
 			if(cu.verify().equals(Valid.create())) {
