@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 
-import com.sun.org.apache.bcel.internal.classfile.LineNumber;
-
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
 import chameleon.core.modifier.Modifier;
