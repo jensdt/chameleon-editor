@@ -352,7 +352,7 @@ public class ChameleonProjectNature implements IProjectNature{
 	/* (non-Javadoc)
 	 * @see chameleonEditor.editors.IChameleonDocument#getModel()
 	 */
-	public Namespace getModel(){
+	public Namespace<?> getModel(){
 		return language().defaultNamespace();
 	}
 

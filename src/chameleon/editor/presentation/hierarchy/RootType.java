@@ -12,6 +12,7 @@ import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
+import chameleon.oo.language.ObjectOrientedLanguage;
 
 /**
  * This is just an ObjectWrapper to wrap round the root object
@@ -38,7 +39,7 @@ public class RootType implements HierarchyTreeNode {
 	public Object[] getChildren(){
 		// try to lookup type with fqn (so the newest rootTypeElement in the model is found)
 		try {
-			TypeReference tref = new TypeReference(rootTypeFqn);
+			TypeReference tref = projectNature.getModel().language(ObjectOrientedLanguage.class).createTypeReference(rootTypeFqn);
 			tref.setUniParent(projectNature.getModel());
 			Type type = tref.getElement();
 			if(type!=null){

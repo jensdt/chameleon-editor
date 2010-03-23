@@ -8,6 +8,7 @@ import chameleon.core.lookup.LookupException;
 import chameleon.core.type.Type;
 import chameleon.core.type.TypeReference;
 import chameleon.editor.project.ChameleonProjectNature;
+import chameleon.oo.language.ObjectOrientedLanguage;
 
 public class HierarchyTypeNode implements HierarchyTreeNode {
 	
@@ -26,7 +27,7 @@ public class HierarchyTypeNode implements HierarchyTreeNode {
 	public Type getType() throws LookupException {
 		Type result = null; 
 		try {
-			TypeReference tref= new TypeReference(fullyQualifiedName);
+			TypeReference tref= projectNature.getModel().language(ObjectOrientedLanguage.class).createTypeReference(fullyQualifiedName);
 			tref.setUniParent(projectNature.getModel());
 			result = tref.getType();
 		} catch (NullPointerException e) {
