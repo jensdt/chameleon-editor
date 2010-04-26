@@ -103,7 +103,7 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 				System.out.println("Empty document.");
 			}
 			if(! element.hasTag(tagType)) {
-				Element ancestor = element.furthestAncestor();
+				Element ancestor = element.farthestAncestor();
 				boolean cleanup = false;
 				if(element != compilationUnit) {
 					cleanup = true;

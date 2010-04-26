@@ -10,8 +10,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
-import chameleon.core.type.Type;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
 
 /**
  * When a new type is selected in the hierarhcy viewer, the corresponding

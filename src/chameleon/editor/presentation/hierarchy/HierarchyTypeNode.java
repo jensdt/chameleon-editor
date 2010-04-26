@@ -5,10 +5,10 @@
 package chameleon.editor.presentation.hierarchy;
 
 import chameleon.core.lookup.LookupException;
-import chameleon.core.type.Type;
-import chameleon.core.type.TypeReference;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.oo.language.ObjectOrientedLanguage;
+import chameleon.oo.type.Type;
+import chameleon.oo.type.TypeReference;
 
 public class HierarchyTypeNode implements HierarchyTreeNode {
 	

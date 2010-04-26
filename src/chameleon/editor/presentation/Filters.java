@@ -21,14 +21,13 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
-import chameleon.core.namespace.NamespaceElement;
 import chameleon.core.namespacepart.NamespacePart;
-import chameleon.core.type.Type;
 import chameleon.core.variable.MemberVariable;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
 import chameleon.util.Util;
 
 /**

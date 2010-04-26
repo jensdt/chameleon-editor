@@ -21,7 +21,6 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
 import chameleon.editor.presentation.Filters;

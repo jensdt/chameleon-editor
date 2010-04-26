@@ -1,10 +1,6 @@
 package chameleon.editor.project;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.StringBufferInputStream;
 
 import org.eclipse.core.internal.resources.Workspace;

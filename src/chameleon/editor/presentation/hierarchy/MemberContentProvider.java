@@ -7,8 +7,7 @@ package chameleon.editor.presentation.hierarchy;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import chameleon.core.lookup.LookupException;
-import chameleon.core.type.Type;
+import chameleon.oo.type.Type;
 
 /**
  * This class calculates the members of a given type. 

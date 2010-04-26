@@ -2,9 +2,6 @@ package chameleon.editor.presentation;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

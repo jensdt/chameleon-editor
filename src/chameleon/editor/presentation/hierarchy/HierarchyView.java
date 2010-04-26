@@ -30,11 +30,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.IViewDescriptor;
 
-import chameleon.core.language.Language;
-import chameleon.editor.connector.EclipseEditorExtension;
-import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
-import chameleon.editor.presentation.DeclarationCategorizer;
 import chameleon.editor.presentation.Filters;
 import chameleon.editor.presentation.OutlineComparator;
 import chameleon.editor.presentation.TreeViewerActions;

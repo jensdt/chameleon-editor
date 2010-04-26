@@ -1,7 +1,7 @@
 package chameleon.editor.editors.reconciler;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 //import org.eclipse.jface.text.reconciler.DirtyRegion; // ChameleonDirtyRegion
 

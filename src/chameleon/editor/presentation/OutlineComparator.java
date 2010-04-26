@@ -1,6 +1,5 @@
 package chameleon.editor.presentation;
 
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
 import chameleon.core.declaration.Declaration;

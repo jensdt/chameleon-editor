@@ -2,13 +2,11 @@ package chameleon.editor.connector;
 
 import org.eclipse.jface.text.BadLocationException;
 
-import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.NoLocationException;
-import chameleon.input.ParseException;
 import chameleon.input.SourceManager;
 import chameleon.tool.Connector;
 import chameleon.tool.ConnectorImpl;

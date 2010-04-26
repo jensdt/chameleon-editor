@@ -15,8 +15,6 @@ import chameleon.core.language.Language;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.ElementWithModifiers;
 import chameleon.core.modifier.Modifier;
-import chameleon.core.type.Type;
-import chameleon.core.type.TypeElement;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.EclipseEditorExtension;
@@ -26,6 +24,8 @@ import chameleon.editor.presentation.outline.ChameleonOutlineTree;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.exception.ModelException;
 import chameleon.oo.language.ObjectOrientedLanguage;
+import chameleon.oo.type.Type;
+import chameleon.oo.type.TypeElement;
 import chameleon.output.Syntax;
 
 /**

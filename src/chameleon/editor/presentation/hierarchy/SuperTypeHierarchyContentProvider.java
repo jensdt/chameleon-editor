@@ -10,11 +10,10 @@ import java.util.List;
 
 import org.rejuse.java.collections.Visitor;
 
-import chameleon.core.type.Type;
-import chameleon.core.type.TypeReference;
-import chameleon.core.type.inheritance.InheritanceRelation;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
+import chameleon.oo.type.inheritance.InheritanceRelation;
 
 /**
  * This class will calculate the children of an element in the super type hierarchy

@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.presentation.outline.ChameleonOutlinePage;
 import chameleon.editor.presentation.outline.ChameleonOutlineTree;
 
 

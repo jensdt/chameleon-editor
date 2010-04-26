@@ -7,8 +7,8 @@ package chameleon.editor.editors;
 import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.method.Method;
-import chameleon.core.type.Type;
 import chameleon.editor.connector.EclipseEditorTag;
+import chameleon.oo.type.Type;
 
 
 /**

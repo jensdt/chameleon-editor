@@ -6,13 +6,13 @@ package chameleon.editor.presentation.hierarchy;
 
 import org.eclipse.core.resources.IFile;
 
-import chameleon.core.type.Type;
-import chameleon.core.type.TypeReference;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
 import chameleon.oo.language.ObjectOrientedLanguage;
+import chameleon.oo.type.Type;
+import chameleon.oo.type.TypeReference;
 
 /**
  * This is just an ObjectWrapper to wrap round the root object

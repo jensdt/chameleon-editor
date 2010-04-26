@@ -13,13 +13,12 @@ import chameleon.core.Config;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
-import chameleon.core.namespacepart.NamespacePart;
-import chameleon.core.type.Type;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.ModelFactory;
+import chameleon.oo.type.Type;
 
 
 /**

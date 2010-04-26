@@ -10,11 +10,10 @@ import java.util.TreeSet;
 
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.element.Element;
 import chameleon.core.namespace.Namespace;
-import chameleon.core.type.Type;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
 
 /**
  * This class will calculate the children of an element in the sub type hierarchy

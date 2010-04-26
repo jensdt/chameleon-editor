@@ -7,8 +7,8 @@ package chameleon.editor.presentation.hierarchy;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import chameleon.core.type.Type;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
 
 /**
  * returns all members (also inherited) of a type

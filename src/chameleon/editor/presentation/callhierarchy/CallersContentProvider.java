@@ -11,9 +11,7 @@ import java.util.HashSet;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rejuse.predicate.SafePredicate;
-import org.rejuse.predicate.TypePredicate;
 
-import chameleon.core.element.Element;
 import chameleon.core.expression.Invocation;
 import chameleon.core.method.Method;
 import chameleon.editor.project.ChameleonProjectNature;

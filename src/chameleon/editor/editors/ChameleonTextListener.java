@@ -4,8 +4,6 @@ import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextEvent;
 
-import chameleon.editor.presentation.PresentationManager;
-
 /**
  * @author Manuel Van Wesemael 
  * @author Joeri Hendrickx 

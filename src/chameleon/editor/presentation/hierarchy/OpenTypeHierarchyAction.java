@@ -23,8 +23,6 @@ import org.rejuse.predicate.SafePredicate;
 
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.core.type.Type;
-import chameleon.core.type.TypeReference;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
@@ -32,6 +30,8 @@ import chameleon.editor.editors.ChameleonEditor;
 import chameleon.editor.presentation.ChameleonLabelProvider;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.exception.ModelException;
+import chameleon.oo.type.Type;
+import chameleon.oo.type.TypeReference;
 
 /**
  * This class represents the action to open the super or subtype (==actionType in constructor) hierarchy.
