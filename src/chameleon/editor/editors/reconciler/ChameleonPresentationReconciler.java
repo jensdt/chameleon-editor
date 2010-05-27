@@ -56,23 +56,22 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 	 * @return null;
 	 */
 	public IPresentationDamager getDamager(String contentType) {
-		return damager;
+		return null;
 	}
 
 	/**
 	 * @return null;
 	 */
 	public IPresentationRepairer getRepairer(String contentType) {
-		return repairer;
+		return null;
 	}
 
-	
 	private boolean presenting =false;
-	private IPresentationDamager damager;
-	private IPresentationRepairer repairer;
-	//private HashMap<String, IPresentationDamager> fDamagers;
-	//private HashMap<String, IPresentationRepairer> fRepairers;
-	
+//	private IPresentationDamager damager;
+//	private IPresentationRepairer repairer;
+//	//private HashMap<String, IPresentationDamager> fDamagers;
+//	//private HashMap<String, IPresentationRepairer> fRepairers;
+//	
 	/**
 	 * Colors the document where this presentationReconciler is used
 	 * Folding is also done.

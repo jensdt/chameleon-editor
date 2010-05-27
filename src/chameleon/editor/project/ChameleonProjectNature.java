@@ -282,22 +282,22 @@ public class ChameleonProjectNature implements IProjectNature{
 		IResource[] resources;
 		try {
 			resources = getProject().members();
-			List<String> extensions = LanguageMgt.getInstance().extensions(language());
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				if((resource instanceof IFile)){
-					if(!(isEclipseProjectFile(resource) || (isChameleonProjectFile(resource)))) {
-						IPath fullPath = resource.getFullPath();
-						String fileExtension = fullPath.getFileExtension();
-						if(extensions.contains(fileExtension)) {
-						  addResourceToModel(resource);
-						}
-					}
-				}
-				else //tis ne folder
-					if (resource instanceof IFolder) {
-						addResourceToModel(resource);
-					}
+				addResourceToModel(resource);
+//				if((resource instanceof IFile)){
+//					if(!(isEclipseProjectFile(resource) || (isChameleonProjectFile(resource)))) {
+//						IPath fullPath = resource.getFullPath();
+//						String fileExtension = fullPath.getFileExtension();
+//						if(extensions.contains(fileExtension)) {
+//						  addResourceToModel(resource);
+//						}
+//					}
+//				}
+//				else //tis ne folder
+//					if (resource instanceof IFolder) {
+//						addResourceToModel(resource);
+//					}
 					
 			}
 		
@@ -308,11 +308,17 @@ public class ChameleonProjectNature implements IProjectNature{
 	}
 
 	private boolean isChameleonProjectFile(IResource resource) {
-		return resource.getFullPath().getFileExtension().equals(CHAMELEON_PROJECT_FILE_EXTENSION);
+		String ext = extension(resource);
+		return ext != null && ext.equals(CHAMELEON_PROJECT_FILE_EXTENSION);
 	}
 
 	private boolean isEclipseProjectFile(IResource resource) {
-		return resource.getFullPath().getFileExtension().equals("project");
+		String ext = extension(resource);
+		return ext != null && ext.equals("project");
+	}
+
+	private String extension(IResource resource) {
+		return resource.getFullPath().getFileExtension();
 	}
 
 	/**
@@ -320,10 +326,16 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * @param resource
 	 */
 	public void addResourceToModel(IResource resource) {
-		System.out.println("ADDING :: "+resource.getName());
-		
+		List<String> extensions = LanguageMgt.getInstance().extensions(language());
 		if (resource instanceof IFile)  {
-			addToModel(new ChameleonDocument(this,(IFile)resource,resource.getFullPath()));
+			if(!(isEclipseProjectFile(resource) || (isChameleonProjectFile(resource)))) {
+				IPath fullPath = resource.getFullPath();
+				String fileExtension = fullPath.getFileExtension();
+				if(extensions.contains(fileExtension)) {
+					System.out.println("ADDING :: "+resource.getName());
+					addToModel(new ChameleonDocument(this,(IFile)resource,resource.getFullPath()));
+				}
+			}
 		}
 		if (resource instanceof IFolder) {
 			IFolder folder = (IFolder) resource ;
