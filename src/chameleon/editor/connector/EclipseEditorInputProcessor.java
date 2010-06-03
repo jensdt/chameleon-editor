@@ -72,8 +72,8 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 
 	public void setLocation(Element element, int offset, int length, CompilationUnit compilationUnit) {
 		if(element == null) {
-			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
-		}
+			//throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
+		} else {
 		// ECLIPSE NEEDS A +1 INCREMENT FOR THE LENGTH
 		length++;
 		setSingleLocation(element, offset, length, compilationUnit, EclipseEditorTag.ALL_TAG);
@@ -83,7 +83,7 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		if(element instanceof Modifier) {
 			setSingleLocation(element, offset, length, compilationUnit, EclipseEditorTag.MODIFIER_TAG);
 		}
- 
+		}
 	}
 	
 	public void setLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String tagType) {
