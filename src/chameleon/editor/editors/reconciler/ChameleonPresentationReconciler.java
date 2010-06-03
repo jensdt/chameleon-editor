@@ -82,37 +82,37 @@ public class ChameleonPresentationReconciler extends AbstractChameleonReconciler
 		
 		doFolding();
 		doColoring();
-    doVerificationErrors();
+//    doVerificationErrors();
 		
 		presenting = false;
 	}
 	
-	private void doVerificationErrors() {
-		VerificationResult result = null;
-		try {
-		  CompilationUnit cu = getDocument().compilationUnit();
-		  result = cu.verify();
-		} catch(Exception exc) {
-			exc.printStackTrace();
-		}
-		if(result instanceof Invalid) {
-		  for(BasicProblem problem: ((Invalid)result).problems()) {
-			  markError(problem);
-		  }
-		}
-		
-	}
+//	private void doVerificationErrors() {
+//		VerificationResult result = null;
+//		try {
+//		  CompilationUnit cu = getDocument().compilationUnit();
+//		  result = cu.verify();
+//		} catch(Exception exc) {
+//			exc.printStackTrace();
+//		}
+//		if(result instanceof Invalid) {
+//		  for(BasicProblem problem: ((Invalid)result).problems()) {
+//			  markError(problem);
+//		  }
+//		}
+//		
+//	}
 	
 	@Override
 	public ChameleonDocument getDocument() {
 		return (ChameleonDocument)super.getDocument();
 	}
 	
-	public void markError(BasicProblem problem) {
+	public static void markError(BasicProblem problem, ChameleonDocument document) {
 		String message = problem.message();
 		HashMap<String, Object> attributes = createProblemMarkerMap(message);
 		EclipseEditorTag positionTag = (EclipseEditorTag) problem.element().tag(EclipseEditorTag.ALL_TAG);
-		ChameleonDocument document = getDocument();
+//		ChameleonDocument document = getDocument();
 		if(positionTag != null) {
 			int offset = positionTag.getOffset();
 			int length = positionTag.getLength();

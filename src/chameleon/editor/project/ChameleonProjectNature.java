@@ -493,8 +493,9 @@ public class ChameleonProjectNature implements IProjectNature{
 		ChameleonEditor editor = ChameleonEditor.getCurrentActiveEditor();
 		if(editor!=null){
 			ChameleonDocument doc = editor.getDocument();
-			if(doc!= null)
+			if(doc!= null) {
 				return doc.language();
+			}
 		}
 		return null;
 	}
@@ -511,6 +512,7 @@ public class ChameleonProjectNature implements IProjectNature{
 		for(CompilationUnit compilationUnit: compilationUnits()) {
 			compilationUnit.flushCache();
 		}
+		language().flushCache();
 	}
 
 }

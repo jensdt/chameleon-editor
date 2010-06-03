@@ -10,12 +10,17 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 
 import chameleon.core.Config;
+import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.namespace.Namespace;
+import chameleon.core.validation.BasicProblem;
+import chameleon.core.validation.Invalid;
+import chameleon.core.validation.VerificationResult;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonSourceViewerConfiguration;
+import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.ModelFactory;
 import chameleon.oo.type.Type;
@@ -222,8 +227,31 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		clonePositions();
 		this._firstDR = true;
 		
+		nature().flushProjectCache();
+		checkVerificationErrors();
 		fireModelUpdated();
 		
+	}
+	
+	private void checkVerificationErrors() {
+		VerificationResult result = null;
+		try {
+		  CompilationUnit cu = getDocument().compilationUnit();
+		  result = cu.verify();
+		} catch(Exception exc) {
+			exc.printStackTrace();
+		}
+		if(result instanceof Invalid) {
+		  for(BasicProblem problem: ((Invalid)result).problems()) {
+			  ChameleonPresentationReconciler.markError(problem,getDocument());
+		  }
+		}
+		
+	}
+
+	
+	public ChameleonProjectNature nature() {
+		return getDocument().getProjectNature();
 	}
 
 	private void reparseEntireDocument(boolean[] status, Position[] positions, int i) {
