@@ -18,10 +18,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.language.Language;
 import chameleon.core.validation.Valid;
+import chameleon.core.validation.VerificationResult;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
 import chameleon.editor.connector.Builder;
 import chameleon.editor.editors.ChameleonDocument;
+import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.editor.project.ResourceDeltaFileVisitor;
 import chameleon.exception.ModelException;
@@ -91,10 +93,12 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				IPath path = resource.getFullPath();
 				ChameleonDocument doc = chameleonNature().documentOfPath(path);
 				System.out.println("build: changed "+delta.getProjectRelativePath());
-				CompilationUnit cu = doc.compilationUnit();
-				List<CompilationUnit> cus = new ArrayList<CompilationUnit>();
-				cus.add(cu);
-				build(cus);
+				if(doc != null) {
+					CompilationUnit cu = doc.compilationUnit();
+					List<CompilationUnit> cus = new ArrayList<CompilationUnit>();
+					cus.add(cu);
+					build(cus);
+				}
 			}
 
 			@Override
@@ -112,9 +116,11 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	public void build(CompilationUnit cu) {
+	public void build(CompilationUnit cu) throws CoreException {
 		try {
-			if(cu.verify().equals(Valid.create())) {
+			ChameleonDocument doc = chameleonNature().document(cu);
+			VerificationResult ver = ChameleonReconcilingStrategy.checkVerificationErrors(doc);
+			if(ver.equals(Valid.create())) {
 			  builder().build(cu);
 			}
 		} catch (ModelException e) {

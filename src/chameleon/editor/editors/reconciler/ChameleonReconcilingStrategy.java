@@ -228,25 +228,25 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 		this._firstDR = true;
 		
 		nature().flushProjectCache();
-		checkVerificationErrors();
+		//checkVerificationErrors();
 		fireModelUpdated();
 		
 	}
 	
-	private void checkVerificationErrors() {
+	public static VerificationResult checkVerificationErrors(ChameleonDocument document) {
 		VerificationResult result = null;
 		try {
-		  CompilationUnit cu = getDocument().compilationUnit();
+		  CompilationUnit cu = document.compilationUnit();
 		  result = cu.verify();
 		} catch(Exception exc) {
 			exc.printStackTrace();
 		}
 		if(result instanceof Invalid) {
 		  for(BasicProblem problem: ((Invalid)result).problems()) {
-			  ChameleonPresentationReconciler.markError(problem,getDocument());
+			  ChameleonPresentationReconciler.markError(problem,document);
 		  }
 		}
-		
+		return result;
 	}
 
 	
