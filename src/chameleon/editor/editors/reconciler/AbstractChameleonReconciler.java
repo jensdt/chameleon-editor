@@ -279,6 +279,7 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 		 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			if(newInput instanceof ChameleonDocument) {
 				_document = (ChameleonDocument) newInput;
 				if (_document == null) {
 					return;
@@ -287,6 +288,7 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 				
 				_document.addDocumentListener(this);
 				startReconciling();
+			}
 		}			
 	}
 	

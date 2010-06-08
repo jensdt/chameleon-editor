@@ -38,9 +38,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IShowEditorInput;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
@@ -671,7 +673,6 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		HashSet visited = new HashSet();
 		boolean loop = false;
 		while(element != origin && ! loop) {
-			//FIXME: check for infinite loop?
 			loop = visited.contains(element);
 			visited.add(element);
 			element = origin;
@@ -759,17 +760,25 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 		return null;
 	}
 
-	private static Collection<ChameleonEditor> getActiveChameleonEditors(){
+	public static Collection<ChameleonEditor> getActiveChameleonEditors(){
 		final List<ChameleonEditor> editors = new ArrayList<ChameleonEditor>();
-		IEditorReference[] references = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
-		new Visitor<IEditorReference>(){
-			@Override
-			public void visit(IEditorReference element) {
-				IEditorPart editor = element.getEditor(true);
-				if(editor instanceof ChameleonEditor)
-					editors.add((ChameleonEditor)editor);
+		IWorkbench wb = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
+		int nbWindows = windows.length;
+		for(int i = 0; i< nbWindows; i++) {
+			IWorkbenchPage[] pages = windows[i].getPages();
+			int nbPages = pages.length;
+			for(int j = 0; j< nbPages; j++) {
+				IEditorReference[] references = pages[j].getEditorReferences();
+				int nbReferences = references.length;
+				for(int k = 0; k < nbReferences; k++) {
+					IEditorPart editor = references[k].getEditor(false);
+					if(editor instanceof ChameleonEditor) {
+						editors.add((ChameleonEditor)editor);
+					}
+				}
 			}
-		}.applyTo(references);
+		}
 		return editors;
 	}
 

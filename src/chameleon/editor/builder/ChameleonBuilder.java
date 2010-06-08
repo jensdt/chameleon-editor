@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +24,7 @@ import chameleon.editor.connector.Builder;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.project.ChameleonProjectNature;
-import chameleon.editor.project.ResourceDeltaFileVisitor;
+import chameleon.editor.project.ChameleonResourceDeltaFileVisitor;
 import chameleon.exception.ModelException;
 
 public class ChameleonBuilder extends IncrementalProjectBuilder {
@@ -73,14 +72,19 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		return new IProject[0];
 	}
 
-	private ChameleonProjectNature chameleonNature() throws CoreException {
+	public ChameleonProjectNature chameleonNature() throws CoreException {
 		return ((ChameleonProjectNature)getProject().getNature(ChameleonProjectNature.NATURE));
 	}
 
 	protected IProject[] incrementalBuild(Map arguments, IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = getDelta(getProject());
+		incrementalBuild(delta);
+		return new IProject[0];
+	}
+
+	public void incrementalBuild(IResourceDelta delta) throws CoreException {
 		System.out.println("RUNNING INCREMENTAL BUILD!");
-		delta.accept(new ResourceDeltaFileVisitor(){
+		delta.accept(new ChameleonResourceDeltaFileVisitor(chameleonNature()){
 		
 			@Override
 			public void handleRemoved(IResourceDelta delta) throws CoreException {
@@ -89,9 +93,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		
 			@Override
 			public void handleChanged(IResourceDelta delta) throws CoreException {
-				IResource resource = delta.getResource();
-				IPath path = resource.getFullPath();
-				ChameleonDocument doc = chameleonNature().documentOfPath(path);
+				ChameleonDocument doc = documentOf(delta);
 				System.out.println("build: changed "+delta.getProjectRelativePath());
 				if(doc != null) {
 					CompilationUnit cu = doc.compilationUnit();
@@ -106,7 +108,6 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				System.out.println("build: added "+delta.getProjectRelativePath());
 			}
 		});
-		return new IProject[0];
 	}
 
 	public void build(List<CompilationUnit> compilationUnits) throws CoreException {

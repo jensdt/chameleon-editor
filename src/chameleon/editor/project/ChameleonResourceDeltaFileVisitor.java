@@ -4,7 +4,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 
-public abstract class ResourceDeltaFileVisitor extends ResourceDeltaVisitor {
+public abstract class ChameleonResourceDeltaFileVisitor extends ChameleonResourceDeltaVisitor {
+
+	public ChameleonResourceDeltaFileVisitor(ChameleonProjectNature nature) {
+		super(nature);
+	}
 
 	/**
 	 * Process each resource delta that concerns a file. Other resources

@@ -1,16 +1,18 @@
 package chameleon.editor.project;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
@@ -158,20 +160,20 @@ public class ChameleonProjectNature implements IProjectNature{
 			IProject old = _project;
 			this._project = project;
 			if(project != null) {
-			try {
-				BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/."+CHAMELEON_PROJECT_FILE_EXTENSION)));
-				String lang = f.readLine();
-				f.close();
-				Language language = LanguageMgt.getInstance().createLanguage(lang);
-				init(language);
-				loadDocuments();
-				_projectListener = new ProjectChangeListener();
-				getProject().getWorkspace().addResourceChangeListener(_projectListener, IResourceChangeEvent.POST_CHANGE);
-				//			updateAllModels();
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.println("No initfile...");
-			}
+				try {
+					BufferedReader f = new BufferedReader(new FileReader(new File(project.getLocation()+"/."+CHAMELEON_PROJECT_FILE_EXTENSION)));
+					String lang = f.readLine();
+					f.close();
+					Language language = LanguageMgt.getInstance().createLanguage(lang);
+					init(language);
+					loadDocuments();
+					_projectListener = new ProjectChangeListener(this);
+					getProject().getWorkspace().addResourceChangeListener(_projectListener, IResourceChangeEvent.POST_CHANGE);
+					//			updateAllModels();
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.out.println("No initfile...");
+				}
 			} else {
 				old.getWorkspace().removeResourceChangeListener(_projectListener);
 			}
@@ -181,36 +183,86 @@ public class ChameleonProjectNature implements IProjectNature{
 	private IResourceChangeListener _projectListener;
 	
 	public class ProjectChangeListener implements IResourceChangeListener {
+		
+		public ProjectChangeListener(ChameleonProjectNature nature) {
+			_nature = nature;
+		}
+		
+		private ChameleonProjectNature _nature;
+		
+		public ChameleonProjectNature nature() {
+			return _nature;
+		}
 
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta delta = event.getDelta();
 			try {
-				delta.accept( new ResourceDeltaVisitor() {
+				//nature().getProject().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+				delta.accept( new ChameleonResourceDeltaVisitor(nature()) {
 
 					@Override
 					public void handleAdded(IResourceDelta delta) throws CoreException {
+						System.out.println("### ADDING FILE TO MODEL ###");
+						IResource resource = delta.getResource();
+						nature().addResourceToModel(resource);
+						nature().flushProjectCache();
 					}
 
 					@Override
 					public void handleChanged(IResourceDelta delta) throws CoreException {
+						boolean update = true;
+						Collection<ChameleonEditor> editors = ChameleonEditor.getActiveChameleonEditors();
+						ChameleonDocument doc = documentOf(delta);
+						for(ChameleonEditor editor: editors) {
+							if(editor.getDocument() == doc) {
+								update = false;
+								break;
+							}
+						}
+						if(update) {
+							System.out.println("### UPDATING FILE IN MODEL ###");
+//							xx must refresh the content of the document.
+							IResource resource = delta.getResource();
+							if(resource instanceof IFile) {
+								try {
+									IFile youfile = (IFile) resource;
+									IPath location = youfile.getLocation();
+									File file = null;
+									if (location != null) {
+										file = location.toFile();
+									}
+									;
+									byte[] bytes = new byte[(int) file.length()];
+									BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
+									stream.read(bytes);
+									doc.set(new String(bytes));
+									updateModel(doc);
+									nature().flushProjectCache();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+						} else {
+							System.out.println("### FOUND EDITOR FOR FILE ###"+ delta.getResource());
+						}
 					}
 
 					@Override
 					public void handleRemoved(IResourceDelta delta) throws CoreException {
+						System.out.println("### REMOVING FILE FROM MODEL ###");
+						ChameleonDocument doc = documentOf(delta);
+						doc.compilationUnit().disconnect();
+						nature().removeModelElement(doc);
+						nature().flushProjectCache();
 					}
 					
 				}
 				);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-
-//	private void setMetaModelFactory(IMetaModelFactory mMF) {
-//		_metaModelFactory = mMF;
-//	}
 
 	/*
 	 *  (non-Javadoc)
@@ -256,26 +308,32 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * @param doc
 	 */
 	public void updateModel(ChameleonDocument doc) {
-		try {
-			doc.getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-			// getDocument().removeParseErrors();
-		} catch (CoreException e) {
-			// something went wrong
-			e.printStackTrace();
+		
+		// Removing the file markers is already done someplace else, and it gives a ResourceException
+		// when this method is ran via the project listener of this nature.
+		
+//		try {
+//			IFile file = doc.getFile();
+//			if(documentOfFile(file) != null) {
+//			  file.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+//			}
+//			// getDocument().removeParseErrors();
+//		} catch (CoreException e) {
+//			e.printStackTrace();
+//		}
+		if(doc != null) {
+			doc.dumpPositions();
+			try {
+				modelFactory().addToModel(doc.get(), doc.compilationUnit());
+			} catch (ParseException e) {
+				// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
+				e.printStackTrace();
+			}
 		}
-		doc.dumpPositions();
-		try {
-			modelFactory().addToModel(doc.get(), doc.compilationUnit());
-		} catch (ParseException e) {
-			// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
-			e.printStackTrace();
-		}
-
 	}
 
 	/**
-	 * Loads all the project documents.
-	 *
+	 * Clear the list of documents, and loads all the project files with a project extension into the model.
 	 */
 	public void loadDocuments(){
 		_documents.clear();
@@ -285,20 +343,6 @@ public class ChameleonProjectNature implements IProjectNature{
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				addResourceToModel(resource);
-//				if((resource instanceof IFile)){
-//					if(!(isEclipseProjectFile(resource) || (isChameleonProjectFile(resource)))) {
-//						IPath fullPath = resource.getFullPath();
-//						String fileExtension = fullPath.getFileExtension();
-//						if(extensions.contains(fileExtension)) {
-//						  addResourceToModel(resource);
-//						}
-//					}
-//				}
-//				else //tis ne folder
-//					if (resource instanceof IFolder) {
-//						addResourceToModel(resource);
-//					}
-					
 			}
 		
 		} catch (CoreException e) {
@@ -307,17 +351,23 @@ public class ChameleonProjectNature implements IProjectNature{
 		
 	}
 
-	private boolean isChameleonProjectFile(IResource resource) {
+	/**
+	 * Check whether the given resource is the Chameleon project description file.
+	 */
+	protected boolean isChameleonProjectFile(IResource resource) {
 		String ext = extension(resource);
 		return ext != null && ext.equals(CHAMELEON_PROJECT_FILE_EXTENSION);
 	}
 
-	private boolean isEclipseProjectFile(IResource resource) {
+	/**
+	 * Check whether the given resource is the Eclipse project description file.
+	 */
+	protected boolean isEclipseProjectFile(IResource resource) {
 		String ext = extension(resource);
 		return ext != null && ext.equals("project");
 	}
 
-	private String extension(IResource resource) {
+	protected String extension(IResource resource) {
 		return resource.getFullPath().getFileExtension();
 	}
 
@@ -407,42 +457,11 @@ public class ChameleonProjectNature implements IProjectNature{
 		return null;
 	}
 	
-/*	public IMetaModel getMetamodel(IDocument document){
-		if (modelElements.contains(document))
-			try {
-				return  getMetaModelFactory().getMetaModel(new IDocument[]{document});
-			} catch (Exception e) {
-				return null;
-			}
-		else
-			return null;
-	}
-
-	
-	public IMetaModel getMetamodel(IDocument[] document){
-		if (modelElements.contains(document))
-			try {
-				return  getMetaModelFactory().getMetaModel(document);
-			} catch (Exception e) {
-				return null;
-			}
-		else
-			return null;
-	}
-	*/
 	public void removeModelElement(IDocument document){
 		_documents.remove(document);
 		
 	}
 
-//	/**
-//	 * 
-//	 * @return the language of the project
-//	 */
-//	public String getLanguage() {
-//		return _language;
-//	}
-	
 	public Language language() {
 		return _language;
 	}
@@ -473,8 +492,9 @@ public class ChameleonProjectNature implements IProjectNature{
 	 * @return returns null if no appropriate document found.
 	 */
 	public ChameleonDocument documentOfFile(IFile file){
-		if(file == null)
+		if(file == null) {
 			return null;
+		}
 		for(ChameleonDocument doc : _documents){
 			if(file.equals(doc.getFile())){
 				return doc;
