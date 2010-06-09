@@ -103,8 +103,10 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		Element element = getElement(modelObject);
 		try {
 			Language language = element.language();
-			EclipseEditorExtension extension = language.connector(EclipseEditorExtension.class);
-			image = extension.getIcon(element);
+			if(language != null) {
+				EclipseEditorExtension extension = language.connector(EclipseEditorExtension.class);
+				image = extension.getIcon(element);
+			}
 		}catch(IOException exc) {
 			// Do nothing specifically for an exception.
 		}
