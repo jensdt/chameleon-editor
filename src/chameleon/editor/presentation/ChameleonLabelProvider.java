@@ -1,5 +1,6 @@
 package chameleon.editor.presentation;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -98,13 +99,24 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	 * 			No image is returned if the element does not have image available
 	 */
 	public Image getImage(Object modelObject) {
-		ImageDescriptor descriptor = getDescriptor(modelObject);
-		//obtain the cached image corresponding to the descriptor
-		Image image = imageCache.get(descriptor);
-		if (image == null) {
-			image = descriptor.createImage();
-			if(image != null) { //this occurs when no icon is found from the description
-				imageCache.put(descriptor, image);
+		Image image = null;
+		Element element = getElement(modelObject);
+		try {
+			Language language = element.language();
+			EclipseEditorExtension extension = language.connector(EclipseEditorExtension.class);
+			image = extension.getIcon(element);
+		}catch(IOException exc) {
+			// Do nothing specifically for an exception.
+		}
+		if(image == null) {
+			ImageDescriptor descriptor = getDescriptor(modelObject);
+			//obtain the cached image corresponding to the descriptor
+			image = imageCache.get(descriptor);
+			if (image == null) {
+				image = descriptor.createImage();
+				if(image != null) { //this occurs when no icon is found from the description
+					imageCache.put(descriptor, image);
+				}
 			}
 		}
 		return image;

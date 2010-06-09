@@ -1,7 +1,13 @@
 package chameleon.editor.connector;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 import chameleon.core.element.Element;
@@ -15,6 +21,24 @@ import chameleon.tool.ConnectorImpl;
  */
 public abstract class EclipseEditorExtension extends ConnectorImpl {
 
+	public EclipseEditorExtension() {
+		initializeRegistry();
+	}
+	
+	private ImageRegistry _imageRegistry = new ImageRegistry();
+	
+	public ImageRegistry imageRegistry() {
+		return _imageRegistry;
+	}
+	
+	/**
+	 * Add the image descriptors to the registry.
+	 * @throws IOException 
+	 */
+	protected void initializeRegistry() {
+		
+	}
+	
 	/**
 	 * Return a text label for the given element. This is used for example in the outline.
 	 */
@@ -22,8 +46,9 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
   
   /**
    * Return an icon to represent the given element.
+   * @throws IOException 
    */
-  public abstract Image getIcon(Element modelObject);
+  public abstract Image getIcon(Element element) throws IOException;
 
   /**
    * Returns the string for the template for the given method.
@@ -33,7 +58,7 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
    * Used for auto-completion of methods.
    * 
    * @param method the method to be converted to a (pattern) string
-   * @return patternstring for a template
+   * @return pattern string for a template
    */
   public abstract String getMethodTemplatePattern(Method method);
       
@@ -51,6 +76,38 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
    * groups.
    */
   public abstract DeclarationCategorizer declarationCategorizer();
+
+	/**
+	 * Register an icon in the image registry. The icon must be in the icons/ directory
+	 * of this language module editor plugin. The name of the file must be name+".png". The
+	 * icon is registered under the given name.
+	 */
+	public void register(String name) throws MalformedURLException {
+		Image image = image(name+".png");
+		imageRegistry().put(name, image);
+	}
+
+	/**
+	 * Create an image from the file in the icons directory of this language module editor plugin
+	 * that has the same name as the given name. 
+	 */
+	public Image image(String fileName) throws MalformedURLException {
+		URL url = icon(fileName);
+		Image image = ImageDescriptor.createFromURL(url).createImage();
+		return image;
+	}
+
+	/**
+	 * Return the URL for the icons directory of this language module editor plugin.
+	 */
+	public URL icon(String name) throws MalformedURLException {
+		URL root = Platform.getBundle(pluginID()).getEntry("/");
+		URL icons = new URL(root,"icons/");
+		URL url = new URL(icons, name);
+		return url;
+	}
+	
+	public abstract String pluginID();
   	
 //  	public abstract ICompletionProposal completionProposal(Element element, ChameleonDocument document, int offset);
 
