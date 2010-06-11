@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.StringBufferInputStream;
 
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -29,6 +30,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import chameleon.editor.LanguageMgt;
+import chameleon.editor.builder.ChameleonBuilder;
 
 /**
  * @author Manuel Van Wesemael 
@@ -47,7 +49,7 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 		setDefaultPageImageDescriptor(ImageDescriptor.createFromFile(getClass(),"../../../icons/chameleon32.png"));
 	}
 
-    public void addPages(  )
+    public void addPages()
     {
 		pages = new IWizardPage[2];
 		pages[0] = new LanguageSectionPage("Language Selection");
@@ -240,6 +242,11 @@ public class ProjectWizard extends BasicNewProjectResourceWizard implements INew
 		      System.arraycopy(natures, 0, newNatures, 0, natures.length);
 		      newNatures[natures.length] = ChameleonProjectNature.NATURE;
 		      description.setNatureIds(newNatures);
+		      ICommand[] builders = new ICommand[1];
+		      ICommand command = description.newCommand();
+		      command.setBuilderName(ChameleonBuilder.BUILDER_ID);
+          builders[0] = command;
+		      description.setBuildSpec(builders);
 		      project.setDescription(description, null);
 
 //					PrintStream out = new PrintStream(new File("temp"));

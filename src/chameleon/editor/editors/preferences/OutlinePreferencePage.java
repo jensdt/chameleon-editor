@@ -168,9 +168,7 @@ public class OutlinePreferencePage extends FieldEditorPreferencePage implements 
 		
 		Set<String> languages = options.keySet();
 		// iterate over languages:
-		for (Iterator<String> iter = languages.iterator(); iter.hasNext();) {
-			String language = iter.next();
-			
+		for (String language: languages) {
 			List<String> allowed = new ArrayList<String>();
 			
 			Set<String> elements = options.get(language).keySet();

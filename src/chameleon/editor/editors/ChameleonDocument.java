@@ -350,13 +350,11 @@ public class ChameleonDocument extends Document {
 			if(Config.DEBUG) {
 			  System.out.println("removing compilation unit from tree");
 			}
-			_cu.disconnect();
-
 			// C. remove Document from project
 			if(Config.DEBUG) {
-			  System.out.println("Remove document from project");
+				System.out.println("Remove document from project");
 			}
-			getProjectNature().removeModelElement(this);
+			getProjectNature().removeDocument(this);
 
 			// D. Re-add Document to the project (wich will cause it to be parsed)
 			if(Config.DEBUG) {

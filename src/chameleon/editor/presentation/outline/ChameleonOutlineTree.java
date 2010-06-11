@@ -11,6 +11,7 @@ import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupException;
+import chameleon.editor.connector.EclipseEditorExtension;
 
 /**
  * @author Manuel Van Wesemael 
@@ -27,7 +28,7 @@ public class ChameleonOutlineTree {
 	private IChameleonOutlineTreeListener listener= NullChameleonOutlineTreeListener.getSoleInstance();
 	
 	//contains string representation of all the elements that may be contained in this tree
-	private static HashMap<String, List<String>> allowedTreeElements = new HashMap<String, List<String>>(0);
+//	private static HashMap<String, List<String>> allowedTreeElements = new HashMap<String, List<String>>(0);
 	
 	/**
 	 * Creates a new empty tree with empty current node, and no children
@@ -100,10 +101,11 @@ public class ChameleonOutlineTree {
 	 * @param elementChild 
 	 * @return true if the element is a proper tree element and has decorators
 	 */
-	public static boolean isAllowedInTree(Language language, Element elementChild) {
-		 return (elementChild instanceof Declaration) &&
-		        ( //(elementChild.hasTags()) && 
-				    (ChameleonOutlineTree.isAllowedDescription(language, elementChild.getClass().getSimpleName())));
+	public boolean isAllowedInTree(Language language, Element<?,?> elementChild) {
+		 return (elementChild instanceof Declaration);// &&
+//             elementChild.language().connector(EclipseEditorExtension.class).isOutlineElement((Declaration)elementChild);		 
+
+		 
 	}
 	
 	
@@ -305,7 +307,7 @@ public class ChameleonOutlineTree {
 	 * This does not update the tree !
 	 */
 	public static void setAllowedElements(String lang, List<String> alloweds) {
-		allowedTreeElements.put(lang, alloweds);	
+		//allowedTreeElements.put(lang, alloweds);	
 	}
 
 	

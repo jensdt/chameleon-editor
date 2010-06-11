@@ -10,6 +10,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
+import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.Modifier;
@@ -108,6 +109,10 @@ public abstract class EclipseEditorExtension extends ConnectorImpl {
 	}
 	
 	public abstract String pluginID();
+
+//	public boolean isOutlineElement(Declaration elementChild) {
+//		
+//	}
   	
 //  	public abstract ICompletionProposal completionProposal(Element element, ChameleonDocument document, int offset);
 

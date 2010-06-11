@@ -204,8 +204,10 @@ public class ChameleonProjectNature implements IProjectNature{
 					public void handleAdded(IResourceDelta delta) throws CoreException {
 						System.out.println("### ADDING FILE TO MODEL ###");
 						IResource resource = delta.getResource();
-						nature().addResourceToModel(resource);
-						nature().flushProjectCache();
+						if(resource instanceof IFile) {
+							nature().addResourceToModel(resource);
+							nature().flushProjectCache();
+						}
 					}
 
 					@Override
@@ -213,37 +215,39 @@ public class ChameleonProjectNature implements IProjectNature{
 						boolean update = true;
 						Collection<ChameleonEditor> editors = ChameleonEditor.getActiveChameleonEditors();
 						ChameleonDocument doc = documentOf(delta);
-						for(ChameleonEditor editor: editors) {
-							if(editor.getDocument() == doc) {
-								update = false;
-								break;
-							}
-						}
-						if(update) {
-							System.out.println("### UPDATING FILE IN MODEL ###");
-//							xx must refresh the content of the document.
-							IResource resource = delta.getResource();
-							if(resource instanceof IFile) {
-								try {
-									IFile youfile = (IFile) resource;
-									IPath location = youfile.getLocation();
-									File file = null;
-									if (location != null) {
-										file = location.toFile();
-									}
-									;
-									byte[] bytes = new byte[(int) file.length()];
-									BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
-									stream.read(bytes);
-									doc.set(new String(bytes));
-									updateModel(doc);
-									nature().flushProjectCache();
-								} catch (IOException e) {
-									e.printStackTrace();
+						if(doc != null) {
+							for(ChameleonEditor editor: editors) {
+								if(editor.getDocument() == doc) {
+									update = false;
+									break;
 								}
 							}
-						} else {
-							System.out.println("### FOUND EDITOR FOR FILE ###"+ delta.getResource());
+							if(update) {
+								System.out.println("### UPDATING FILE IN MODEL ###");
+								//							xx must refresh the content of the document.
+								IResource resource = delta.getResource();
+								if(resource instanceof IFile) {
+									try {
+										IFile youfile = (IFile) resource;
+										IPath location = youfile.getLocation();
+										File file = null;
+										if (location != null) {
+											file = location.toFile();
+										}
+										;
+										byte[] bytes = new byte[(int) file.length()];
+										BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
+										stream.read(bytes);
+										doc.set(new String(bytes));
+										updateModel(doc);
+										nature().flushProjectCache();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							} else {
+								System.out.println("### FOUND EDITOR FOR FILE ###"+ delta.getResource());
+							}
 						}
 					}
 
@@ -251,9 +255,11 @@ public class ChameleonProjectNature implements IProjectNature{
 					public void handleRemoved(IResourceDelta delta) throws CoreException {
 						System.out.println("### REMOVING FILE FROM MODEL ###");
 						ChameleonDocument doc = documentOf(delta);
-						doc.compilationUnit().disconnect();
-						nature().removeModelElement(doc);
-						nature().flushProjectCache();
+						if(doc != null) {
+//							doc.compilationUnit().disconnect();
+							nature().removeDocument(doc);
+							nature().flushProjectCache();
+						}
 					}
 					
 				}
@@ -428,7 +434,7 @@ public class ChameleonProjectNature implements IProjectNature{
 			}
 		}
 		if (same!=null) {
-			_documents.remove(same);
+			removeDocument(same);
 		}
 		_documents.add(document);
 		updateModel(document);
@@ -456,10 +462,23 @@ public class ChameleonProjectNature implements IProjectNature{
 		}
 		return null;
 	}
-	
-	public void removeModelElement(IDocument document){
-		_documents.remove(document);
-		
+
+	/**
+	 * Remove the given document from the project. The document is removed from the
+	 * list of documents in the project, and the compilation unit of the document
+	 * is disconnected from the project.
+	 * 
+	 * If the given document is null, nothing happens.
+	 */
+ /*@
+   @ post ! documents().contains(document);
+   @ post document != null ==> document.compilationUnit().disconnected();
+   @*/
+	public void removeDocument(ChameleonDocument document){
+		if(document != null) {
+			_documents.remove(document);
+			document.compilationUnit().disconnect();
+		}
 	}
 
 	public Language language() {

@@ -223,6 +223,10 @@ abstract public class AbstractChameleonReconciler implements IReconciler {
 	 */
 	class Listener implements IDocumentListener, ITextInputListener {
 		
+		public Listener() {
+			
+		}
+		
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
