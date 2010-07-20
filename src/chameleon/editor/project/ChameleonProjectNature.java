@@ -55,7 +55,7 @@ import chameleon.input.SourceManager;
  * Defines the nature for ChameleonProjects, it contains the elements in the model 
  * of the nature, the language of the project, and knows the project it is created for.
  */
-public class ChameleonProjectNature implements IProjectNature{
+public class ChameleonProjectNature implements IProjectNature {
 	public ChameleonProjectNature() {
 		_documents=new ArrayList<ChameleonDocument>();
 	}

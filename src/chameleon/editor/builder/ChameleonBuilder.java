@@ -121,6 +121,9 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		try {
 			ChameleonDocument doc = chameleonNature().document(cu);
 			VerificationResult ver = ChameleonReconcilingStrategy.checkVerificationErrors(doc);
+			if(ver == null) {
+				System.out.println("debug");
+			}
 			if(ver.equals(Valid.create())) {
 			  builder().build(cu);
 			}

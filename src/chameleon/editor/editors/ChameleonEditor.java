@@ -431,7 +431,9 @@ public class ChameleonEditor extends TextEditor implements ActionListener {
 	 * @param document
 	 */
 	public void documentChanged(ChameleonDocument document) {
-		
+		if(document == null) {
+			System.out.println("debug");
+		}
 		this.document = document;
 		
 		if (document.getProjectNature()==null){

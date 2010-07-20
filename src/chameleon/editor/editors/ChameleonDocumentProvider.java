@@ -40,6 +40,7 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
+		try {
 		IProject project = null;
 		ChameleonProjectNature nature = null;
 		IPath path=null;
@@ -77,8 +78,12 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 		} else {
 			nature.updateModel(document);
 		}
-		
 		return document;
+		}
+		catch (Throwable t) {
+				System.out.println("Debug");
+				throw new Error();
+		}
 	}
 	
 //	/*
