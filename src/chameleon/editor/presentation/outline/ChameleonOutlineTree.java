@@ -2,7 +2,6 @@ package chameleon.editor.presentation.outline;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupException;
-import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.exception.ChameleonProgrammerException;
 
 /**
  * @author Manuel Van Wesemael 
@@ -89,7 +88,11 @@ public class ChameleonOutlineTree {
 					children.add(elementChild);
 				}
 			}
-		} catch (LookupException e) {
+		} 
+		catch (ChameleonProgrammerException e) {
+			// simply stop processing if the declarations cannot be computed.
+		}
+		catch (LookupException e) {
 			// simply stop processing if the declarations cannot be computed.
 		}
 		return children;

@@ -66,12 +66,17 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 		public void actionPerformed(ActionEvent arg0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					ChameleonOutlinePage outlinePage = null;
-					if(_chameleonEditor != null) {
-						outlinePage=_chameleonEditor.outlinePage();
-					}
-					if(outlinePage != null) {
-					  outlinePage.updateOutline();
+					try {
+						ChameleonOutlinePage outlinePage = null;
+						if(_chameleonEditor != null) {
+							outlinePage=_chameleonEditor.outlinePage();
+						}
+						if(outlinePage != null) {
+							outlinePage.updateOutline();
+						}
+					} catch(NullPointerException exc) {
+						//FIXME there is a synchronization problem where the call outlinePage.updateOutline() does
+						// throw a NullPointerException. Ignore for now.
 					}
 				}
 			});	

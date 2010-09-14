@@ -285,6 +285,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 			} catch (RuntimeException e) {} // voor bij het afsluiten
 		}
 		catch(Exception e){
+			chameleonTree = new ChameleonOutlineTree();
 			e.printStackTrace();
 		}
 	}
