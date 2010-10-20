@@ -84,6 +84,10 @@ public abstract class EclipseBootstrapper {
 	public abstract Syntax getCodeWriter();
 	
 	// FIXME: must be a language/project extension (or move to editor extension)
+	/**
+	 * The resulting builder must be connected to a fresh language object. A syntax connector
+	 * must be attached to that language. The builder must be connected to that language.
+	 */
 	public Builder createBuilder(Language source, File projectDirectory) {
 		return null;
 	}

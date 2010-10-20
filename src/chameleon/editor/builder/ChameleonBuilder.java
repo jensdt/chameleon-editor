@@ -118,21 +118,24 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 	}
 	
 	public void build(CompilationUnit cu) throws CoreException {
-		try {
-			ChameleonDocument doc = chameleonNature().document(cu);
-			VerificationResult ver = ChameleonReconcilingStrategy.checkVerificationErrors(doc);
-			if(ver == null) {
-				System.out.println("debug");
+		Builder builder = builder();
+		if(builder != null) {
+			try {
+				ChameleonDocument doc = chameleonNature().document(cu);
+				VerificationResult ver = ChameleonReconcilingStrategy.checkVerificationErrors(doc);
+				if(ver == null) {
+					System.out.println("debug");
+				}
+				if(ver.equals(Valid.create())) {
+					builder.build(cu);
+				}
+			} catch (ModelException e) {
+				//TODO report error using a MARKER
+				e.printStackTrace();
+			} catch (IOException e) {
+				//TODO report error using a MARKER
+				e.printStackTrace();
 			}
-			if(ver.equals(Valid.create())) {
-			  builder().build(cu);
-			}
-		} catch (ModelException e) {
-			//TODO report error using a MARKER
-			e.printStackTrace();
-		} catch (IOException e) {
-			//TODO report error using a MARKER
-			e.printStackTrace();
 		}
 	}
 

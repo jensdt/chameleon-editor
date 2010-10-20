@@ -83,7 +83,8 @@ public class ChameleonOutlineTree {
 	public List<Element> getChildren(Language lang, DeclarationContainer<?,?> element) {
 		List<Element> children = new ArrayList<Element>();
 		try {
-			for(Element elementChild : element.declarations()){
+			for(Declaration elementChild : element.declarations()){
+//			for(Declaration elementChild : element.locallyDeclaredDeclarations()){
 				if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
 					children.add(elementChild);
 				}
