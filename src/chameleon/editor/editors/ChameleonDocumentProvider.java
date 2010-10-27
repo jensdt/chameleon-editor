@@ -80,9 +80,9 @@ public class ChameleonDocumentProvider extends FileDocumentProvider {
 		}
 		return document;
 		}
-		catch (Throwable t) {
+		catch (Error t) {
 				System.out.println("Debug");
-				throw new Error();
+				throw t;
 		}
 	}
 	

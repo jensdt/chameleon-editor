@@ -334,6 +334,8 @@ public class ChameleonProjectNature implements IProjectNature {
 			} catch (ParseException e) {
 				// FIXME Can we ignore this exception? Normally, the parse error markers should have been set.
 				e.printStackTrace();
+			} finally {
+				flushProjectCache();
 			}
 		}
 	}
