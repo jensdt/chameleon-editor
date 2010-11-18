@@ -67,8 +67,8 @@ public class ChameleonDocument extends Document {
 	//the last known presentation of the document
 	private TextPresentation _lastpresentation;
 	
-	//check whether presentation is going on by some reconciler
-	private boolean _presenting;
+//	//check whether presentation is going on by some reconciler
+//	private boolean _presenting;
 	//when the document contains language errors, they are stored here.
 	private List<ParseException> _parseErrors;	
 	//A listener for the time when the errors change
@@ -253,14 +253,38 @@ public class ChameleonDocument extends Document {
 
 
 	@Override
-	public void addPosition(Position position) throws BadLocationException {
+	public synchronized void addPosition(Position position) throws BadLocationException {
 		super.addPosition(position);
 	}
 
 
 	@Override
-	public void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException {
+	public synchronized void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException {
 		super.addPosition(category, position);
+	}
+
+	@Override
+	public synchronized void removePosition(Position position) {
+		super.removePosition(position);
+	}
+
+
+	@Override
+	public synchronized void removePosition(String category, Position position) throws BadPositionCategoryException {
+		super.removePosition(category, position);
+	}
+	
+	
+
+	@Override
+	public synchronized Position[] getPositions(String category, int offset, int length, boolean canStartBefore, boolean canEndAfter)
+			throws BadPositionCategoryException {
+		return super.getPositions(category, offset, length, canStartBefore, canEndAfter);
+	}
+
+	@Override
+	public synchronized Position[] getPositions(String category) throws BadPositionCategoryException {
+		return super.getPositions(category);
 	}
 
 	public Language language() {
