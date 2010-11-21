@@ -37,7 +37,7 @@ public class CalleesContentProvider implements ITreeContentProvider {
 				@Override
 				public void visit(MethodInvocation invocation) {
 					try {
-						calledMethods.add(invocation.getMethod());
+						calledMethods.add(invocation.getElement());
 					} catch (ModelException e) {
 						e.printStackTrace();
 					}

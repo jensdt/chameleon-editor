@@ -103,7 +103,7 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 				String elementLabel = ext.getLabel(element);
 				if(element instanceof MethodInvocation){
 					MethodInvocation method = (MethodInvocation) element;
-					elementLabel = ext.getLabel(method.getMethod());
+					elementLabel = ext.getLabel(method.getElement());
 					return new IContextInformation[]{new ContextInformation(elementLabel, elementLabel)};
 				} else {
 					return null;
