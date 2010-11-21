@@ -185,6 +185,7 @@ public class LanguageMgt {
 		}
 
 		public static URL pluginURL(String pluginID, String directory) throws IOException {
+			System.out.println("Looking for plugin with ID "+pluginID);
 			URL url = FileLocator.toFileURL(FileLocator.find(
     			Platform.getBundle(pluginID),
     			new Path(directory), null));

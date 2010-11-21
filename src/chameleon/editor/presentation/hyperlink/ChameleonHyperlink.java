@@ -159,7 +159,7 @@ public class ChameleonHyperlink implements IHyperlink {
 //				// marker.delete();
 //			}
 		} catch (ModelException exc) {
-//			exc.printStackTrace();
+			exc.printStackTrace();
 			System.out.println("Referenced element not found.");
 		}
 	}
