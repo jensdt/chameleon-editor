@@ -35,7 +35,7 @@ public class OutlineComparator extends ViewerComparator {
 	  Element element = ChameleonLabelProvider.getElement(object);
 		if(element instanceof Declaration) {
 			Language language = element.language();
-			DeclarationCategorizer categorizer = language.connector(EclipseEditorExtension.class).declarationCategorizer();
+			DeclarationCategorizer categorizer = language.plugin(EclipseEditorExtension.class).declarationCategorizer();
 			return categorizer.category((Declaration)element);
 		} else {
 			return 0;

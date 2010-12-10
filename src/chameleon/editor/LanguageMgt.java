@@ -5,7 +5,6 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -26,13 +25,12 @@ import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.editor.connector.Builder;
 import chameleon.editor.connector.EclipseBootstrapper;
 import chameleon.editor.presentation.PresentationModel;
 import chameleon.exception.ChameleonProgrammerException;
-import chameleon.output.Syntax;
+import chameleon.plugin.build.Builder;
+import chameleon.plugin.output.Syntax;
 
 /**
  * @author Marko van Dooren

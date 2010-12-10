@@ -7,7 +7,8 @@ import java.util.List;
 
 import chameleon.core.language.Language;
 import chameleon.input.ParseException;
-import chameleon.output.Syntax;
+import chameleon.plugin.build.Builder;
+import chameleon.plugin.output.Syntax;
 
 /**
  * @author Joeri Hendrickx

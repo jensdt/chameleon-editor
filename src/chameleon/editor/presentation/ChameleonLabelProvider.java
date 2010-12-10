@@ -27,7 +27,7 @@ import chameleon.exception.ModelException;
 import chameleon.oo.language.ObjectOrientedLanguage;
 import chameleon.oo.type.Type;
 import chameleon.oo.type.TypeElement;
-import chameleon.output.Syntax;
+import chameleon.plugin.output.Syntax;
 
 /**
  * @author Manuel Van Wesemael 
@@ -104,7 +104,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		try {
 			Language language = element.language();
 			if(language != null) {
-				EclipseEditorExtension extension = language.connector(EclipseEditorExtension.class);
+				EclipseEditorExtension extension = language.plugin(EclipseEditorExtension.class);
 				image = extension.getIcon(element);
 			}
 		}catch(IOException exc) {
@@ -265,7 +265,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	public String getLabel(Object modelObject){
 		Element element = getElement(modelObject);
 		if(element != null) {
-			EclipseEditorExtension ext = getLanguage().connector(EclipseEditorExtension.class);
+			EclipseEditorExtension ext = getLanguage().plugin(EclipseEditorExtension.class);
 			return ext.getLabel(element);
 		} else {
 			if(modelObject != null) {

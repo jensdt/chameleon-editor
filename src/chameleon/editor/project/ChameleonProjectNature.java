@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.IDocument;
 
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
@@ -92,7 +91,7 @@ public class ChameleonProjectNature implements IProjectNature {
 			throw new ChameleonProgrammerException("Cannot set the language of a Chameleon project nature to null.");
 		}
 		this._language = language;
-		language.setConnector(SourceManager.class, new EclipseSourceManager(this));
+		language.setPlugin(SourceManager.class, new EclipseSourceManager(this));
 		language.addProcessor(InputProcessor.class, new EclipseEditorInputProcessor(this));
 	}
 	
@@ -275,7 +274,7 @@ public class ChameleonProjectNature implements IProjectNature {
 	 * @see chameleonEditor.editors.IChameleonDocument#getMetaModelFactory()
 	 */
 	public ModelFactory modelFactory() {
-		return language().connector(ModelFactory.class);
+		return language().plugin(ModelFactory.class);
 	}
 
 

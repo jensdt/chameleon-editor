@@ -9,19 +9,17 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
-import chameleon.core.declaration.Declaration;
 import chameleon.core.element.Element;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.Modifier;
 import chameleon.editor.presentation.DeclarationCategorizer;
-import chameleon.tool.ConnectorImpl;
+import chameleon.plugin.PluginImpl;
 
 /**
  * @author Marko van Dooren
  */
-public abstract class EclipseEditorExtension extends ConnectorImpl {
+public abstract class EclipseEditorExtension extends PluginImpl {
 
 	public EclipseEditorExtension() {
 		initializeRegistry();

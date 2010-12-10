@@ -20,12 +20,12 @@ import chameleon.core.validation.Valid;
 import chameleon.core.validation.VerificationResult;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.LanguageMgt;
-import chameleon.editor.connector.Builder;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.editor.project.ChameleonResourceDeltaFileVisitor;
 import chameleon.exception.ModelException;
+import chameleon.plugin.build.Builder;
 
 public class ChameleonBuilder extends IncrementalProjectBuilder {
 

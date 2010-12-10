@@ -14,8 +14,8 @@ import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.input.InputProcessor;
 import chameleon.input.ParseException;
-import chameleon.tool.Processor;
-import chameleon.tool.ProcessorImpl;
+import chameleon.plugin.Processor;
+import chameleon.plugin.ProcessorImpl;
 
 public class EclipseEditorInputProcessor extends ProcessorImpl implements InputProcessor {
 

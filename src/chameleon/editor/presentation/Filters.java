@@ -234,7 +234,7 @@ public class Filters {
 	public static void addModifierFiltersSubmenu(StructuredViewer viewer, IContributionManager mgr, Language language){
 		if(language != null){
 			IMenuManager filtersSubmenu = new MenuManager("Modifier filters (" + language.name()+")");
-			EclipseEditorExtension ext = language.connector(EclipseEditorExtension.class);
+			EclipseEditorExtension ext = language.plugin(EclipseEditorExtension.class);
 			if(ext != null){
 				List<Modifier> modifiers = ext.getFilterModifiers();
 				for(Modifier mod : modifiers){
