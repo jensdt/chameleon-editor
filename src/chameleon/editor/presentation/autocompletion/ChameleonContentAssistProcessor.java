@@ -14,7 +14,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 import chameleon.core.element.Element;
-import chameleon.core.expression.Invocation;
+import chameleon.core.expression.MethodInvocation;
 import chameleon.core.language.Language;
 import chameleon.core.lookup.LookupStrategy;
 import chameleon.editor.connector.EclipseEditorExtension;
@@ -101,8 +101,8 @@ public class ChameleonContentAssistProcessor implements IContentAssistProcessor 
 				Language language = ((ChameleonDocument)viewer.getDocument()).getProjectNature().getModel().language();
 				EclipseEditorExtension ext = language.plugin(EclipseEditorExtension.class);
 				String elementLabel = ext.getLabel(element);
-				if(element instanceof Invocation){
-					Invocation method = (Invocation) element;
+				if(element instanceof MethodInvocation){
+					MethodInvocation method = (MethodInvocation) element;
 					elementLabel = ext.getLabel(method.getMethod());
 					return new IContextInformation[]{new ContextInformation(elementLabel, elementLabel)};
 				} else {

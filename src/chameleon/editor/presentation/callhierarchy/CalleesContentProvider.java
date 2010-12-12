@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rejuse.java.collections.Visitor;
 
-import chameleon.core.expression.Invocation;
+import chameleon.core.expression.MethodInvocation;
 import chameleon.core.method.Method;
 import chameleon.exception.ModelException;
 
@@ -30,12 +30,12 @@ public class CalleesContentProvider implements ITreeContentProvider {
 		if (inputObject instanceof Method) {
 			Method<?,?,?,?> method = (Method) inputObject;
 			// get all the invocations of the given method:
-			List<Invocation> invocations = method.descendants(Invocation.class);
+			List<MethodInvocation> invocations = method.descendants(MethodInvocation.class);
 			// get all the methods of these invocations:
 			final List<Method> calledMethods = new ArrayList<Method>();
-			new Visitor<Invocation>(){
+			new Visitor<MethodInvocation>(){
 				@Override
-				public void visit(Invocation invocation) {
+				public void visit(MethodInvocation invocation) {
 					try {
 						calledMethods.add(invocation.getMethod());
 					} catch (ModelException e) {
