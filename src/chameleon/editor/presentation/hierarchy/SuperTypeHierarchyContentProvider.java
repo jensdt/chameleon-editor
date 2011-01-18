@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.rejuse.java.collections.Visitor;
 
+import chameleon.core.declaration.Declaration;
+import chameleon.core.element.Element;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
 import chameleon.oo.type.Type;
@@ -34,20 +36,20 @@ public class SuperTypeHierarchyContentProvider extends HierarchyContentProvider 
 				HierarchyTypeNode parentTypeNode = (HierarchyTypeNode)element;
 				ChameleonProjectNature projectNature = parentTypeNode.getProjectNature();
 				Type type = parentTypeNode.getType();
-				final Collection<Type> result = new ArrayList<Type>();
+				final Collection<Declaration> result = new ArrayList<Declaration>();
 				List<InheritanceRelation> inheritanceRelations = type.inheritanceRelations();
 				// van elke typereference het type opvragen en aan het resultaat toevoegen:
 				new Visitor<InheritanceRelation>(){
 					public void visit(InheritanceRelation element) {
 						try {
-							result.add(element.superClass());
+							result.add(element.superElement());
 						} catch (ModelException e) {
 							e.printStackTrace();
 						}
 					}
 				}.applyTo(inheritanceRelations);
 				
-				Type[] typeArray = result.toArray(new Type[]{});
+				Declaration[] typeArray = result.toArray(new Declaration[]{});
 				return HierarchyTypeNode.encapsulateInHierarchyTreeNodes(typeArray, projectNature, parentTypeNode);
 
 			} catch (ModelException e) {

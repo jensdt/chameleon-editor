@@ -4,6 +4,7 @@
  */
 package chameleon.editor.presentation.hierarchy;
 
+import chameleon.core.declaration.Declaration;
 import chameleon.core.lookup.LookupException;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.oo.language.ObjectOrientedLanguage;
@@ -18,8 +19,8 @@ public class HierarchyTypeNode implements HierarchyTreeNode {
 	
 	private HierarchyTreeNode parent;
 	
-	public HierarchyTypeNode(Type type, ChameleonProjectNature projectNature, HierarchyTreeNode parent){
-		fullyQualifiedName = type.getFullyQualifiedName();
+	public HierarchyTypeNode(Declaration type, ChameleonProjectNature projectNature, HierarchyTreeNode parent){
+		fullyQualifiedName = type.signature().name();
 		this.projectNature = projectNature;
 		this.parent = parent;
 	}
@@ -50,10 +51,10 @@ public class HierarchyTypeNode implements HierarchyTreeNode {
 	 * STATIC MEMBERS
 	 */
 	
-	public static HierarchyTypeNode[] encapsulateInHierarchyTreeNodes(Type[] types, ChameleonProjectNature projectNature, HierarchyTreeNode parent){
+	public static HierarchyTypeNode[] encapsulateInHierarchyTreeNodes(Declaration[] types, ChameleonProjectNature projectNature, HierarchyTreeNode parent){
 		HierarchyTypeNode[] nodes = new HierarchyTypeNode[types.length];
 		for(int i=0; i<types.length; i++){
-			Type type = types[i];
+			Declaration type = types[i];
 			HierarchyTypeNode node = new HierarchyTypeNode(type, projectNature, parent);
 			nodes[i] = node;
 		}
