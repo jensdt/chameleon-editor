@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rejuse.predicate.SafePredicate;
 
-import chameleon.core.expression.Invocation;
+import chameleon.core.expression.MethodInvocation;
 import chameleon.core.method.Method;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
@@ -38,14 +38,14 @@ public class CallersContentProvider implements ITreeContentProvider {
 		if(inputObject instanceof Method){
 			final Method method = (Method)inputObject;
 			// get all invocations in this project:
-			Collection<Invocation> invocations = getInvocations();
+			Collection<MethodInvocation> invocations = getInvocations();
 			// System.out.println("found "+ invocations.size()+" invocations");
 			// build a predicate to search for matching invocations:
-			SafePredicate<Invocation> predicate = new SafePredicate<Invocation>(){
+			SafePredicate<MethodInvocation> predicate = new SafePredicate<MethodInvocation>(){
 				@Override
-				public boolean eval(Invocation invocation) {
+				public boolean eval(MethodInvocation invocation) {
 					try {
-						return method.equals(invocation.getMethod());
+						return method.equals(invocation.getElement());
 					} catch (ModelException e) {
 						e.printStackTrace();
 						return false;
@@ -56,7 +56,7 @@ public class CallersContentProvider implements ITreeContentProvider {
 			predicate.filter(invocations);
 			// get the methods containing the invocations:
 			Collection<Method> result = new ArrayList<Method>();
-			for(Invocation invocation : invocations){
+			for(MethodInvocation invocation : invocations){
 				Method callerMethod = (Method) invocation.nearestAncestor(Method.class);
 				result.add(callerMethod);
 			}
@@ -71,15 +71,15 @@ public class CallersContentProvider implements ITreeContentProvider {
 	/**
 	 * Cashing of the method invocations of this project (for performance reasons)
 	 */
-	private Collection<Invocation> cachedInvocations;
+	private Collection<MethodInvocation> cachedInvocations;
 	
 	/**
 	 * Returns all the method invocations in the current project.
 	 * 
 	 */
-	private Collection<Invocation> getInvocations() {
+	private Collection<MethodInvocation> getInvocations() {
 		if(cachedInvocations == null){
-			cachedInvocations = new HashSet<Invocation>(projectNature.getModel().descendants(Invocation.class));
+			cachedInvocations = new HashSet<MethodInvocation>(projectNature.getModel().descendants(MethodInvocation.class));
 		}
 		return cachedInvocations;
 	}

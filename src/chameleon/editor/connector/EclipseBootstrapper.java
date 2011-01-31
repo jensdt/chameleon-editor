@@ -1,11 +1,15 @@
 package chameleon.editor.connector;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import chameleon.core.language.Language;
+import chameleon.editor.LanguageMgt;
+import chameleon.input.ModelFactory;
 import chameleon.input.ParseException;
 import chameleon.plugin.build.Builder;
 import chameleon.plugin.output.Syntax;
@@ -91,6 +95,14 @@ public abstract class EclipseBootstrapper {
 	 */
 	public Builder createBuilder(Language source, File projectDirectory) {
 		return null;
+	}
+	
+	protected void loadAPIFiles(String extension, String pluginId, ModelFactory factory) throws IOException, ParseException {
+		FilenameFilter filter = LanguageMgt.fileNameFilter(extension);
+		URL directory = LanguageMgt.pluginURL(pluginId, "api/");
+		List<File> files = LanguageMgt.allFiles(directory, filter);
+		System.out.println("Loading "+files.size()+" API files.");	
+		factory.initializeBase(files);
 	}
 
 }
