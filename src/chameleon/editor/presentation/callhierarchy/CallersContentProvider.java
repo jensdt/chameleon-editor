@@ -45,7 +45,7 @@ public class CallersContentProvider implements ITreeContentProvider {
 				@Override
 				public boolean eval(MethodInvocation invocation) {
 					try {
-						return method.equals(invocation.getMethod());
+						return method.equals(invocation.getElement());
 					} catch (ModelException e) {
 						e.printStackTrace();
 						return false;

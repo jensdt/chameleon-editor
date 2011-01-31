@@ -40,6 +40,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 	public void setupBuilder() throws CoreException {
 		if(_builder == null) {
 			ChameleonProjectNature nature = (ChameleonProjectNature)getProject().getNature(ChameleonProjectNature.NATURE);
+			_nature = nature;
 			Language language = nature.language();
 			IFile projectFile = getProject().getFile(".project");
 			IPath location = projectFile.getLocation();
@@ -50,6 +51,12 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 			//FIXME ACTUAL BUILDER MUST BE A CONNECTOR 
 			_builder = LanguageMgt.getInstance().createBuilder(language,file);
 		}
+	}
+	
+	private ChameleonProjectNature _nature;
+	
+	public ChameleonProjectNature nature() {
+		return _nature;
 	}
 	
 	private Builder _builder;
@@ -117,8 +124,9 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	public void build(CompilationUnit cu) throws CoreException {
+	private void build(CompilationUnit cu) throws CoreException {
 		Builder builder = builder();
+		List<CompilationUnit> compilationUnits = nature().compilationUnits();
 		if(builder != null) {
 			try {
 				ChameleonDocument doc = chameleonNature().document(cu);
@@ -127,7 +135,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 					System.out.println("debug");
 				}
 				if(ver.equals(Valid.create())) {
-					builder.build(cu);
+					builder.build(cu,compilationUnits);
 				}
 			} catch (ModelException e) {
 				//TODO report error using a MARKER
