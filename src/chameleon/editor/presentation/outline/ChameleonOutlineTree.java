@@ -80,7 +80,7 @@ public class ChameleonOutlineTree {
 	 * @param element
 	 * 	The parent element for which the displayed children are returned
 	 */
-	public List<Element> getChildren(Language lang, DeclarationContainer<?,?> element) {
+	public List<Element> getChildren(Language lang, DeclarationContainer<?> element) {
 		List<Element> children = new ArrayList<Element>();
 		try {
 			for(Declaration elementChild : element.declarations()){
@@ -105,7 +105,7 @@ public class ChameleonOutlineTree {
 	 * @param elementChild 
 	 * @return true if the element is a proper tree element and has decorators
 	 */
-	public boolean isAllowedInTree(Language language, Element<?,?> elementChild) {
+	public boolean isAllowedInTree(Language language, Element<?> elementChild) {
 		 return (elementChild instanceof Declaration);// &&
 //             elementChild.language().connector(EclipseEditorExtension.class).isOutlineElement((Declaration)elementChild);		 
 

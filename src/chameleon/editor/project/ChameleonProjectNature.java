@@ -452,7 +452,7 @@ public class ChameleonProjectNature implements IProjectNature {
 	 * @param element
 	 * @return
 	 */
-	public ChameleonDocument document(Element<?,?> element) {
+	public ChameleonDocument document(Element<?> element) {
 		if(element != null) {
 			CompilationUnit cu = element.nearestElement(CompilationUnit.class);
 			for(ChameleonDocument doc : _documents) {
