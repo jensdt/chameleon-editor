@@ -454,7 +454,7 @@ public class ChameleonProjectNature implements IProjectNature {
 	 */
 	public ChameleonDocument document(Element<?> element) {
 		if(element != null) {
-			CompilationUnit cu = element.nearestElement(CompilationUnit.class);
+			CompilationUnit cu = element.nearestAncestorOrSelf(CompilationUnit.class);
 			for(ChameleonDocument doc : _documents) {
 				if(doc.compilationUnit().equals(cu)) {
 					return doc;
