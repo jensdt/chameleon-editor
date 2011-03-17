@@ -128,8 +128,7 @@ public class ChameleonEditorPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle
-				.getBundle(CHAMELEON_RESOURCEBUNDLE_BASENAME);
+				resourceBundle = ResourceBundle.getBundle(CHAMELEON_RESOURCEBUNDLE_BASENAME);
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
