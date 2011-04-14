@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Chameleon Eclipse Plugin
 Bundle-SymbolicName: be.chameleon.eclipse;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.2
 Bundle-ClassPath: lib/log4j-1.2.15.jar,
  lib/org.rejuse.jar,
  bin/.,
