@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.Image;
 import chameleon.core.element.Element;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.Modifier;
+import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.presentation.DeclarationCategorizer;
 import chameleon.plugin.PluginImpl;
 
@@ -22,10 +23,11 @@ import chameleon.plugin.PluginImpl;
 public abstract class EclipseEditorExtension extends PluginImpl {
 
 	public EclipseEditorExtension() {
+		_imageRegistry = ChameleonEditorPlugin.getDefault().getImageRegistry();
 		initializeRegistry();
 	}
 	
-	private ImageRegistry _imageRegistry = new ImageRegistry();
+	private ImageRegistry _imageRegistry;
 	
 	public ImageRegistry imageRegistry() {
 		return _imageRegistry;
