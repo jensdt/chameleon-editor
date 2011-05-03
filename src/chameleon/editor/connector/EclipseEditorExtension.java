@@ -50,7 +50,7 @@ public abstract class EclipseEditorExtension extends PluginImpl {
    * Return an icon to represent the given element.
    * @throws IOException 
    */
-  public abstract Image getIcon(Element element) throws IOException;
+  public abstract Image getIcon(Element<?> element) throws IOException;
 
   /**
    * Returns the string for the template for the given method.
@@ -81,12 +81,11 @@ public abstract class EclipseEditorExtension extends PluginImpl {
 
 	/**
 	 * Register an icon in the image registry. The icon must be in the icons/ directory
-	 * of this language module editor plugin. The name of the file must be name+".png". The
-	 * icon is registered under the given name.
+	 * of this language module editor plugin..
 	 */
-	public void register(String name) throws MalformedURLException {
-		Image image = image(name+".png");
-		imageRegistry().put(name, image);
+	public void register(String fileName, String iconName) throws MalformedURLException {
+		Image image = image(fileName);
+		imageRegistry().put(iconName, image);
 	}
 
 	/**
