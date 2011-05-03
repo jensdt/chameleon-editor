@@ -25,10 +25,6 @@ import chameleon.exception.ChameleonProgrammerException;
  */
 public class EclipseEditorTag extends Position implements Tag {
 
-	// FIXME: We should keep a reference to the ChameleonDocument.
-	//        We need this to switch documents if this tag is moved to
-	//        another element.
-	
 	/**
 	 * Initialize a new Chameleon editor position with the given offset and length, and
 	 * with the given name.
@@ -74,7 +70,6 @@ public class EclipseEditorTag extends Position implements Tag {
   }
   
   public void setElement(Element element, String name) {
-		Element old = _element;
   	if(element != _element) {
   		// Set new pointer, backup old for removal.
   		_element = element;
@@ -123,10 +118,29 @@ public class EclipseEditorTag extends Position implements Tag {
 	private void setName(String name) {
 		_name = name;
 	}
+	
+	/**
+	 * Return the name of this editor tag. The name represents the meaning of the location.
+	 * @return
+	 */
 	public String getName() {
 		return _name;
 	}
 
+	/**
+	 * Check whether this editor tag is of the given kind.
+	 * @param kind The kind to be checked.
+	 */
+ /*@
+   @ public behavior
+   @
+   @ pre kind != null;
+   @
+   @ post \result == getName().equals(kind);
+   @*/
+	public boolean is(String kind) {
+		return getName().equals(kind);
+	}
 	
 //	public EclipseEditorTag getParentDecorator(){
 //		Element parentElem = getElement().parent();

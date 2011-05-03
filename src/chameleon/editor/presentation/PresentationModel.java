@@ -211,29 +211,29 @@ public class PresentationModel {
 		
 	}
 
-	/*
-	 * creates a color from a string 
-	 */
-	private Color createColor(String coded) {
-		int r = Integer.parseInt(coded.substring(1,3),16);
-		int g = Integer.parseInt(coded.substring(3,5),16);
-		int b = Integer.parseInt(coded.substring(5,7),16);
-		return new Color(Display.getCurrent(),r,g,b);
-	}	
+//	/*
+//	 * creates a color from a string 
+//	 */
+//	private Color createColor(String coded) {
+//		int r = Integer.parseInt(coded.substring(1,3),16);
+//		int g = Integer.parseInt(coded.substring(3,5),16);
+//		int b = Integer.parseInt(coded.substring(5,7),16);
+//		return new Color(Display.getCurrent(),r,g,b);
+//	}	
 	
 	/**
 	 * Finds a presentation style for a certain position
 	 * @param element
 	 * 	the element type of the given position.  May be expressed hierarchically using periods
-	 * @param decorator
-	 *  the decorator type of the given position
+	 * @param tag
+	 *  the tag type of the given position
 	 * @return the style if any, null otherwise
 	 */
-	public PresentationStyle getRule(String element, String decorator){
+	public PresentationStyle getRule(String element, String tag){
 		Iterator it = _rules.iterator();
 		while (it.hasNext()){
 			StyleRule sr = (StyleRule) it.next();
-			if (sr.selector.map(element, decorator))
+			if (sr.selector.map(element, tag))
 				return sr.style;
 		}
 		return null;
@@ -243,14 +243,23 @@ public class PresentationModel {
 	 * Represents a new style rule with a certain style & selector
 	 *
 	 */
-	class StyleRule {
-		public PresentationStyle style;
-		public Selector selector;
+	public class StyleRule {
 		public StyleRule(PresentationStyle style, Selector selector){
 			this.style=style;
 			this.selector=selector;
 		}
+
+		private PresentationStyle style;
 		
+		public PresentationStyle style() {
+			return this.style;
+		}
+		
+		private Selector selector;
+		
+		public Selector selector() {
+			return this.selector;
+		}
 	}
 
 	/**
@@ -266,15 +275,10 @@ public class PresentationModel {
 	 * @return a new styleRange for a given element
 	 */
 	public StyleRange map(int offset, int length, String element, String decname) {
-		//System.out.println("Mapping from "+this);
-
-		Iterator<StyleRule> it = _rules.iterator();
-		while(it.hasNext())
-		{
-			StyleRule rule = it.next();
-			
-			if (rule.selector.map(element,decname))
+		for(StyleRule rule: _rules)	{
+			if (rule.selector.map(element,decname)) {
 				return rule.style.getStyleRange(offset,length);
+			}
 		}
 		return null;
 	}

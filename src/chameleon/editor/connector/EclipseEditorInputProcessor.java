@@ -45,27 +45,6 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 		}
 	}
 
-//	public void setLocation(Element element, Position2D start, Position2D end, CompilationUnit compilationUnit) {
-//		//System.out.println("dec at "+offset+" to "+length+" type "+dectype+" on "+el);
-//		if(element == null) {
-//			throw new ChameleonProgrammerException("Trying to set decorator to a null element.");
-//		}
-//		ChameleonDocument doc = document(compilationUnit);
-//		String dectype = ChameleonEditorPosition.ALL_DECORATOR;
-//		try {
-//			int offset = doc.getLineOffset(start.lineNumber()) + start.offset();
-//			int endOffSet = doc.getLineOffset(end.lineNumber()) + end.offset();
-//			int length = endOffSet - offset;
-//			ChameleonEditorPosition dec = new ChameleonEditorPosition(offset,length,element,dectype);
-//			doc.addPosition(ChameleonEditorPosition.CHAMELEON_CATEGORY,dec);
-//			element.setTag(dec,dectype);
-//		} catch (BadLocationException e) {
-//			System.err.println("Couldn't set decorator ["+dectype+"] for "+element);
-//		} catch (BadPositionCategoryException e) {
-//			System.err.println("Couldn't set decorator ["+dectype+"] for "+element);
-//		}
-//	}
-	
 	public ChameleonDocument document(Element element) {
 		return projectNature().document(element);
 	}
@@ -109,10 +88,7 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 					cleanup = true;
 					ancestor.setUniParent(compilationUnit);
 				}
-				
 				EclipseEditorTag dec = new EclipseEditorTag(doc,offset,length,element,tagType);
-//				doc.addPosition(EclipseEditorTag.CHAMELEON_CATEGORY,dec);
-				
 				if(cleanup) {
 					ancestor.setUniParent(null);
 				}
