@@ -25,6 +25,8 @@ import chameleon.core.namespacepart.NamespacePart;
 import chameleon.core.variable.MemberVariable;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorExtension;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.TreeViewerActions;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.exception.ModelException;
 import chameleon.oo.type.Type;

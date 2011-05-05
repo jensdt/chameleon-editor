@@ -32,8 +32,8 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 import chameleon.editor.editors.actions.IChameleonEditorActionDefinitionIds;
 import chameleon.editor.presentation.Filters;
-import chameleon.editor.presentation.OutlineComparator;
-import chameleon.editor.presentation.TreeViewerActions;
+import chameleon.editor.presentation.treeview.ChameleonViewComparator;
+import chameleon.editor.presentation.treeview.TreeViewerActions;
 
 /**
  * The Chameleon hierarchy type view. 
@@ -134,7 +134,7 @@ public class HierarchyView extends ViewPart {
 		// create the member table viewer
 		memberViewer = new TableViewer(sashForm);
 		memberViewer.setContentProvider(new MemberContentProvider());
-		memberViewer.setComparator(new OutlineComparator());
+		memberViewer.setComparator(new ChameleonViewComparator());
 		// layout the tree viewer below the text field
 		layoutData = new GridData();
 		layoutData.grabExcessHorizontalSpace = true;

@@ -14,7 +14,7 @@ import chameleon.core.element.Element;
 import chameleon.core.method.RegularMethod;
 import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.editor.editors.ChameleonDocument;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 
 /**
  * Generates the CompletionProposals for the ContentAssistProcessor.

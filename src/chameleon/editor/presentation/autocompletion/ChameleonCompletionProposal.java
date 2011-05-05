@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 import chameleon.core.element.Element;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 
 
 /**

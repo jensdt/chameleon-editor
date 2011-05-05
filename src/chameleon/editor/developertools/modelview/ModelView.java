@@ -30,8 +30,8 @@ import chameleon.core.language.Language;
 import chameleon.core.tag.Tag;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonEditor;
-import chameleon.editor.presentation.ChameleonLabelProvider;
-import chameleon.editor.presentation.TreeViewerActions;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.TreeViewerActions;
 
 /**
  * This class contains a view intended to be used by Chameleon programmers. 

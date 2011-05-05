@@ -27,7 +27,7 @@ import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 import chameleon.exception.ChameleonProgrammerException;
 import chameleon.exception.ModelException;
 import chameleon.oo.type.Type;

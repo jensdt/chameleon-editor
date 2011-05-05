@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import chameleon.editor.presentation.TreeViewerActions;
+import chameleon.editor.presentation.treeview.TreeViewerActions;
 
 /**
  * This View will show all the methods invocating the current method

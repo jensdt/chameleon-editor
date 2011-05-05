@@ -94,11 +94,7 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 	 * checks whether the given element has children
 	 */
 	public boolean hasChildren(Object element) {
-		//System.out.println("ChameleonTreeContents hasChildren: ");
-        if (((ChameleonOutlineTree) element).getChildren().size()==0)
-            return false;
-        else
-            return true;
+		return ((ChameleonOutlineTree) element).hasChildren();
 	}
 
 	/**
@@ -123,9 +119,6 @@ public class ChameleonOutlineTreeContentProvider implements ITreeContentProvider
 		System.out.println("fire changed");
 		viewer.refresh();
 	}
-	
-
-
 }
 
 	

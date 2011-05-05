@@ -2,7 +2,7 @@
  * Created on 30-apr-07
  * @author Tim Vermeiren
  */
-package chameleon.editor.presentation;
+package chameleon.editor.presentation.treeview;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionManager;

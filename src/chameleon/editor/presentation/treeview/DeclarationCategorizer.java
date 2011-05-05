@@ -1,4 +1,4 @@
-package chameleon.editor.presentation;
+package chameleon.editor.presentation.treeview;
 
 import chameleon.core.declaration.Declaration;
 

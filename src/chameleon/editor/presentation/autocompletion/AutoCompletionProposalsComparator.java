@@ -8,7 +8,7 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.editors.preferences.ChameleonEditorPreferencePage;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 import chameleon.oo.type.Type;
 
 /**

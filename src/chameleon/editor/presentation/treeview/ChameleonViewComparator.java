@@ -1,4 +1,4 @@
-package chameleon.editor.presentation;
+package chameleon.editor.presentation.treeview;
 
 import org.eclipse.jface.viewers.ViewerComparator;
 
@@ -21,25 +21,27 @@ import chameleon.editor.connector.EclipseEditorExtension;
  * 
  * @author Marko van Dooren
  */
-public class OutlineComparator extends ViewerComparator {
+public class ChameleonViewComparator extends ViewerComparator {
 	
-	public OutlineComparator() {
+	public ChameleonViewComparator() {
+		// Only explicit to be able to view the constructor call chain.
 	}
 	
 	/**
-	 * In this method you determine the order in which the elements are shown in the outline. Elements
-	 * grouped per category.
+	 * This method determines the order in which the elements are shown in the outline. Elements
+	 * are grouped per category. The work is delegated to the declarationCategorize() of the
+	 * editor extension.
 	 */
 	@Override
 	public int category(Object object) {
 	  Element element = ChameleonLabelProvider.getElement(object);
+	  int result = 0;
 		if(element instanceof Declaration) {
 			Language language = element.language();
 			DeclarationCategorizer categorizer = language.plugin(EclipseEditorExtension.class).declarationCategorizer();
-			return categorizer.category((Declaration)element);
-		} else {
-			return 0;
+			result = categorizer.category((Declaration)element);
 		}
+		return result;
 	}
 	
 }

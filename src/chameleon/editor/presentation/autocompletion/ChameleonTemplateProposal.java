@@ -12,7 +12,7 @@ import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
 
 import chameleon.core.element.Element;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 
 /**
  * Extention on the TemplateProposal to support ContextInformation

@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -22,11 +23,11 @@ import chameleon.core.element.Element;
 import chameleon.core.language.Language;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.editors.ChameleonEditor;
-import chameleon.editor.presentation.ChameleonLabelProvider;
 import chameleon.editor.presentation.Filters;
-import chameleon.editor.presentation.OutlineComparator;
 import chameleon.editor.presentation.PresentationModel;
-import chameleon.editor.presentation.TreeViewerActions;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonViewComparator;
+import chameleon.editor.presentation.treeview.TreeViewerActions;
 
 /**
  * @author Manuel Van Wesemael 
@@ -54,8 +55,6 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	// Wheter to show the root-element of the tree, or not
 	public boolean showRoot = false;
 
-	//private Vector<String> allowedTreeElements;
-
 	/**
 	 * The creation of a ChameleonContentOutlinePage with given language & editor
 	 * 
@@ -75,14 +74,11 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 				throw new NullPointerException("editor is not available, ouline is not created");
 			}
 			this._editor = editor;
-			//this.allowedTreeElements = allowedElements;
 			changeLanguage(language);
 		} catch (NullPointerException npe){
 			System.err.println(npe.getMessage());
 		}
 		PresentationModel.initAllowedOutlineElementsByDefaults(language.name(), allowedElements, defaultAllowedElements);
-//		if (allTrees == null) allTrees = new Vector<ChameleonContentOutlinePage>();
-//		allTrees.add(this);		
 	}
 
 	/**
@@ -128,7 +124,8 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		// Create content providers for the tree viewer
 		//---------------------------------------------
 		treeViewer.setContentProvider(new ChameleonOutlineTreeContentProvider());
-		treeViewer.setLabelProvider(new ChameleonLabelProvider(_currentLanguage, true, false, false)); 
+		ChameleonLabelProvider chameleonLabelProvider = new ChameleonLabelProvider(_currentLanguage, true, false, false);
+		treeViewer.setLabelProvider(new DecoratingLabelProvider(chameleonLabelProvider,null)); 
 
 		// Set initial expansion level
 		//----------------------------
@@ -179,7 +176,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		mgr.add(new TreeViewerActions.RefreshAction(treeViewer));
 		mgr.add(new Separator("Outline actions"));
 		mgr.add(new ShowRootAction(this));
-		mgr.add(new hideTypesAction(treeViewer));
+		mgr.add(new hideTypesAction());
 		mgr.add(new Separator(Filters.FILTER_GROUP_NAME));
 		// here the filters will be added
 		mgr.add(new Separator());
@@ -205,26 +202,19 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		}
 	}
 
+	public ChameleonLabelProvider chameleonLabelProvider() {
+		return (ChameleonLabelProvider) ((DecoratingLabelProvider)treeViewer.getLabelProvider()).getLabelProvider();
+	}
+	
 	public class hideTypesAction extends Action {
-		private TreeViewer treeViewer;
-		public hideTypesAction(TreeViewer treeViewer){
+		public hideTypesAction(){
 			super("Hide defining types", AS_CHECK_BOX);
-			this.treeViewer = treeViewer;
-			ChameleonLabelProvider labelProv = ((ChameleonLabelProvider)treeViewer.getLabelProvider());
-			if(!labelProv.isShowingDefiningTypes()){
-				setChecked(true);
-			}
+			setChecked(!chameleonLabelProvider().isShowingDefiningTypes());
 		}
 		@Override
 		public void run() {
-			ChameleonLabelProvider labelProv = ((ChameleonLabelProvider)treeViewer.getLabelProvider());
-			if(labelProv.isShowingDefiningTypes()){
-				labelProv.setShowDefiningTypes(false);
-				treeViewer.refresh();
-			} else {
-				labelProv.setShowDefiningTypes(true);
-				treeViewer.refresh();
-			}
+			chameleonLabelProvider().invertShowDefiningType();
+			treeViewer.refresh();
 		}
 	}
 
@@ -240,7 +230,7 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		}
 		@Override
 		public void run() {
-			OutlineComparator outlineComparator = outlineComparator();
+			ChameleonViewComparator outlineComparator = outlineComparator();
 			if(! outlineComparator.equals(treeViewer.getComparator())){
 				// if not yet sorted
 				treeViewer.setComparator(outlineComparator);
@@ -250,8 +240,8 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 		}
 	}
 	
-	public OutlineComparator outlineComparator() {
-		return new OutlineComparator();
+	public ChameleonViewComparator outlineComparator() {
+		return new ChameleonViewComparator();
 	}
 
 	/**
@@ -276,8 +266,8 @@ public class ChameleonOutlinePage extends ContentOutlinePage {
 	private void buildTree() {
 		try{
 //			System.out.println("BUILDING OUTLINE TREE");
-			chameleonTree = new ChameleonOutlineTree();
-			chameleonTree.composeTree(_currentLanguage, getTreeRootElement());
+			chameleonTree = new ChameleonOutlineTree(getTreeRootElement());
+			chameleonTree.composeTree();
 			try {
 				treeViewer.setInput(chameleonTree);
 				treeViewer.refresh();

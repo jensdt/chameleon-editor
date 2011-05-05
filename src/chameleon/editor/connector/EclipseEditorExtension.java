@@ -14,7 +14,8 @@ import chameleon.core.element.Element;
 import chameleon.core.method.Method;
 import chameleon.core.modifier.Modifier;
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.presentation.DeclarationCategorizer;
+import chameleon.editor.presentation.outline.ChameleonOutlineSelector;
+import chameleon.editor.presentation.treeview.DeclarationCategorizer;
 import chameleon.plugin.PluginImpl;
 
 /**
@@ -25,6 +26,7 @@ public abstract class EclipseEditorExtension extends PluginImpl {
 	public EclipseEditorExtension() {
 		_imageRegistry = ChameleonEditorPlugin.getDefault().getImageRegistry();
 		initializeRegistry();
+		_outlineSelector = createOutlineSelector();
 	}
 	
 	private ImageRegistry _imageRegistry;
@@ -37,9 +39,7 @@ public abstract class EclipseEditorExtension extends PluginImpl {
 	 * Add the image descriptors to the registry.
 	 * @throws IOException 
 	 */
-	protected void initializeRegistry() {
-		
-	}
+	protected void initializeRegistry() {}
 	
 	/**
 	 * Return a text label for the given element. This is used for example in the outline.
@@ -83,8 +83,8 @@ public abstract class EclipseEditorExtension extends PluginImpl {
 	 * Register an icon in the image registry. The icon must be in the icons/ directory
 	 * of this language module editor plugin..
 	 */
-	public void register(String fileName, String iconName) throws MalformedURLException {
-		Image image = image(fileName);
+	public void register(String fileName, String iconName, String pluginID) throws MalformedURLException {
+		Image image = createImage(fileName, pluginID);
 		imageRegistry().put(iconName, image);
 	}
 
@@ -92,28 +92,42 @@ public abstract class EclipseEditorExtension extends PluginImpl {
 	 * Create an image from the file in the icons directory of this language module editor plugin
 	 * that has the same name as the given name. 
 	 */
-	public Image image(String fileName) throws MalformedURLException {
-		URL url = icon(fileName);
+	public Image createImage(String fileName, String pluginID) throws MalformedURLException {
+		URL url = icon(fileName, pluginID);
 		Image image = ImageDescriptor.createFromURL(url).createImage();
 		return image;
+	}
+	
+	public Image image(String iconName) {
+		return imageRegistry().get(iconName);
 	}
 
 	/**
 	 * Return the URL for the icons directory of this language module editor plugin.
 	 */
-	public URL icon(String name) throws MalformedURLException {
-		URL root = Platform.getBundle(pluginID()).getEntry("/");
+	public URL icon(String name, String pluginID) throws MalformedURLException {
+		URL root = Platform.getBundle(pluginID).getEntry("/");
 		URL icons = new URL(root,"icons/");
 		URL url = new URL(icons, name);
 		return url;
 	}
 	
+	/**
+	 * Return the ID of this plugin.
+	 */
 	public abstract String pluginID();
 
-//	public boolean isOutlineElement(Declaration elementChild) {
-//		
-//	}
-  	
+	
+	public ChameleonOutlineSelector createOutlineSelector() {
+		return new ChameleonOutlineSelector();
+	}
+	
+	private ChameleonOutlineSelector _outlineSelector;
+	
+	public ChameleonOutlineSelector outlineSelector() {
+		return _outlineSelector;
+	}
+	
 //  	public abstract ICompletionProposal completionProposal(Element element, ChameleonDocument document, int offset);
 
 }

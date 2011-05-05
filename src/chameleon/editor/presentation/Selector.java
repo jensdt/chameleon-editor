@@ -4,7 +4,7 @@ package chameleon.editor.presentation;
  * @author Manuel Van Wesemael 
  * @author Joeri Hendrickx 
  * 
- * A selector determines to which positions in the code a certain style rule should map
+ * A selector determines which positions in the code a certain style rule should map
  * to.  A null-string indicates that that criterium should be ignored.  All criteria
  * are combined using the AND rule.
  */

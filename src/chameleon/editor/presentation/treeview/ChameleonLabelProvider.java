@@ -1,4 +1,4 @@
-package chameleon.editor.presentation;
+package chameleon.editor.presentation.treeview;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,24 +38,6 @@ import chameleon.plugin.output.Syntax;
  */
 public class ChameleonLabelProvider implements ILabelProvider {
 
-	//a cache for the images, used for faster lookup
-	private HashMap<ImageDescriptor,Image> imageCache = new HashMap<ImageDescriptor,Image>(11);
-
-	/**
-	 * Whether to show the defining types (return types or field types) of the elements
-	 */
-	protected boolean showDefingType;
-
-	/**
-	 * Whether to show the fully qualified names of the declaring elements
-	 */
-	protected boolean showDeclaringElementFqn;
-
-	/**
-	 * Wheter to show the simple class name of this element
-	 */
-	protected boolean showElementClassName;
-
 	/**
 	 * Creates a new labelProvider with for the given language and the paths for the icons
 	 * @param language
@@ -72,9 +54,27 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		}
 		_language = language;
 		this.showDeclaringElementFqn = showDeclaringElementFqn;
-		this.showDefingType = showDefingType;
+		this._showDefingType = showDefingType;
 		this.showElementClassName = showElementClassName;
 	}
+
+	//a cache for the images, used for faster lookup
+	private HashMap<ImageDescriptor,Image> imageCache = new HashMap<ImageDescriptor,Image>(11);
+
+	/**
+	 * Whether to show the defining types (return types or field types) of the elements
+	 */
+	protected boolean _showDefingType;
+
+	/**
+	 * Whether to show the fully qualified names of the declaring elements
+	 */
+	protected boolean showDeclaringElementFqn;
+
+	/**
+	 * Wheter to show the simple class name of this element
+	 */
+	protected boolean showElementClassName;
 
 	private Language _language;
 
@@ -87,13 +87,17 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	}
 
 	public boolean isShowingDefiningTypes(){
-		return showDefingType;
+		return _showDefingType;
 	}
 
 	public void setShowDefiningTypes(boolean showDefingType){
-		this.showDefingType = showDefingType;
+		this._showDefingType = showDefingType;
 	}
 
+	public void invertShowDefiningType() {
+		setShowDefiningTypes(! isShowingDefiningTypes());
+	}
+	
 	/**
 	 * @return the image corresponding to the given element.
 	 * 			No image is returned if the element does not have image available
@@ -110,6 +114,7 @@ public class ChameleonLabelProvider implements ILabelProvider {
 		}catch(IOException exc) {
 			// Do nothing specifically for an exception.
 		}
+		// FIXME I think the remainder (excluding the return statement) can be removed. Then remove private getDescriptor method as well.
 		if(image == null) {
 			ImageDescriptor descriptor = getDescriptor(modelObject);
 			//obtain the cached image corresponding to the descriptor

@@ -13,7 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 
 import chameleon.editor.ChameleonEditorPlugin;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 
 /**
  * This class contains some small simple actions for the HierarchyView

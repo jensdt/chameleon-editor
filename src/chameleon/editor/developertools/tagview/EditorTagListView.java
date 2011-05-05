@@ -29,7 +29,7 @@ import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.connector.EclipseEditorTag;
 import chameleon.editor.editors.ChameleonDocument;
 import chameleon.editor.editors.ChameleonEditor;
-import chameleon.editor.presentation.ChameleonLabelProvider;
+import chameleon.editor.presentation.treeview.ChameleonLabelProvider;
 
 /**
  * Shows the Editor Tags of the current Chameleon Document.

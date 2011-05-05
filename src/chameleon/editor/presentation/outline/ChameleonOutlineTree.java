@@ -5,24 +5,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import chameleon.core.declaration.Declaration;
 import chameleon.core.declaration.DeclarationContainer;
 import chameleon.core.element.Element;
 import chameleon.core.language.Language;
-import chameleon.core.lookup.LookupException;
+import chameleon.editor.connector.EclipseEditorExtension;
 import chameleon.exception.ChameleonProgrammerException;
+import chameleon.exception.ModelException;
 
 /**
  * @author Manuel Van Wesemael 
- * @author Joeri Hendrickx 
+ * @author Joeri Hendrickx
+ * @author Marko van Dooren
  * 
- * Creates a new tree of chameleon Decorators
+ * Represents the model of the outline view.
  */
 public class ChameleonOutlineTree {
 	//the current element
-	private Element node;
+	private Element _node;
 	//the current element's children
-	private List<ChameleonOutlineTree> children;
+	private List<ChameleonOutlineTree> _children;
 	//A listener for this tree
 	private IChameleonOutlineTreeListener listener= NullChameleonOutlineTreeListener.getSoleInstance();
 	
@@ -35,9 +36,9 @@ public class ChameleonOutlineTree {
 	public ChameleonOutlineTree() {
 		// this.hashElements = hashElements;
 		//  this.decorators = decorators_All;
-		this.node = null;
+		this._node = null;
 		//this.editor = editor;
-		this.children = new ArrayList<ChameleonOutlineTree>();  
+		this._children = new ArrayList<ChameleonOutlineTree>();  
 	}
 	
 	/*
@@ -46,9 +47,9 @@ public class ChameleonOutlineTree {
 	public ChameleonOutlineTree(Element node) {
 		//  this.hashElements = hashElements;
 		//  this.decorators = decorators_All;
-		this.node = node;
+		this._node = node;
 		//this.editor = editor;
-		this.children = new ArrayList<ChameleonOutlineTree>();
+		this._children = new ArrayList<ChameleonOutlineTree>();
 	}
 	
 	/**
@@ -68,9 +69,9 @@ public class ChameleonOutlineTree {
 	 * the child tree is added 
 	 */
 	private ChameleonOutlineTree addTreeNodeChild(ChameleonOutlineTree childTNode) {
-		if (children == null)
-			children = new  ArrayList<ChameleonOutlineTree>(0);
-		children.add(childTNode);
+		if (_children == null)
+			_children = new  ArrayList<ChameleonOutlineTree>(0);
+		_children.add(childTNode);
 		return childTNode;
 	}
 	
@@ -80,39 +81,33 @@ public class ChameleonOutlineTree {
 	 * @param element
 	 * 	The parent element for which the displayed children are returned
 	 */
-	public List<Element> getChildren(Language lang, DeclarationContainer<?> element) {
-		List<Element> children = new ArrayList<Element>();
+	protected List<Element> getChildren(Element<?> element) {
 		try {
-//			for(Declaration elementChild : element.declarations()){
-			for(Declaration elementChild : element.locallyDeclaredDeclarations()){
-				if (isAllowedInTree(lang, elementChild)){ //Dit fungeert als een filter voor de element die moeten getoond worden	
-					children.add(elementChild);
-				}
-			}
+			return element.language().plugin(EclipseEditorExtension.class).outlineSelector().outlineChildren(element);
 		} 
 		catch (ChameleonProgrammerException e) {
 			// simply stop processing if the declarations cannot be computed.
 		}
-		catch (LookupException e) {
+		catch (ModelException e) {
 			// simply stop processing if the declarations cannot be computed.
 		}
-		return children;
+		return new ArrayList<Element>();
 	}
 	
-	/**
-	 * Checks whether this element can be be stated in the chameleonTree.
-	 * 
-	 * @param elementChild 
-	 * @return true if the element is a proper tree element and has decorators
-	 */
-	public boolean isAllowedInTree(Language language, Element<?> elementChild) {
-		 return (elementChild instanceof Declaration);// &&
-//             elementChild.language().connector(EclipseEditorExtension.class).isOutlineElement((Declaration)elementChild);		 
+	public boolean isAllowed(Element element) {
+		try {
+			return element.language().plugin(EclipseEditorExtension.class).outlineSelector().isAllowed(element);
+		} 
+		catch (ChameleonProgrammerException e) {
+			// simply stop processing if the declarations cannot be computed.
+		}
+		catch (ModelException e) {
+			// simply stop processing if the declarations cannot be computed.
+		}
+		return false;
+	}
+	
 
-		 
-	}
-	
-	
 	/*
 	 * check whether the given description matches one of the allowed ones
 	 */
@@ -126,7 +121,11 @@ public class ChameleonOutlineTree {
 	 * @return the children of this tree
 	 */
 	public List<ChameleonOutlineTree> getChildren() {
-		return children;
+		return new ArrayList<ChameleonOutlineTree>(_children);
+	}
+	
+	public boolean hasChildren() {
+		return _children.size() > 0;
 	}
 	
 	/**
@@ -134,7 +133,7 @@ public class ChameleonOutlineTree {
 	 * @return the current element (= current node in the tree)
 	 */
 	public Element getElement() {
-		return node;
+		return _node;
 	}
 	
 	
@@ -144,43 +143,26 @@ public class ChameleonOutlineTree {
 	 * @param treeRootElement
 	 * 	The beginElement.
 	 */
-	public void composeTree(Language lang, Element treeElement) {
-		node = treeElement;
-		if(treeElement instanceof DeclarationContainer){
-			List<Element> treeElementChildren = getChildren(lang, (DeclarationContainer)treeElement);
-			if(! treeElementChildren.isEmpty()){ 
-			
-				//Filtering is already done in getChildren() no need to do it twice.
-				
-//				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
-//					Element element = (Element) iter.next();
-//					if (!isAllowedInTree(lang, element))
-//						treeElementChildren.remove(element);
-//					
-//				}
-				//adds the children
-				
-				for (Iterator iter = treeElementChildren.iterator(); iter.hasNext();) {
-					Element element = (Element) iter.next();
-					children.add(new ChameleonOutlineTree(element));	
-				}
-				
-				//compose the tree for each of the children
-				
-				for(int i = 0; i < children.size(); i++){
-					children.get(i).composeTree(lang, children.get(i).getElement());
-				}
+	public void composeTree() {
+		composeTree(getChildren(getElement()));
+	}
+
+	protected void composeTree(List<Element> treeElementChildren) {
+		for (Element element: treeElementChildren) {
+			if(isAllowed(element)) {
+				ChameleonOutlineTree child = new ChameleonOutlineTree(element);
+				_children.add(child);
+				child.composeTree();
+			} else {
+				composeTree(getChildren(element));
 			}
-		} else {
-			System.out.println("WARNING composeTree called with a null tree element.");
 		}
 	}
-	
 	/**
 	 * String representation of this tree
 	 */
 	public String toString(){
-		return "chameleontree with node " + node.toString();
+		return "chameleontree with node " + _node.toString();
 	}
 	
 	/**
@@ -194,26 +176,26 @@ public class ChameleonOutlineTree {
 	public void update(Element element, boolean bool) {
 		System.out.println("ChameleonOutlineTree.update");
 		if (bool){ //addition
-			if(element.parent().equals(node)){
+			if(element.parent().equals(_node)){
 				//tis een van dees kinderen.
 				addChild(element);
 				fireAdd(element);
 			}
 			else{
-				for (int i=0; i < children.size(); i++){
-					children.get(i).update(element,bool);
+				for (int i=0; i < _children.size(); i++){
+					_children.get(i).update(element,bool);
 				}
 			}
 		}
 		else{ //removal
-			if (element == node){
-				node = null;
-				children = new ArrayList<ChameleonOutlineTree>(0);
+			if (element == _node){
+				_node = null;
+				_children = new ArrayList<ChameleonOutlineTree>(0);
 				fireRemove(element);
 			}
 			else{
-				for (int i=0; i < children.size(); i++){
-					children.get(i).update(element,bool);
+				for (int i=0; i < _children.size(); i++){
+					_children.get(i).update(element,bool);
 				}
 			}
 		}
@@ -286,11 +268,11 @@ public class ChameleonOutlineTree {
 			if (element == null){
 				return false;
 			}
-			else if(((Element)element).equals(node)){
+			else if(((Element)element).equals(_node)){
 				return true;
 			}
 			else{
-				for (Iterator iter = children.iterator(); iter.hasNext();) {
+				for (Iterator iter = _children.iterator(); iter.hasNext();) {
 					ChameleonOutlineTree childTree = (ChameleonOutlineTree) iter.next();
 					if (childTree.hasAsElement(element))
 						return true;
