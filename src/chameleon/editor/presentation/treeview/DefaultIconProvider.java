@@ -1,33 +1,46 @@
 package chameleon.editor.presentation.treeview;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import chameleon.core.element.Element;
+import chameleon.exception.ChameleonProgrammerException;
 
-public class DefaultIconProvider extends IconProvider {
+/**
+ * A class of icon providers that map elements of a certain type to icon names. A default icon provider
+ * has an optional list of decorators that influence the mapping.
+ * 
+ * @author Marko van Dooren
+ */
+public class DefaultIconProvider extends AbstractIconProvider {
 
+	//FIXME replace baseIconName with Icon, which has a name? That way the name is not written in two places. 
 	
-	@Override
-	public String iconName(Element element) {
+	public DefaultIconProvider(String baseIconName, Class<? extends Element> elementType, NameBasedIconDecorator... decorators) {
+		super(elementType, decorators);
+		if(baseIconName == null) {
+			throw new ChameleonProgrammerException();
+		}
+		_baseIconName = baseIconName;
+	}
+	
+	public String baseIconName(Element element) {
 		String result = null;
-		if(selectedClass().isInstance(element)) {
-			result = auxIconName(element);
+		if(elementType().isInstance(element)) {
+			result = baseIconName();
 		}
 		return result;
 	}
-	
-	protected String auxIconName(Element element) {
-		
-	}
 
-	private List<NameBasedIconDecorator> _decorators = new ArrayList<NameBasedIconDecorator>();
-	
-	private String _undecoratedIconName;
-	
-	public Class<?> selectedClass() {
-		return _selectedClass;
+	/**
+	 * Return the base icon name.
+	 * @return
+	 */
+ /*@
+   @ public behavior
+   @
+   @ post \result != null;
+   @*/
+	public String baseIconName() {
+		return _baseIconName;
 	}
 	
-	private Class<?> _selectedClass;
+  private String _baseIconName;
 }

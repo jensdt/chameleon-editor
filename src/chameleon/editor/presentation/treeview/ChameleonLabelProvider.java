@@ -105,15 +105,14 @@ public class ChameleonLabelProvider implements ILabelProvider {
 	public Image getImage(Object modelObject) {
 		Image image = null;
 		Element element = getElement(modelObject);
-		try {
 			Language language = element.language();
 			if(language != null) {
 				EclipseEditorExtension extension = language.plugin(EclipseEditorExtension.class);
-				image = extension.getIcon(element);
+				try {
+					image = extension.getIcon(element);
+				} catch (ModelException e) {
+				}
 			}
-		}catch(IOException exc) {
-			// Do nothing specifically for an exception.
-		}
 		// FIXME I think the remainder (excluding the return statement) can be removed. Then remove private getDescriptor method as well.
 		if(image == null) {
 			ImageDescriptor descriptor = getDescriptor(modelObject);

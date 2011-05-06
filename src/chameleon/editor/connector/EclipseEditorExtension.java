@@ -16,6 +16,8 @@ import chameleon.core.modifier.Modifier;
 import chameleon.editor.ChameleonEditorPlugin;
 import chameleon.editor.presentation.outline.ChameleonOutlineSelector;
 import chameleon.editor.presentation.treeview.DeclarationCategorizer;
+import chameleon.editor.presentation.treeview.IconProvider;
+import chameleon.exception.ModelException;
 import chameleon.plugin.PluginImpl;
 
 /**
@@ -49,9 +51,23 @@ public abstract class EclipseEditorExtension extends PluginImpl {
   /**
    * Return an icon to represent the given element.
    * @throws IOException 
+   * @throws ModelException 
    */
-  public abstract Image getIcon(Element<?> element) throws IOException;
+	public Image getIcon(Element<?> element) throws ModelException {
+		return image(iconProvider().iconName(element));
+	}
 
+	public abstract IconProvider createIconProvider();
+
+	public IconProvider iconProvider() {
+		if(_iconProvider == null) {
+			_iconProvider = createIconProvider();
+		}
+		return _iconProvider;
+	}
+	
+	private IconProvider _iconProvider;
+	
   /**
    * Returns the string for the template for the given method.
    * The parameters will be editable regions, if used as template patternstring.
