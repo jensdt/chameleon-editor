@@ -3,6 +3,8 @@ package chameleon.editor.connector;
 import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.rejuse.association.Association;
+import org.rejuse.association.SingleAssociation;
 
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.element.Element;
@@ -77,38 +79,37 @@ public class EclipseEditorInputProcessor extends ProcessorImpl implements InputP
 
 	private void setSingleLocation(Element element, int offset, int length, CompilationUnit compilationUnit, String tagType) {
 		ChameleonDocument doc = document(compilationUnit);
-//		try {
-			if(doc.getLength() == 0) {
-				System.out.println("Empty document.");
-			}
+		if(doc.getName().endsWith("A.jlo") && element.getClass().getName().endsWith("JavaMethodInvocation")) {
+				  System.out.println("debug");
+		}
+		Element parent = element.parent();
+		SingleAssociation stub = new SingleAssociation(new Object());
 			if(! element.hasTag(tagType)) {
-				Element ancestor = element.farthestAncestor();
+				SingleAssociation elementParentLink = element.parentLink();
+				Association parentLink = elementParentLink.getOtherRelation();
 				boolean cleanup = false;
 				if(element != compilationUnit) {
 					cleanup = true;
-					ancestor.setUniParent(compilationUnit);
+					if(parentLink != null) {
+					  parentLink.replace(elementParentLink, stub);
+					}
+					element.setUniParent(compilationUnit);
 				}
 				EclipseEditorTag dec = new EclipseEditorTag(doc,offset,length,element,tagType);
 				if(cleanup) {
-					ancestor.setUniParent(null);
+					element.setUniParent(null);
+					if(parentLink != null) {
+						// The setUniParent(null) call above create a new parentLink for the element, so we
+						// must obtain a new reference.
+						elementParentLink = element.parentLink();
+						parentLink.replace(stub,elementParentLink);
+					}
 				}
 			}
-//		} catch (BadLocationException e) {
-//			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
-//			System.err.println("Document length: "+doc.getLength());
-//			System.err.println("Trying to show text starting from offset:");
-//			try {
-//				for(int i=0;i<length;i++) {
-//					System.err.println(doc.getChar(offset+i));
-//				}
-//			} catch(BadLocationException exc) {
-//				
-//			}
-//			e.printStackTrace();
-//		} catch (BadPositionCategoryException e) {
-//			System.err.println("Couldn't set decorator ["+tagType+"] at offset "+offset+" with length " + length+ " for "+element);
-//			e.printStackTrace();
 //		}
+			if(element.parent() != parent) {
+				throw new ChameleonProgrammerException();
+			}
 	}
 
 	public void markParseError(int offset, int length, String message,Element element) {
