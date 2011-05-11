@@ -71,7 +71,7 @@ public class ChameleonSourceViewerConfiguration extends SourceViewerConfiguratio
 						if(_chameleonEditor != null) {
 							outlinePage=_chameleonEditor.outlinePage();
 							if(outlinePage != null) {
-//								outlinePage.updateOutline();
+								outlinePage.updateOutline();
 							}
 							_chameleonEditor.getDocument().getProjectNature().flushProjectCache();
 						}

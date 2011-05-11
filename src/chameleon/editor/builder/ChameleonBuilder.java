@@ -118,9 +118,14 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 	}
 
 	public void build(List<CompilationUnit> compilationUnits) throws CoreException {
-		chameleonNature().flushProjectCache();
-		for(CompilationUnit cu: compilationUnits) {
-			build(cu);
+		try {
+			chameleonNature().acquire();
+			chameleonNature().flushProjectCache();
+			for(CompilationUnit cu: compilationUnits) {
+				build(cu);
+			}
+			chameleonNature().release();
+		} catch(InterruptedException exc) {
 		}
 	}
 	

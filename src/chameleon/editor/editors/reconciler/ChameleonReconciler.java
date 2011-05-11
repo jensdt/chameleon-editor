@@ -49,7 +49,12 @@ public class ChameleonReconciler extends AbstractChameleonReconciler{
 	
 	// called when complete dirty region queue is reconciled
 	protected void reconciled() {
-		fStrategy.startReconciling();
+		try {
+			getEditor().getDocument().getProjectNature().acquire();
+			fStrategy.startReconciling();
+			getEditor().getDocument().getProjectNature().release();
+		} catch(InterruptedException exc) {
+		}
 	}
 		
 	/*

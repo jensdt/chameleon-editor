@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -554,5 +555,14 @@ public class ChameleonProjectNature implements IProjectNature {
 		}
 		language().flushCache();
 	}
+	
+	public void acquire() throws InterruptedException {
+		_semaphore.acquire();
+	}
 
+	public void release() {
+		_semaphore.release();
+	}
+	
+	private Semaphore _semaphore = new Semaphore(1);
 }
