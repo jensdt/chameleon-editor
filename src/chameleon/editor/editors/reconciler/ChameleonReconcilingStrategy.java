@@ -336,7 +336,6 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 	private void parseWholeDocument(IDocument document) throws Exception{
 		ChameleonDocument doc = this.getDocument();
 		doc.reParse();
-		doc.getProjectNature().flushProjectCache();
 	}
 
 	
