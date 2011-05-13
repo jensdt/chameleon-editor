@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import chameleon.core.compilationunit.CompilationUnit;
 import chameleon.core.language.Language;
@@ -75,7 +78,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 
 	protected IProject[] fullBuild(Map arguments, IProgressMonitor monitor) throws CoreException {
 		System.out.println("RUNNING FULL BUILD!");
-		build(chameleonNature().compilationUnits());
+		build(chameleonNature().compilationUnits(), monitor);
 		return new IProject[0];
 	}
 
@@ -85,12 +88,16 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 
 	protected IProject[] incrementalBuild(Map arguments, IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = getDelta(getProject());
-		incrementalBuild(delta);
+		incrementalBuild(delta, monitor);
 		return new IProject[0];
 	}
 
-	public void incrementalBuild(IResourceDelta delta) throws CoreException {
+	public void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
 		System.out.println("RUNNING INCREMENTAL BUILD!");
+		
+		// First collect all the compilation units. If we pass them in one call to
+		// the build method, the progress monitor works without writing additional code.
+		final List<CompilationUnit> cus = new ArrayList<CompilationUnit>();
 		delta.accept(new ChameleonResourceDeltaFileVisitor(chameleonNature()){
 		
 			@Override
@@ -104,9 +111,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				System.out.println("build: changed "+delta.getProjectRelativePath());
 				if(doc != null) {
 					CompilationUnit cu = doc.compilationUnit();
-					List<CompilationUnit> cus = new ArrayList<CompilationUnit>();
 					cus.add(cu);
-					build(cus);
 				}
 			}
 
@@ -115,17 +120,44 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				System.out.println("build: added "+delta.getProjectRelativePath());
 			}
 		});
+
+		build(cus,monitor);
 	}
 
-	public void build(List<CompilationUnit> compilationUnits) throws CoreException {
+	private void checkForCancellation(IProgressMonitor monitor) throws CoreException {
+		if(monitor.isCanceled()) {
+			forgetLastBuiltState();
+			getProject().deleteMarkers(IMarker.PROBLEM,true,IResource.DEPTH_INFINITE);
+			throw new OperationCanceledException("The build was cancelled by the user.");
+		}
+	}
+	
+	private String buildName() {
+		return "Building project";
+	}
+	
+	public void build(List<CompilationUnit> compilationUnits, IProgressMonitor monitor) throws CoreException {
+		boolean released = true;
 		try {
+			int totalWork = compilationUnits.size();
+			monitor.setTaskName(buildName());
+			monitor.beginTask(buildName(), totalWork);
 			chameleonNature().acquire();
+			released = false;
 			chameleonNature().flushProjectCache();
+			int i = 0;
 			for(CompilationUnit cu: compilationUnits) {
+				checkForCancellation(monitor);
 				build(cu);
+				i++;
+				monitor.worked(1);
 			}
-			chameleonNature().release();
 		} catch(InterruptedException exc) {
+		} finally {
+			if(! released) {
+				chameleonNature().release();
+			}
+			monitor.done();
 		}
 	}
 	
