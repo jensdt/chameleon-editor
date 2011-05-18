@@ -268,8 +268,8 @@ public class ChameleonReconcilingStrategy implements IChameleonReconcilingStrate
 			//System.out.println("  verwerken positie niet geslaagd");
 			//System.out.println("   => positie(s) en element verwijderd");
 			ClonedChameleonPosition pos = ((ClonedChameleonPosition) dirtyPositions.get(i));
-			pos.getElement().disconnect();
 			try{
+				pos.getElement().disconnect();
 				getDocument().removePosition(EclipseEditorTag.CHAMELEON_CATEGORY,pos);				
 				// FIXME: positions is always null, making this call useless
 //				removeEmbeddedPos(pos, positions, status);
