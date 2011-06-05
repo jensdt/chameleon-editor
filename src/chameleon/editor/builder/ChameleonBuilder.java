@@ -28,6 +28,7 @@ import chameleon.editor.editors.reconciler.ChameleonReconcilingStrategy;
 import chameleon.editor.project.ChameleonProjectNature;
 import chameleon.editor.project.ChameleonResourceDeltaFileVisitor;
 import chameleon.exception.ModelException;
+import chameleon.plugin.build.BuildProgressHelper;
 import chameleon.plugin.build.Builder;
 
 public class ChameleonBuilder extends IncrementalProjectBuilder {
@@ -78,7 +79,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 
 	protected IProject[] fullBuild(Map arguments, IProgressMonitor monitor) throws CoreException {
 		System.out.println("RUNNING FULL BUILD!");
-		build(chameleonNature().compilationUnits(), monitor);
+		build2(chameleonNature().compilationUnits(), monitor);
 		return new IProject[0];
 	}
 
@@ -121,7 +122,7 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 			}
 		});
 
-		build(cus,monitor);
+		build2(cus,monitor);
 	}
 
 	private void checkForCancellation(IProgressMonitor monitor) throws CoreException {
@@ -136,7 +137,79 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 		return "Building project";
 	}
 	
-	public void build(List<CompilationUnit> compilationUnits, IProgressMonitor monitor) throws CoreException {
+	protected void build2(List<CompilationUnit> compilationUnits, final IProgressMonitor monitor) throws CoreException {
+		// We only know how many CUs we are going to build after we have verified them. Therefore, the progress bar is only updated for building,
+		// not for verifying. Not ideal, but currently no other way.
+		List<CompilationUnit> validCompilationUnits = new ArrayList<CompilationUnit>();
+		
+		for(CompilationUnit cu: compilationUnits) {
+			ChameleonDocument doc = chameleonNature().document(cu);
+			VerificationResult ver = ChameleonReconcilingStrategy.checkVerificationErrors(doc);
+			if(ver == null) {
+				System.out.println("debug");
+			}
+			
+			if(ver.equals(Valid.create()))
+				validCompilationUnits.add(cu);
+			
+		}
+		
+		boolean released = true;
+		List<CompilationUnit> projectCompilationUnits = nature().compilationUnits();
+		try {
+			int totalWork = builder().totalAmountOfWork(validCompilationUnits, projectCompilationUnits);
+			System.out.println(totalWork);
+			//monitor.setTaskName(buildName());
+			
+			monitor.beginTask(buildName(), totalWork);
+			monitor.subTask(buildName());
+			chameleonNature().acquire();
+			released = false;
+			chameleonNature().flushProjectCache();
+			
+			BuildProgressHelper helper = new BuildProgressHelper() {
+				
+				@Override
+				public void checkForCancellation()  {
+					try {
+						ChameleonBuilder.this.checkForCancellation(monitor);
+					} catch (CoreException e) {
+						// Wrap in RTE
+						throw new RuntimeException(e);
+					}
+				}
+				
+				@Override
+				public void addWorked(int n) {
+					monitor.worked(n);
+				}
+			};
+			
+			
+			try {
+				builder().build(validCompilationUnits, projectCompilationUnits, helper);
+			}
+			catch (ModelException e) {
+				//TODO report error using a MARKER
+				e.printStackTrace();
+			} catch (IOException e) {
+				//TODO report error using a MARKER
+				e.printStackTrace();
+			}
+		} 
+		catch(InterruptedException exc) 
+		{
+			
+		}
+		finally {
+			if(! released) {
+				chameleonNature().release();
+			}
+			monitor.done();
+		}
+	}
+	/*
+	protected void build(List<CompilationUnit> compilationUnits, IProgressMonitor monitor) throws CoreException {
 		boolean released = true;
 		try {
 			int totalWork = compilationUnits.size();
@@ -182,6 +255,5 @@ public class ChameleonBuilder extends IncrementalProjectBuilder {
 				e.printStackTrace();
 			}
 		}
-	}
-
+	}*/
 }
